@@ -1,0 +1,56 @@
+# Primero fuerza todo HTTP a HTTPS en un bloque server separado:
+#
+# server {
+#   listen 80;
+#   listen [::]:80;
+#   server_name racinghobbiesec.com www.racinghobbiesec.com;
+#   return 308 https://$host$request_uri;
+# }
+#
+# Después incluye las cabeceras dentro del bloque server HTTPS que sirve
+# este sitio. Verifica al terminar con scripts/verify-production-security.sh.
+#
+# Para el alias www, usa otro bloque HTTPS con el certificado correspondiente:
+#
+# server {
+#   listen 443 ssl;
+#   listen [::]:443 ssl;
+#   server_name www.racinghobbiesec.com;
+#   return 308 https://racinghobbiesec.com$request_uri;
+# }
+
+# Dentro del bloque server HTTPS, mantén desactivados los listados y evita que
+# archivos de control, credenciales, backups o mapas fuente sean públicos:
+if ($request_method !~ ^(GET|HEAD|OPTIONS)$) {
+  return 405;
+}
+autoindex off;
+error_page 404 /404.html;
+location ~ (^|/)\.(?!well-known(?:/|$)) {
+  deny all;
+  access_log off;
+  log_not_found off;
+}
+location ~* (^|/)(?:\.env(?:\..*)?|\.git(?:/|$)|package\.json|config\.json|.*\.(?:bak|old|orig|swp|swo|map))$ {
+  deny all;
+  access_log off;
+  log_not_found off;
+}
+location ~* \.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$ {
+  deny all;
+  access_log off;
+  log_not_found off;
+}
+
+add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-elem 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; frame-src https://www.google.com; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" always;
+add_header Cross-Origin-Opener-Policy "same-origin" always;
+add_header Cross-Origin-Resource-Policy "same-origin" always;
+add_header Permissions-Policy "accelerometer=(), autoplay=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), interest-cohort=(), local-fonts=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), xr-spatial-tracking=(), fullscreen=(self \"https://www.google.com\")" always;
+add_header Origin-Agent-Cluster "?1" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-DNS-Prefetch-Control "off" always;
+add_header X-Download-Options "noopen" always;
+add_header X-Permitted-Cross-Domain-Policies "none" always;
+add_header X-Frame-Options "DENY" always;

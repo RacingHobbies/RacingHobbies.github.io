@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-elem 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; frame-src 'none'; form-action 'self'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <script src="js/frame-guard.min.js?v=1" integrity="sha256-omfqFtYSLgAsJEbmFHczRiUdMurlrdQToP6ZK1foFsg="></script>
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.min.css?v=193" integrity="sha256-vUpe2+OZg+ubhXu1PgdoL270bY6ibRdKVjePI5XQjcU=">
+  <link rel="stylesheet" href="css/typography.css?v=5" integrity="sha256-Ob6mr9H0xaVdzlLU6xWl5TvS6AJ6Yt3hhBBNoVarX0s=">
+  <link rel="stylesheet" href="css/format-parity.css?v=28" integrity="sha256-/rDGpyRF4oj5bPQUDz95Higoi2Bf1OEB4rRVXzlToBA=">
+  <meta name="description" content="Catálogo de Racing Hobbies Ecuador: crawlers 4x4, autos de pista Tamiya, monster trucks, aviones y helicópteros RC, baterías y repuestos nitro.">
+  <link rel="canonical" href="https://racinghobbiesec.com/catalogo.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_EC">
+  <meta property="og:site_name" content="Racing Hobbies Ecuador">
+  <meta property="og:title" content="Catálogo RC — Racing Hobbies Ecuador">
+  <meta property="og:description" content="Crawlers, pista, monster trucks, aviones, helicópteros, baterías y repuestos RC en Ecuador.">
+  <meta property="og:url" content="https://racinghobbiesec.com/catalogo.html">
+  <meta property="og:image" content="https://racinghobbiesec.com/assets/img/logo-oficial.png?v=2">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Catálogo — Racing Hobbies Ecuador</title>
+</head>
+<body class="page-catalog">
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="Racing Hobbies Ecuador — Inicio"><img class="logo-img" src="assets/img/logo-mark-180.webp?v=2" srcset="assets/img/logo-mark-180.webp?v=2 180w, assets/img/logo-mark-240.webp?v=2 240w, assets/img/logo-mark-360.webp?v=2 360w, assets/img/logo-mark.webp?v=2 1261w" sizes="104px" alt="" width="1261" height="652" decoding="async"></a>
+      <nav class="main-nav" id="main-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalogo.html" aria-current="page">Catálogo</a></li>
+          <li><a href="servicio-tecnico.html">Servicio Técnico</a></li>
+          <li><a href="nosotros.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <button class="cart-btn" type="button" data-open-cart aria-label="Abrir carrito de compras">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+            <path d="M3 4h2l2.6 12.4a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20.5 8H6" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9.5" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>
+          </svg>
+          <span class="cart-count" aria-hidden="true"></span>
+        </button>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menú">
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero" aria-labelledby="page-title">
+      <div class="container">
+        <p class="kicker" data-anim-high="right">Catálogo completo</p>
+        <h1 id="page-title" data-reveal-lines>Elige tu <span class="accent">próxima máquina</span></h1>
+        <p>Todo el catálogo RC de la tienda: crawlers, pista, monster, aviones, helicópteros y baterías. Arma tu pedido y lo confirmamos por WhatsApp.</p>
+      </div>
+    </section>
+
+    <div class="checkers" aria-hidden="true"></div>
+
+    <section aria-label="Productos" class="catalog-section">
+      <div class="container">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="M20 20l-3.8 -3.8" stroke-linecap="round"/>
+            </svg>
+            <input type="search" id="catalog-search" placeholder="Buscar productos…" aria-label="Buscar productos" aria-controls="catalog-grid" aria-keyshortcuts="/" autocomplete="off" maxlength="80">
+            <button class="search-clear" id="catalog-search-clear" type="button" aria-label="Limpiar búsqueda" hidden>✕</button>
+          </div>
+          <label class="visually-hidden" for="catalog-brand">Filtrar por marca</label>
+          <select class="sort-select brand-select" id="catalog-brand" aria-label="Filtrar productos por marca">
+            <option value="all">Todas las marcas</option>
+          </select>
+          <label class="visually-hidden" for="catalog-sort">Ordenar productos</label>
+          <select class="sort-select" id="catalog-sort">
+            <option value="featured">Destacados primero</option>
+            <option value="price-asc">Precio: menor a mayor</option>
+            <option value="price-desc">Precio: mayor a menor</option>
+            <option value="name">Nombre A–Z</option>
+          </select>
+        </div>
+        <p class="catalog-rail-hint" aria-hidden="true">Categorías · desliza para explorar <span>→</span></p>
+        <div class="chips" id="catalog-chips" role="group" aria-label="Filtrar por categoría"></div>
+        <div class="results-row">
+          <p class="results-info" id="catalog-results" aria-live="polite"></p>
+          <div class="catalog-actions">
+            <button class="catalog-share" id="catalog-share" type="button" aria-label="Compartir esta selección de productos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+                <circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/>
+                <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5" stroke-linecap="round"/>
+              </svg>
+              Compartir selección
+            </button>
+            <button class="catalog-reset" id="catalog-reset" type="button" hidden>Restablecer filtros</button>
+          </div>
+        </div>
+        <div class="prod-grid" id="catalog-grid"></div>
+      </div>
+    </section>
+
+    <section class="sec-dark pit-band" aria-labelledby="order-help-title">
+      <div class="container">
+        <div class="reveal">
+          <p class="kicker" data-anim-high="right">¿No encuentras algo?</p>
+          <h2 id="order-help-title">Lo conseguimos <span class="accent">por ti</span></h2>
+          <p>Si buscas un modelo, repuesto o upgrade que no está en el catálogo, escríbenos: lo importamos o te recomendamos la mejor alternativa.</p>
+        </div>
+        <a class="btn btn-volt reveal" data-wa-link="¡Hola Racing Hobbies! 🏁 Estoy buscando un producto que no encuentro en el catálogo:" href="https://wa.me/593989019836" target="_blank" rel="noopener noreferrer">
+          Pedir por WhatsApp
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="index.html" aria-label="Racing Hobbies Ecuador — Inicio"><img class="logo-img" src="assets/img/logo-mark-180.webp?v=2" srcset="assets/img/logo-mark-180.webp?v=2 180w, assets/img/logo-mark-240.webp?v=2 240w, assets/img/logo-mark-360.webp?v=2 360w, assets/img/logo-mark.webp?v=2 1261w" sizes="104px" alt="" width="1261" height="652" loading="lazy" decoding="async"></a>
+          <p>Autos, aviones y helicópteros RC, repuestos originales y servicio técnico especializado en Quito.</p>
+          <div class="footer-social">
+            <a href="https://www.instagram.com/racinghobbies/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Racing Hobbies">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61578637936920" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Racing Hobbies">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M13.5 21v-7h2.4l.4 -3h-2.8V9.1c0 -.9 .3 -1.5 1.6 -1.5h1.3V4.9c-.3 0 -1.2 -.1 -2.3 -.1 -2.3 0 -3.8 1.4 -3.8 3.9V11H8v3h2.3v7h3.2Z"/>
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@racinghobbies" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Racing Hobbies">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M16.6 3c.4 2 1.7 3.4 3.9 3.6v3c-1.5 0 -2.8 -.4 -3.9 -1.2v5.6a5.6 5.6 0 1 1 -5.6 -5.6c.3 0 .6 0 .9 .1v3.1a2.6 2.6 0 1 0 1.8 2.4V3h2.9Z"/>
+              </svg>
+            </a>
+            <a data-wa-link href="https://wa.me/593989019836" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Racing Hobbies">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 3a9 9 0 0 0 -7.8 13.5L3 21l4.6 -1.2A9 9 0 1 0 12 3Zm4.4 12.6c-.2 .6 -1.2 1.1 -1.7 1.2 -.4 .1 -1 .1 -1.6 -.1a13 13 0 0 1 -1.5 -.6 11.3 11.3 0 0 1 -4.3 -3.8c-.5 -.7 -1 -1.6 -1 -2.5 0 -.9 .5 -1.4 .7 -1.6a1 1 0 0 1 .7 -.3h.5c.2 0 .4 0 .6 .4l.8 2c.1 .2 .1 .4 0 .6l-.4 .6c-.2 .2 -.3 .4 -.1 .7a8.6 8.6 0 0 0 1.6 2 7.8 7.8 0 0 0 2.3 1.4c.3 .1 .5 .1 .6 -.1l.7 -.9c.2 -.3 .4 -.2 .7 -.1l1.9 .9c.3 .1 .5 .2 .5 .4 .1 .1 .1 .5 0 .8Z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Explorar</h3>
+          <ul>
+            <li><a href="index.html" data-anim="text-hover">Inicio</a></li>
+            <li><a href="catalogo.html" data-anim="text-hover">Catálogo</a></li>
+            <li><a href="servicio-tecnico.html" data-anim="text-hover">Servicio Técnico</a></li>
+            <li><a href="nosotros.html" data-anim="text-hover">Nosotros</a></li>
+            <li><a href="contacto.html" data-anim="text-hover">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Categorías</h3>
+          <ul>
+            <li><a href="catalogo.html?cat=crawlers">Crawlers 4x4</a></li>
+            <li><a href="catalogo.html?cat=pista">Autos de Pista</a></li>
+            <li><a href="catalogo.html?cat=monster">Monster y Off-Road</a></li>
+            <li><a href="catalogo.html?cat=aviones">Aviones RC</a></li>
+            <li><a href="catalogo.html?cat=helis">Helicópteros</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Contacto</h3>
+          <ul>
+            <li><a href="https://www.google.com/maps/search/?api=1&query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Av. Eloy Alfaro N40-413 y Granados, Quito</a></li>
+            <li><a data-tel-link href="tel:+593989019836">099&nbsp;801&nbsp;9836</a></li>
+            <li><a href="tel:+59323341561">02&nbsp;334&#8209;1561</a></li>
+            <li><a href="mailto:racinghobbiesquito@gmail.com">racinghobbiesquito@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> Racing Hobbies Ecuador. Todos los derechos reservados.</p>
+        <nav class="footer-legal" aria-label="Enlaces legales">
+          <a href="garantia.html">Garantía</a>
+          <a href="privacidad.html">Privacidad</a>
+        </nav>
+        <p>Hecho con <span class="volt">❤️‍🔥</span> en Quito, Ecuador</p>
+      </div>
+    </div>
+  </footer>
+
+  <a class="wa-float" data-wa-link href="https://wa.me/593989019836" target="_blank" rel="noopener noreferrer" aria-label="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 3a9 9 0 0 0 -7.8 13.5L3 21l4.6 -1.2A9 9 0 1 0 12 3Zm4.4 12.6c-.2 .6 -1.2 1.1 -1.7 1.2 -.4 .1 -1 .1 -1.6 -.1a13 13 0 0 1 -1.5 -.6 11.3 11.3 0 0 1 -4.3 -3.8c-.5 -.7 -1 -1.6 -1 -2.5 0 -.9 .5 -1.4 .7 -1.6a1 1 0 0 1 .7 -.3h.5c.2 0 .4 0 .6 .4l.8 2c.1 .2 .1 .4 0 .6l-.4 .6c-.2 .2 -.3 .4 -.1 .7a8.6 8.6 0 0 0 1.6 2 7.8 7.8 0 0 0 2.3 1.4c.3 .1 .5 .1 .6 -.1l.7 -.9c.2 -.3 .4 -.2 .7 -.1l1.9 .9c.3 .1 .5 .2 .5 .4 .1 .1 .1 .5 0 .8Z"/>
+    </svg>
+  </a>
+
+  <script defer src="js/vendor/lenis.min.js?v=1" integrity="sha256-Uxlcl5fnznv51/qSQrCCCeV/Rt5MnawSamSU+ngOM0Y="></script>
+  <script defer src="js/vendor/gsap.min.js?v=1" integrity="sha256-krualkdvmD0hKivE9UyIkDnBaW3URh1ApzaGCThXD7s="></script>
+
+  <script defer src="js/vendor/ScrollTrigger.min.js?v=1" integrity="sha256-sLFNZ7VbDEPHVqwLEGz8sJ0IeZRfbq1kRRBlsGcpFqI="></script>
+  <script defer src="js/config.min.js?v=1" integrity="sha256-1Jq4Uiogl9VaV+2aHsAWTJk8Y+Ktgtjtq4yNcAiSzVM="></script>
+  <script defer src="js/data.min.js?v=1" integrity="sha256-FgJrYjcKPj1hW9tDbIdkQS1+fzEzqZOMDSBr4JFDH+U="></script>
+  <script defer src="js/main.min.js?v=89" integrity="sha256-YXoksQVApL+j888SOW83N1/Zynz++luR9hcVZUQer+Y="></script>
+  <script defer src="js/catalog.min.js?v=2" integrity="sha256-6Cca/GMJEbsyMFTOvsZ00aUtEOjmvnoHqVAD2lihCzQ="></script>
+</body>
+</html>

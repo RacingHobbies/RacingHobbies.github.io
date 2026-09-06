@@ -1,0 +1,69 @@
+# Endurecimiento para Apache/cPanel. GitHub Pages, Netlify y OpenResty pueden
+# ignorar este archivo; en esos casos deben aplicarse _headers o la plantilla
+# nginx equivalente.
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Canonicaliza www y fuerza HTTPS solo para los hosts del sitio.
+  RewriteCond %{HTTP_HOST} ^www\.racinghobbiesec\.com$ [NC]
+  RewriteRule ^ https://racinghobbiesec.com%{REQUEST_URI} [R=308,L,NE]
+
+  RewriteCond %{HTTP_HOST} ^racinghobbiesec\.com$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://racinghobbiesec.com%{REQUEST_URI} [R=308,L,NE]
+
+  # Nunca sirvas archivos ocultos ni metadatos de control, credenciales,
+  # repositorios, backups o mapas fuente.
+  RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L,NC]
+  RewriteRule (^|/)(?:\.env(?:\..*)?|\.git(?:/|$)|package\.json|config\.json|(?:.*\.)?(?:bak|old|orig|swp|swo|map))$ - [F,L,NC]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-elem 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; worker-src 'self'; frame-src https://www.google.com; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Cross-Origin-Resource-Policy "same-origin"
+  Header always set Permissions-Policy "accelerometer=(), autoplay=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), hid=(), idle-detection=(), interest-cohort=(), local-fonts=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), usb=(), xr-spatial-tracking=(), fullscreen=(self \"https://www.google.com\")"
+  Header always set Origin-Agent-Cluster "?1"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-DNS-Prefetch-Control "off"
+  Header always set X-Download-Options "noopen"
+  Header always set X-Permitted-Cross-Domain-Policies "none"
+  Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# El sitio no ejecuta código del servidor: bloquea extensiones ejecutables si
+# algún archivo extraño llega al directorio público.
+<IfModule mod_authz_core.c>
+  <LimitExcept GET HEAD OPTIONS>
+    Require all denied
+  </LimitExcept>
+  <FilesMatch "^(?:\.|.*\.(?:bak|old|orig|swp|swo|map))$">
+    Require all denied
+  </FilesMatch>
+  <FilesMatch "^(?:package\.json|config\.json)$">
+    Require all denied
+  </FilesMatch>
+  <FilesMatch "\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# El contenido versionado puede cachearse; el HTML siempre debe revalidarse.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:css|js|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(?:webp|png|svg)$">
+    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>

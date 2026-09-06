@@ -1,0 +1,184 @@
+/* CTA cards: shared editorial layout for the final service/about sections. */
+
+.service-cta-section .deck-wrap,
+.about-vision-section .two-col {
+  width: min(1260px, calc(100% - 48px));
+  box-sizing: border-box;
+}
+
+.service-cta-section .deck-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.82fr);
+  align-items: center;
+  gap: clamp(48px, 8vw, 132px);
+}
+
+.service-cta-section .cta-message,
+.about-vision-section .vision-copy {
+  min-width: 0;
+}
+
+.service-cta-section .cta-message .kicker,
+.about-vision-section .vision-action .kicker {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 clamp(22px, 2.5vw, 36px);
+}
+
+.service-cta-section .cta-message .kicker::before,
+.about-vision-section .vision-action .kicker::before {
+  content: "";
+  display: block;
+  flex: 0 0 clamp(34px, 3.5vw, 58px);
+  height: 3px;
+  background: var(--neo-orange-hot, #3dfe40);
+  box-shadow: 0 0 18px rgba(61, 254, 64, 0.32);
+}
+
+.service-cta-section .cta-message .sec-title {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(4rem, 6.7vw, 7.8rem) !important;
+  line-height: 0.84 !important;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.service-cta-section .cta-message .sec-title .accent {
+  display: inline-block;
+  color: var(--neo-orange-hot, #3dfe40) !important;
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.13em;
+}
+
+.service-cta-section .cta-action,
+.about-vision-section .vision-action {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(24px, 3vw, 38px);
+  min-width: 0;
+  padding: clamp(24px, 3.2vw, 46px) 0 clamp(24px, 3.2vw, 46px) clamp(28px, 4vw, 64px);
+  border-left: 1px solid rgba(195, 195, 195, 0.24);
+}
+
+.service-cta-section .cta-action::before,
+.about-vision-section .vision-action::before {
+  content: "PIT LANE";
+  position: absolute;
+  top: 0;
+  left: clamp(28px, 4vw, 64px);
+  color: rgba(229, 229, 229, 0.44);
+  font-family: "Archivo", Arial, sans-serif;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.service-cta-section .cta-action .sec-sub,
+.about-vision-section .vision-action .sec-sub {
+  max-width: 38ch;
+  margin: 0;
+  font-size: clamp(1rem, 1.28vw, 1.25rem) !important;
+  line-height: 1.65;
+}
+
+.service-cta-section .cta-action .btn,
+.about-vision-section .vision-action .btn {
+  min-width: 0;
+  margin: 0;
+}
+
+.about-vision-section .two-col {
+  grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
+  gap: clamp(48px, 6vw, 92px);
+}
+
+.about-vision-section .vision-copy {
+  max-width: 15ch;
+  margin: 0;
+  font-size: clamp(3rem, 4.1vw, 5.6rem) !important;
+  /* Anton's accent on “Í” extends above the cap height at this scale. */
+  line-height: 1.10 !important;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.about-vision-section .vision-copy .accent {
+  color: var(--neo-orange-hot, #3dfe40) !important;
+}
+
+.about-vision-section .vision-action {
+  padding-top: clamp(42px, 4.6vw, 70px);
+}
+
+@media (max-width: 899px) {
+  .service-cta-section .deck-wrap,
+  .about-vision-section .two-col {
+    width: min(100% - 36px, 680px);
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .service-cta-section .cta-message .sec-title {
+    max-width: 14ch;
+    font-size: clamp(3.4rem, 14vw, 5.6rem) !important;
+  }
+
+  .service-cta-section .cta-action,
+  .about-vision-section .vision-action {
+    gap: 24px;
+    padding: 38px 0 0;
+    border-top: 1px solid rgba(195, 195, 195, 0.24);
+    border-left: 0;
+  }
+
+  .service-cta-section .cta-action::before,
+  .about-vision-section .vision-action::before {
+    top: 14px;
+    left: 0;
+  }
+
+  .about-vision-section .vision-copy {
+    max-width: 15ch;
+    font-size: clamp(2.7rem, 11vw, 4.8rem) !important;
+  }
+
+  .service-cta-section .cta-action .sec-sub,
+  .about-vision-section .vision-action .sec-sub {
+    max-width: 44ch;
+  }
+}
+
+@media (max-width: 560px) {
+  .service-cta-section .deck-wrap,
+  .about-vision-section .two-col {
+    width: calc(100% - 28px);
+  }
+
+  .service-cta-section .cta-message .kicker,
+  .about-vision-section .vision-action .kicker {
+    gap: 12px;
+  }
+
+  .service-cta-section .cta-message .kicker::before,
+  .about-vision-section .vision-action .kicker::before {
+    flex-basis: 28px;
+  }
+
+  .service-cta-section .cta-message .sec-title {
+    font-size: clamp(3.15rem, 16vw, 4.8rem) !important;
+  }
+
+  .about-vision-section .vision-copy {
+    font-size: clamp(2.55rem, 11vw, 4.2rem) !important;
+  }
+
+  .service-cta-section .cta-action .btn,
+  .about-vision-section .vision-action .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,639 @@
+/* ==========================================================================
+   PARIDAD DE FORMATOS
+   Hoja final: iguala lo que las capas anteriores dejaban distinto entre el
+   formato de pantalla completa y el resto (tablet, vertical, móvil). Se carga
+   la última en todas las páginas.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Navegación 720–1079 px
+   A partir de 1080 la navegación es una píldora con borde, fondo translúcido
+   y enlaces de 0.67rem. Entre 720 y 1079 sólo la portada la mostraba, y lo
+   hacía desnuda: sin píldora, sin fondo y con el cuerpo bajado a 0.58rem, así
+   que el mismo menú se leía como otro componente. Aquí se reconstruye la
+   misma píldora, a escala, y se extiende al resto de páginas.
+   -------------------------------------------------------------------------- */
+@media (min-width: 720px) and (max-width: 1079px) {
+  .main-nav,
+  body.page-home .main-nav {
+    position: fixed !important;
+    top: 22px !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: 50% !important;
+    z-index: 10023 !important;
+    display: block !important;
+    width: max-content !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 4px !important;
+    overflow: visible !important;
+    border: 1px solid var(--neo-line, rgba(198, 198, 198, 0.2)) !important;
+    border-radius: 15px 4px 15px 4px !important;
+    background: linear-gradient(135deg, rgba(23, 23, 23, 0.82), rgba(4, 4, 4, 0.76)) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.07), 0 16px 40px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(18px) saturate(145%);
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .main-nav ul,
+  body.page-home .main-nav ul {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: max-content !important;
+    height: auto !important;
+    gap: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .main-nav li {
+    margin: 0 !important;
+    border: 0 !important;
+  }
+
+  .main-nav a,
+  body.page-home .main-nav a {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 9px 10px !important;
+    border-radius: 10px 3px 10px 3px !important;
+    color: rgba(245, 248, 255, 0.7) !important;
+    /* Por debajo de 900 la hoja base cambiaba los enlaces a la display
+       condensada: el mismo menú parecía otra marca. */
+    font-family: "Archivo", Arial, sans-serif !important;
+    font-size: 0.62rem !important;
+    font-weight: 780 !important;
+    letter-spacing: 0.09em !important;
+    line-height: 1.2 !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+  }
+
+  /* Sin esto el subrayado deslizante de la versión compacta pintaba una línea
+     suelta bajo la píldora. */
+  .main-nav a::before,
+  .main-nav a::after,
+  body.page-home .main-nav a::before,
+  body.page-home .main-nav a::after {
+    display: none !important;
+  }
+
+  .site-header .main-nav a:hover,
+  .site-header .main-nav a:focus-visible {
+    color: var(--neo-ice, #f5f7ff) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+  }
+
+  .site-header .main-nav a[aria-current="page"] {
+    color: #2be72e !important;
+    background: rgba(43, 231, 46, 0.16) !important;
+    box-shadow: inset 0 -2px #2be72e !important;
+  }
+}
+
+/* Con la navegación visible entre 720 y 1079, el logo y las acciones vuelven
+   a las esquinas como en pantalla completa (el bloque compacto los centraba
+   y los dejaba pisando la píldora). */
+@media (min-width: 720px) and (max-width: 899px) {
+  .site-header .logo,
+  body.rh-intro-running .site-header .logo,
+  body.rh-intro-complete .site-header .logo {
+    left: 24px !important;
+    transform: none !important;
+  }
+
+  .header-actions {
+    right: 24px !important;
+    left: auto !important;
+    width: auto !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Filigrana "T-MAXX" de la sección destacada
+   En pantalla completa la filigrana vive detrás del titular, en la columna
+   izquierda, recortada por el borde. Al apilarse la sección el titular sube y
+   la filigrana se queda a la altura de la foto del producto —que es opaca—,
+   así que de los 272px sólo asomaban 14 por la izquierda: se leía como un
+   rectángulo gris suelto, no como una marca de agua.
+
+   Aquí se ancla al titular, centrada como el resto del bloque apilado.
+   -------------------------------------------------------------------------- */
+/* Sólo en vertical: en apaisado la sección recupera las dos columnas de la
+   referencia (bloque 9), y con ellas la filigrana anclada al borde izquierdo
+   que tiene allí. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .page-home .feature-hero .ghost {
+    top: 21% !important;
+    left: 50% !important;
+    font-size: 30vw !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Abanico de la comunidad en teléfonos
+   La apertura ya estaba topada para que la ficha exterior entrara completa,
+   pero el ancho de ficha (36vw) no bajaba con ella: a 390px las siete fichas
+   se repartían 172px de apertura con 101px de ancho cada una, o sea un 70% de
+   solape. El abanico dejaba de leerse como un abanico.
+
+   Bajando la ficha a 22vw la apertura sube a ~128px y el solape cae al 20–40%,
+   que es el aire con el que se leen las siete en pantalla completa. Por encima
+   de 600px no cambia nada: ahí el abanico ya respiraba.
+   -------------------------------------------------------------------------- */
+@media (max-width: 599px) {
+  /* Las dos declaraciones tienen que moverse juntas: `--fan-card-w` sólo
+     alimenta el cálculo de la apertura, el ancho real lo fija esta otra. */
+  .page-home .community-section .social-fan {
+    --fan-card-w: clamp(84px, 22.5vw, 112px);
+  }
+
+  /* El alto es una declaración aparte: al bajar sólo el ancho, las fichas
+     pasaban de 1.5:1 a 2.4:1 y se leían como tiras, no como reels. */
+  .page-home .community-section .social-fan .deck-card {
+    width: clamp(84px, 22.5vw, 112px) !important;
+    height: clamp(126px, 33.75vw, 168px) !important;
+  }
+
+  /* -56px estaba calculado para el abanico de tablet; sobre uno más corto los
+     botones caían en mitad de las fichas en vez de apoyarse en su base. */
+  .community-section .social-links {
+    margin-top: clamp(-56px, -7vw, -20px) !important;
+  }
+}
+
+/* Las fichas del abanico están ancladas al pie de `.social-fan`, así que el
+   alto de esa caja es el que decide cuánto aire queda entre el titular y el
+   abanico. En pantalla completa ese hueco es del 4% del alto de pantalla; con
+   el alto heredado se iba al 10% en tablet y al 26% en teléfono, y la sección
+   se partía en dos. Los valores de abajo devuelven el mismo margen de holgura
+   sobre la ficha (~11%) que tiene la referencia ancha. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .page-home .community-section .social-fan {
+    height: clamp(230px, 36vw, 300px) !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .page-home .community-section .social-fan {
+    height: clamp(150px, 40vw, 200px) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Manifiesto en vertical
+   La capa móvil conservaba la pendiente de escritorio (7.15vw) para que las
+   cuatro frases cayeran en una línea cada una, igual que en pantalla completa.
+   El corte de línea salía idéntico, pero el cuerpo bajaba a 29px: el bloque
+   pasaba de ocupar el 53% de la pantalla a ocupar el 13%, y el manifiesto
+   —que en ancho es la escena más rotunda del sitio— se leía como un pie de
+   página perdido en medio de la sección.
+
+   Se prioriza el peso sobre el corte: las frases pueden partirse en dos
+   líneas y el cuerpo sube hasta que el bloque vuelve a ocupar ~53% del alto.
+   `min(vw, svh)` es lo que impide que en una tablet vertical (768 × 1024) el
+   mismo 14.5vw se coma la pantalla entera.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) and (orientation: portrait) {
+  .ln-manifesto-copy {
+    font-size: clamp(34px, min(14.5vw, 8svh), 7.8rem) !important;
+    line-height: 0.96 !important;
+  }
+
+  /* Sin esto la cuarta frase (que va en `nowrap`) se salía de pantalla en
+     cuanto el cuerpo subía. */
+  .ln-manifesto-copy .ln-serif {
+    white-space: normal !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Filas de datos de "Estamos en Quito"
+   El sangrado negativo de las filas (-8px en ancho, -12px en compacto) está
+   pensado para morder el canal del contenedor sin salirse: con 60px de canal
+   la fila sigue entrando 52px; con 14px se iba a 2px y las líneas separadoras
+   quedaban pegadas al borde de la pantalla, en vez de alineadas con el
+   titular como en pantalla completa.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .info-item {
+    margin-inline: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Fotos de las tarjetas de proceso (Nosotros / Servicio técnico)
+   El -18px de sangrado está pensado para una tarjeta con 18px de relleno
+   lateral, pero por debajo de 900 la tarjeta va sin relleno: la foto acababa
+   36px más ancha que su propia tarjeta y la primera del carril se salía de la
+   pantalla por la izquierda (se leía "sión" en vez de "Pasión"). En pantalla
+   completa la foto ocupa exactamente el ancho de la tarjeta.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  .static-step-card .step-media {
+    margin-inline: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. Halo verde del pie
+   El halo se define con un radio absoluto (27rem = 432px). Sobre 1440px eso
+   es el 30% del ancho y se lee como un reflejo en la esquina; sobre 390px
+   cubre el 110% y teñía de verde el pie entero. Se topa al mismo 30% del
+   ancho para que el reflejo ocupe siempre la misma proporción.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1439px) {
+  .site-footer {
+    background:
+      linear-gradient(rgba(47, 255, 50, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(47, 255, 50, 0.055) 1px, transparent 1px),
+      radial-gradient(circle at 84% 18%, rgba(61, 254, 64, 0.11), transparent min(27rem, 30vw)),
+      #000000 !important;
+    /* La retícula también es absoluta: 72px sobre 1440 son 20 columnas que se
+       leen como textura; sobre 390 quedaban 5 columnas y se veía como una
+       cuadrícula dibujada. Atada al ancho mantiene las 20 columnas. */
+    background-size: clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px),
+      clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px), auto, auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. Retícula y halos de las páginas internas
+   Mismo problema que en el pie, y en todas las secciones de las páginas
+   internas: la retícula se declara en 72px y los halos en rem. Sobre 1440px
+   la retícula da 20 columnas (textura) y el halo mide un tercio del ancho;
+   sobre 390px quedan 5 columnas dibujadas y el halo cubre la pantalla entera,
+   así que el mismo fondo cambia de carácter según el dispositivo.
+
+   Aquí las dos cosas pasan a ser proporcionales al ancho: los valores en
+   1440px son exactamente los actuales (5vw = 72px, 34vw = 31rem…), así que
+   el formato de pantalla completa no se mueve ni un píxel.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1439px) {
+  .page-hero {
+    background:
+      linear-gradient(rgba(67, 198, 69, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(67, 198, 69, 0.09) 1px, transparent 1px),
+      radial-gradient(circle at 72% 25%, rgba(47, 255, 50, 0.18), transparent min(29rem, 32vw)),
+      radial-gradient(circle at 15% 78%, rgba(61, 254, 64, 0.13), transparent min(27rem, 30vw)),
+      var(--neo-night) !important;
+    background-size: clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px),
+      clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px), auto, auto, auto !important;
+  }
+
+  body:not(.page-home) .page-hero {
+    background-color: var(--rh-internal-night) !important;
+    background-image:
+      linear-gradient(rgba(67, 198, 69, 0.09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(67, 198, 69, 0.09) 1px, transparent 1px),
+      radial-gradient(circle at 74% 28%, rgba(47, 255, 50, 0.2), transparent min(31rem, 34vw)),
+      radial-gradient(circle at 13% 81%, rgba(61, 254, 64, 0.15), transparent min(29rem, 32vw)),
+      linear-gradient(155deg, #0a0a0a, #000000) !important;
+    background-size: clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px),
+      clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px), auto, auto, auto !important;
+  }
+
+  body:not(.page-home) main > section {
+    background-image:
+      linear-gradient(rgba(67, 198, 69, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(67, 198, 69, 0.07) 1px, transparent 1px),
+      radial-gradient(circle at 84% 22%, rgba(47, 255, 50, 0.16), transparent min(31rem, 34vw)),
+      radial-gradient(circle at 12% 82%, rgba(61, 254, 64, 0.1), transparent min(29rem, 32vw)) !important;
+    background-size: clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px),
+      clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px), auto, auto !important;
+  }
+
+  body:not(.page-home) main > section:nth-of-type(even) {
+    background-image:
+      linear-gradient(rgba(67, 198, 69, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(67, 198, 69, 0.055) 1px, transparent 1px),
+      radial-gradient(circle at 16% 18%, rgba(47, 255, 50, 0.15), transparent min(30rem, 33vw)),
+      radial-gradient(circle at 88% 78%, rgba(61, 254, 64, 0.11), transparent min(30rem, 33vw)),
+      linear-gradient(145deg, #0a0a0a, #000000) !important;
+    background-size: clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px),
+      clamp(19px, 5vw, 72px) clamp(19px, 5vw, 72px), auto, auto, auto !important;
+  }
+}
+
+/* La misma retícula, dentro de las tarjetas grandes (404 y banda de catálogo):
+   44px sobre una tarjeta de 760px son 17 columnas; sobre una de 359px eran 8.
+   5.5vw da 44px justos a 1440 y ~21px en teléfono, o sea las mismas columnas. */
+@media (max-width: 1439px) {
+  .page-error .error-page .container,
+  .page-catalog .pit-band .container {
+    background-size: min(44px, 5.5vw) min(44px, 5.5vw),
+      min(44px, 5.5vw) min(44px, 5.5vw), auto !important;
+  }
+}
+
+/* ==========================================================================
+   9. Secciones de la portada en apaisado de teléfono
+   Las escenas de la portada están fijadas a `100svh`, y sus cabeceras están
+   dimensionadas en `vw` con suelos en px pensados para pantallas altas. En un
+   teléfono en horizontal (844 × 390) esos suelos se comían el 65% del alto —
+   en la referencia ancha son el 47%— y lo que quedaba era inservible:
+
+     · las fichas del carril quedaban en 300 × 137 (relación 2.2:1 en vez de
+       0.78:1), o sea una banda con la foto recortada;
+     · la vitrina se pasaba 42px del alto fijado y se cortaba;
+     · en la ficha destacada la foto del producto se quedaba en 2px de alto —
+       el producto protagonista, literalmente invisible.
+
+   Todo lo de abajo devuelve las proporciones de la referencia ancha atando
+   cabeceras y rellenos al alto de pantalla. El corte a 500px de alto deja
+   fuera las ventanas de 600 y 700 px, que ya funcionaban.
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* --- Carriles horizontales (categorías y vitrina) ------------------- */
+  html.lando-anim [data-lando-horizontal] {
+    padding-block: 10svh 4svh !important;
+  }
+
+  /* 8svh reproduce el 16% del alto que ocupa el titular de dos líneas en la
+     referencia ancha (81px sobre 900). El suelo de 3.6rem lo dejaba en 58px
+     sobre 390, o sea el 26%. */
+  html.lando-anim [data-lando-horizontal] .sec-title,
+  html.lando-anim .page-home .editorial-garage .sec-title,
+  html.lando-anim .page-home .home-showcase .sec-title {
+    font-size: min(10.6vw, 8svh) !important;
+    line-height: 0.94 !important;
+  }
+
+  /* El tope de 8ch partía "EXPLORA POR CATEGORÍA" en TRES líneas (en ancho
+     son dos), y esa tercera línea es justo el alto que les falta a las
+     fichas. 6.42em son los 13ch de la referencia ancha medidos sobre Anton,
+     pero en una unidad que no cambia con la fuente resuelta. */
+  html.lando-anim [data-lando-horizontal] .sec-title,
+  html.lando-anim .page-home .editorial-garage .sec-title,
+  html.lando-anim .page-home .home-showcase .sec-title {
+    max-width: 6.42em !important;
+  }
+
+  html.lando-anim [data-lando-horizontal] .sec-head,
+  html.lando-anim [data-lando-horizontal] .vitrina-head {
+    margin-bottom: 3svh !important;
+  }
+
+  /* La ficha recupera la relación de la referencia ancha (374 × 480) sobre el
+     alto que le queda a la banda.
+
+     El `min-width` no es cosmético: el carril sólo se fija y se desplaza si
+     el recorrido supera los 300px (si no, `main.js` le quita el atributo y la
+     sección deja de ser una escena). Con fichas de 177px el carril medía 953
+     sobre 844 de pantalla, se desactivaba, y las dos últimas fichas quedaban
+     recortadas sin forma de llegar a ellas.
+
+     El ancho va en `svh`, no en `aspect-ratio` sobre `height: 100%`: con la
+     relación de aspecto el ancho depende del alto que el carril tenga en el
+     instante en que `main.js` lo mide, y esa medida ocurre antes de que la
+     escena se fije. Salía un carril corto, se desactivaba, y con él se caía
+     el `height: 100svh` de la sección. */
+  html.lando-anim .page-home [data-lando-htrack] > .rh-hcard {
+    width: max(220px, calc(56svh * 0.78)) !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+  }
+
+  /* --- Ficha destacada: vuelve a dos columnas ------------------------- */
+  /* Apilada no cabe: sólo el titular pedía 90px de los 390 disponibles. En
+     apaisado la pantalla es ancha, así que se recupera exactamente la
+     retícula de la referencia (copia a la izquierda, producto a la derecha)
+     que ya está declarada fuera de las media queries. */
+  .page-home .feature-hero {
+    padding-block: 9svh 4svh !important;
+  }
+
+  .page-home .feature-inner {
+    display: grid !important;
+    flex-direction: row !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    align-content: center !important;
+    text-align: left !important;
+    row-gap: 1.5svh !important;
+  }
+
+  .page-home .feature-tag,
+  .page-home .feature-name,
+  .page-home .feature-price,
+  .page-home .feature-inner > .hero-ctas {
+    order: 0 !important;
+    align-self: center !important;
+    justify-self: start !important;
+    text-align: left !important;
+  }
+
+  .page-home .feature-name {
+    max-width: 100% !important;
+    /* 12.8svh es el peso que tiene el titular del producto en la referencia
+       ancha (115px sobre 900). */
+    font-size: min(8vw, 12.8svh) !important;
+    line-height: 0.86 !important;
+  }
+
+  .page-home .feature-visual {
+    order: 0 !important;
+    flex: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .page-home .feature-hero .hero-ctas {
+    margin-top: 1.5svh !important;
+  }
+}
+
+/* Las fichas de producto de la vitrina no son como las de categorías: su
+   cuerpo (categoría, nombre, precio y botón) mide 160px fijos. Sobre la banda
+   de 227px que deja un teléfono en horizontal, a la foto le quedaban 63px y el
+   producto —lo único que importa de esa tarjeta— desaparecía.
+
+   En apaisado la ficha se tumba: foto a la izquierda, datos a la derecha. Es
+   el mismo contenido y la misma jerarquía que en pantalla completa, sobre la
+   forma que pide una pantalla apaisada. */
+@media (orientation: landscape) and (max-height: 500px) {
+  html.lando-anim .page-home .home-showcase [data-lando-htrack] > .rh-hcard {
+    width: max(330px, calc(56svh * 1.2)) !important;
+  }
+
+  .page-home .vitrina-grid .tile .rh-card {
+    flex-direction: row !important;
+    align-items: stretch !important;
+  }
+
+  /* La especificidad tiene que superar a
+     `html.lando-anim [data-lando-htrack] > .rh-hcard .tile-media`, que fija
+     `flex: auto !important` para la retícula en columna. */
+  html.lando-anim .page-home .vitrina-grid .tile .rh-card .tile-media,
+  html.lando-anim .page-home .vitrina-grid .tile .rh-card .prod-media {
+    flex: 0 0 46% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 12px !important;
+  }
+
+  html.lando-anim .page-home .vitrina-grid .tile .rh-card .tile-body,
+  html.lando-anim .page-home .vitrina-grid .tile .rh-card .prod-body {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    padding: 12px 14px !important;
+  }
+}
+
+/* El menú inmersivo escala su tipografía con el ancho: en un teléfono en
+   horizontal (844 × 390) los enlaces salían a 89.6px y la lista medía 527px
+   sobre 390 de pantalla — de los cinco enlaces sólo se llegaba a tres, y sin
+   forma de bajar. Se topa por alto: 7.2svh deja la lista en el ~42% de la
+   pantalla, entre el 48% de la referencia ancha y el 37% del móvil vertical. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .rh-nav-link {
+    font-size: min(10.6vw, 7.2svh) !important;
+    line-height: 0.98 !important;
+  }
+
+  .rh-nav-panel {
+    align-content: center !important;
+  }
+
+  .rh-nav-content {
+    align-self: center !important;
+  }
+
+  .rh-nav-meta {
+    margin-top: 2svh !important;
+  }
+}
+
+/* ==========================================================================
+   10. Páginas internas en apaisado de teléfono
+   Los rellenos y los titulares de las páginas internas están en `vw`: sobre
+   una pantalla ancha y baja (844 × 390) el relleno vertical de una sección
+   sumaba el 47% del alto —en la referencia ancha es el 35%— y el titular de
+   portadilla salía a 109px por línea, o sea 300px de las 390 disponibles.
+   Nada se cortaba, porque estas secciones no van fijadas, pero cada bloque
+   pedía dos pantallas de scroll donde en ancho ocupa una.
+
+   Los topes de abajo reproducen la proporción de la referencia ancha
+   (17.6% de relleno, 12.8% de alto por línea de titular).
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Las escenas fijadas quedan fuera: su relleno lo fija el bloque 9, más
+     apretado, porque ahí el alto se reparte con el carril. */
+  body:not(.page-home) main > section:not(.page-hero):not([data-lando-horizontal]),
+  body:not(.page-home) .pin-spacer > section:not(.page-hero):not([data-lando-horizontal]) {
+    padding-block: clamp(44px, 17.6svh, 168px) !important;
+  }
+
+  .page-hero {
+    padding-block: clamp(60px, 16.4svh, 148px) clamp(28px, 10svh, 90px) !important;
+    min-height: 0 !important;
+  }
+
+  /* La lista de clases de página no es decorativa: cada página redeclara el
+     titular de portadilla con `.page-about .page-hero h1` y equivalentes, y
+     un `.page-hero h1` a secas pierde contra ellas por especificidad. */
+  .page-about .page-hero h1,
+  .page-catalog .page-hero h1,
+  .page-contact .page-hero h1,
+  .page-error .page-hero h1,
+  .page-garantia .page-hero h1,
+  .page-privacy .page-hero h1,
+  .page-service .page-hero h1 {
+    font-size: min(17vw, 12.8svh) !important;
+  }
+
+  /* `body:not(.page-home) .sec-title` es exactamente el selector que declara
+     el tamaño compacto: repetirlo aquí gana por orden, no por especificidad. */
+  body:not(.page-home) .sec-title,
+  .page-home .community-section .sec-title,
+  .page-home .home-location .sec-title {
+    font-size: min(10vw, 9.5svh) !important;
+  }
+}
+
+/* La ficha de producto en apaisado de teléfono
+   En pantalla completa la ficha mide 780 × 428 sobre 900 de alto: se ve
+   entera y queda por debajo de la cabecera. Sobre 390 de alto pedía 422px de
+   contenido dentro de un tope de 343, así que el precio y "Agregar al
+   carrito" —el único punto de acción de la ficha— quedaban fuera de vista, y
+   además la píldora de navegación (z-index 10023, contra los 140 del velo)
+   se pintaba por encima del borde superior de la tarjeta.
+
+   Se comprimen los rellenos hasta que el contenido entra completo y el velo
+   pasa por delante de la cabecera. Sólo aquí: en ancho la ficha ya cabe y la
+   cabecera nunca la toca. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .modal-backdrop {
+    z-index: 10040 !important;
+  }
+
+  .modal {
+    max-height: 94svh !important;
+  }
+
+  .modal-media,
+  .modal-body {
+    padding: 14px 16px !important;
+  }
+
+  .modal-body {
+    gap: 8px !important;
+  }
+
+  .modal-specs {
+    padding-block: 4px !important;
+  }
+
+  .modal-foot {
+    padding-top: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Número duplicado en las tarjetas de proceso
+   `.step::before` es un contador CSS que en pantalla completa está anulado
+   (`content: none`), porque dentro de un carril el número lo pinta `main.js`
+   como `.rh-card-num`, superpuesto sobre la foto. Por debajo de 900px el
+   contador vuelve a activarse: la tarjeta mostraba DOS números y, como el
+   `::before` va en flujo (48px de cuerpo + 16 de margen), empujaba el resto
+   de la tarjeta 64px hacia abajo. En un teléfono en horizontal eso bastaba
+   para que el pie de la tarjeta se saliera de la escena fijada.
+   -------------------------------------------------------------------------- */
+@media (max-width: 899px) {
+  html.lando-anim [data-lando-htrack] > .static-step-card::before {
+    content: none !important;
+  }
+}
+
+/* En las páginas internas el número del carril es un acento verde sobre la
+   foto (`--neo-orange-hot`), pero esa regla está detrás de un `min-width:
+   900px`: por debajo caía a la marca de agua gris del carril de la portada
+   —invisible sobre las fotos— y las tarjetas de proceso perdían su numeración
+   ordinal, que es lo que las convierte en pasos. */
+@media (max-width: 899px) {
+  html.lando-anim body:not(.page-home) [data-lando-htrack] > .rh-hcard .rh-card-num {
+    color: var(--neo-orange-hot) !important;
+    opacity: 0.92 !important;
+  }
+}
+
+
+/* El ordinal del carril se dibuja sobre la foto. En pantalla completa entra
+   un 12% del ancho de la tarjeta; en compacto se pegaba a 14px de la esquina
+   (un 5%) y se leía como una etiqueta de sistema, no como parte de la
+   composición. */
+@media (max-width: 899px) {
+  html.lando-anim body:not(.page-home) [data-lando-htrack] > .rh-hcard .rh-card-num {
+    top: 8% !important;
+    left: 11% !important;
+  }
+}

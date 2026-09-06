@@ -1,0 +1,21 @@
+# El repositorio de GitHub Pages es público y se publica tal cual: todo lo que
+# se commitea queda accesible en internet. Aquí abajo va lo que NUNCA debe subir.
+
+# Basura del sistema (revela el listado de ficheros del directorio)
+.DS_Store
+._*
+Thumbs.db
+
+# Artefactos de herramientas locales: capturas, snapshots y logs de consola
+# con trazas de error y rutas absolutas del equipo.
+.playwright-cli/
+.claude/
+output/
+.release/
+
+# Notas de diseño internas
+docs/
+
+# Dependencias y temporales
+node_modules/
+*.log

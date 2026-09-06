@@ -1,0 +1,554 @@
+/* Home hero: one composition, scaled continuously across the viewport. */
+
+html,
+body {
+  overflow-x: clip !important;
+}
+
+.rh-loader,
+html.lando-anim .rh-loader,
+body.rh-intro-running .rh-loader,
+body.rh-intro-reveal .rh-loader,
+body.rh-intro-release .rh-loader {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+}
+
+.page-home .hero > .container {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+.page-home .hero-meta,
+.page-home .statement,
+.page-home .statement-sub,
+.page-home .hero .hero-ctas,
+.page-home .hero-proof {
+  position: absolute !important;
+  inset: auto !important;
+  margin: 0 !important;
+}
+
+.page-home .hero-proof,
+body.rh-intro-running .page-home .hero-proof,
+body.rh-intro-complete .page-home .hero-proof {
+  display: none !important;
+}
+
+/* `.hero-machine` es hermano de `.container`, no hijo: declarar `--ln-pad`
+   sólo en el contenedor dejaba a la marca con el valor global y a 360px se
+   salía 2px por la derecha. Se declara en la sección, que las cubre a las dos. */
+.page-home .hero {
+  --ln-pad: calc(1.42vw + 11.2px);
+}
+
+/* Large reference: these values reproduce the 1280 x 720 composition. */
+@media (min-width: 900px) {
+  .page-home .hero > .container {
+    --ln-pad: calc(1.42vw + 11.2px);
+    --home-title-top: 30.4svh;
+    --home-copy-size: clamp(3rem, 7vw, 5.6rem);
+    --home-sub-gap: clamp(18px, calc(4.47vw - 22px), 35px);
+    --home-cta-gap: clamp(76px, calc(6.84vw + 14px), 102px);
+  }
+
+  .site-header .logo {
+    top: 22px !important;
+    left: calc(1.42vw + 11.2px) !important;
+    width: clamp(122px, calc(5.26vw + 74.6px), 142px) !important;
+    transform: none !important;
+  }
+
+  .page-home .hero-meta {
+    top: clamp(112px, 15svh, 154px) !important;
+    left: var(--ln-pad) !important;
+  }
+
+  .page-home .hero-machine,
+  html.lando-anim .page-home .hero-machine {
+    top: 26.5svh !important;
+    bottom: auto !important;
+    height: min(48vh, 27vw) !important;
+    transform: none;
+  }
+
+  .page-home .hero-machine-stage,
+  html.lando-anim .page-home .hero-machine-stage {
+    height: 100% !important;
+    transform: none;
+  }
+
+  .page-home .statement,
+  html.lando-anim .page-home .statement {
+    top: var(--home-title-top) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: clamp(414px, calc(120vw - 666px), 870px) !important;
+    max-width: clamp(414px, calc(120vw - 666px), 870px) !important;
+    font-size: var(--home-copy-size) !important;
+    line-height: 0.92 !important;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  .page-home .statement-sub,
+  html.lando-anim .page-home .statement-sub {
+    top: calc(var(--home-title-top) + (var(--home-copy-size) * 3.52) + var(--home-sub-gap)) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: min(520px, max(clamp(393px, calc(11.84vw + 286.4px), 438px), calc(51.25vw - 218px))) !important;
+    max-width: min(520px, max(clamp(393px, calc(11.84vw + 286.4px), 438px), calc(51.25vw - 218px))) !important;
+    transform: none !important;
+    text-align: left !important;
+  }
+
+  .page-home .hero .hero-ctas,
+  html.lando-anim .page-home .hero .hero-ctas {
+    top: calc(var(--home-title-top) + (var(--home-copy-size) * 3.52) + var(--home-cta-gap)) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: 370px !important;
+    transform: none !important;
+  }
+}
+
+/* Compact reference: same left-copy / right-brand composition, scaled by vw. */
+@media (max-width: 899px) {
+  .page-home .hero,
+  .page-home .hero > .container {
+    overflow: clip !important;
+  }
+
+  .page-home .hero {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: none !important;
+  }
+
+  .page-home .hero,
+  .page-home .hero > .container {
+    --ln-pad: 24px;
+  }
+
+  .page-home .hero > .container {
+    /* El tope de 274px recortaba el arranque del titular en pantallas altas
+       (a 1024px de alto caía al 27% en vez del 30,4% de escritorio). */
+    --home-title-top: clamp(180px, 30.4svh, 340px);
+    /* 7vw dejaba el titular en 27px sobre una pantalla de 390: la retícula era
+       proporcional pero el conjunto se leía diminuto. 7.9vw lo sube sin tocar
+       la composición de dos columnas: con 8.6vw "ADRENALINA" llegaba a 8px del
+       óvalo de marca a 360px, y en la referencia ancha ese aire es del 16%. */
+    --home-copy-size: clamp(1.5rem, 7.9vw, 5.6rem);
+    /* Los huecos eran fijos: en vertical toda la composición se apelotonaba
+       en la mitad superior y dejaba media pantalla vacía debajo. Atados al
+       alto, el bloque se reparte como en la referencia ancha. */
+    --home-sub-gap: clamp(18px, 4svh, 40px);
+    --home-cta-gap: clamp(76px, 20svh, 200px);
+  }
+
+  .site-header .logo,
+  body.rh-intro-running .site-header .logo,
+  body.rh-intro-complete .site-header .logo {
+    top: 22px !important;
+    left: var(--ln-pad) !important;
+    width: 122px !important;
+    height: 54px !important;
+    transform: none !important;
+  }
+
+  .header-actions {
+    top: 22px !important;
+    right: var(--ln-pad) !important;
+    left: auto !important;
+    width: auto !important;
+    justify-content: flex-end !important;
+  }
+
+  .page-home .hero-meta {
+    /* Mismo 15svh que en escritorio; el tope de 126px lo subía al 12% en
+       pantallas de 1024px de alto. */
+    top: clamp(96px, 15svh, 168px) !important;
+    left: var(--ln-pad) !important;
+    transform: none !important;
+  }
+
+  .page-home .hero-machine,
+  html.lando-anim .page-home .hero-machine {
+    inset: clamp(160px, 26.5svh, 238px) var(--ln-pad) auto auto !important;
+    width: 44vw !important;
+    height: calc(44vw * 0.628) !important;
+    transform: none;
+  }
+
+  .page-home .hero-machine-stage,
+  html.lando-anim .page-home .hero-machine-stage {
+    width: 100% !important;
+    height: 100% !important;
+    transform: none;
+  }
+
+  .page-home .statement,
+  html.lando-anim .page-home .statement {
+    top: var(--home-title-top) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: 46vw !important;
+    max-width: 46vw !important;
+    font-size: var(--home-copy-size) !important;
+    line-height: 0.92 !important;
+    text-align: left !important;
+    transform: none !important;
+  }
+
+  .page-home .statement-sub,
+  html.lando-anim .page-home .statement-sub {
+    top: calc(var(--home-title-top) + (var(--home-copy-size) * 3.52) + var(--home-sub-gap)) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: min(393px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    max-width: min(393px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    white-space: normal !important;
+    transform: none !important;
+    text-align: left !important;
+    font-size: clamp(0.72rem, 1vw, 0.9rem) !important;
+  }
+
+  .page-home .hero .hero-ctas,
+  html.lando-anim .page-home .hero .hero-ctas {
+    top: calc(var(--home-title-top) + (var(--home-copy-size) * 3.52) + var(--home-cta-gap)) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: var(--ln-pad) !important;
+    width: min(370px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    transform: none !important;
+  }
+
+  .page-home .hero .hero-ctas .btn {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    min-height: 54px !important;
+    padding-inline: 8px !important;
+    font-size: clamp(0.54rem, 1.25vw, 0.72rem) !important;
+    letter-spacing: 0.09em !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .page-home .hero,
+  .page-home .hero > .container {
+    --ln-pad: 14px;
+  }
+
+  .site-header .logo,
+  body.rh-intro-running .site-header .logo,
+  body.rh-intro-complete .site-header .logo {
+    top: 14px !important;
+    left: var(--ln-pad) !important;
+    width: 108px !important;
+    height: 48px !important;
+  }
+
+  .header-actions {
+    top: 14px !important;
+    right: var(--ln-pad) !important;
+  }
+}
+
+/* Keep the full navigation treatment wherever it still fits. */
+@media (min-width: 720px) and (max-width: 1079px) {
+  body.page-home .main-nav {
+    display: block !important;
+    position: fixed !important;
+    top: 22px !important;
+    left: 50% !important;
+    right: auto !important;
+    width: max-content !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: translateX(-50%) !important;
+  }
+
+  body.page-home .main-nav ul {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: max-content !important;
+    height: auto !important;
+    gap: 0 !important;
+  }
+
+  body.page-home .main-nav a {
+    display: flex !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 10px 7px !important;
+    font-size: 0.58rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.08em !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* The loader lands on the same brand center as the finished hero.
+   Las duraciones y los retardos son los mismos que en escritorio (0.68s/0.08s
+   de entrada y 0.56s/1.42s de salida): antes la marca salía 140 ms antes en
+   móvil, así que la misma apertura se sentía más apresurada según el equipo. */
+@media (max-width: 899px) {
+  .rh-start-mark {
+    animation: rh-logo-arrival-v6 0.68s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both,
+      rh-logo-launch-mobile-v9 0.56s cubic-bezier(0.16, 1, 0.3, 1) 1.42s forwards !important;
+  }
+
+  @keyframes rh-logo-launch-mobile-v9 {
+    0% { top: 25%; left: 50%; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+    35% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(-2deg); }
+    100% { top: var(--hero-launch-y, 32%); left: var(--hero-launch-x, 74%); opacity: 0.9; transform: translate(-50%, -50%) scale(0.34) rotate(0); }
+  }
+}
+
+/* En vertical la marca aterriza en el centro exacto del óvalo apilado: se
+   recalculan aquí las mismas expresiones porque el loader vive fuera de
+   `.hero` y no hereda sus variables. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .rh-start-mark {
+    --ln-pad: 14px;
+    --brand-top: clamp(150px, 22svh, 300px);
+    --title-top: clamp(240px, 42svh, 520px);
+    --brand-h: calc(var(--title-top) - var(--brand-top) - 20px);
+    --brand-w: min(calc(var(--brand-h) / 0.628), calc(100vw - (var(--ln-pad) * 2)));
+    --hero-launch-x: calc(100vw - var(--ln-pad) - (var(--brand-w) / 2));
+    --hero-launch-y: calc(var(--brand-top) + (var(--brand-h) / 2));
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) and (orientation: portrait) {
+  .rh-start-mark {
+    --ln-pad: 24px;
+  }
+}
+
+@media (min-width: 900px) {
+  .rh-start-mark {
+    --hero-launch-x: 75%;
+    --hero-launch-y: calc(26.5vh + min(24vh, 13.5vw));
+    animation: rh-logo-arrival-v6 0.68s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both,
+      rh-logo-launch-desktop-v9 0.56s cubic-bezier(0.16, 1, 0.3, 1) 1.42s forwards !important;
+  }
+
+  @keyframes rh-logo-launch-desktop-v9 {
+    0% { top: 23%; left: 50%; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0); }
+    35% { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(-2deg); }
+    100% { top: var(--hero-launch-y); left: var(--hero-launch-x); opacity: 0.9; transform: translate(-50%, -50%) scale(0.44) rotate(0); }
+  }
+}
+
+/* ==========================================================================
+   PARIDAD DE FORMATOS — portada en vertical
+   En apaisado la portada es una composición de dos columnas (copy a la
+   izquierda, marca a la derecha) que ocupa el alto completo. Al pasar a
+   vertical esa misma retícula dejaba el titular en el 46% del ancho: con
+   `Y ADRENALINA` midiendo 5em, el cuerpo caía a 30px — más pequeño que los
+   `.sec-title` (41px) del resto de la página, así que la portada dejaba de
+   ser el elemento dominante y media pantalla quedaba vacía.
+
+   En vertical se apila la misma composición: meta → marca → titular →
+   bajada → CTAs. El titular pasa a ancho completo y recupera el peso
+   relativo de la referencia ancha (≈30% del alto frente al 35% de
+   escritorio), y el bloque vuelve a repartirse hasta el 85% de la pantalla.
+   ========================================================================== */
+@media (max-width: 899px) and (orientation: portrait) {
+  /* `.hero-machine` es hermano de `.container`: las variables se declaran en
+     la sección (y se repiten en el contenedor para ganarle al bloque de
+     apaisado, que las declara ahí). */
+  .page-home .hero,
+  .page-home .hero > .container {
+    /* El titular arranca más abajo porque la marca ocupa la banda superior,
+       igual que ocupa la columna derecha en la referencia ancha. */
+    --home-title-top: clamp(240px, 42svh, 520px);
+    /* 5em es el ancho de `Y ADRENALINA`, la línea más larga: 17.4vw la deja
+       a ~23px del margen en 390 y a ~19px en 360. El tope de 5.6rem es el
+       mismo de escritorio, así que la portada nunca crece más que allí. */
+    --home-copy-size: clamp(2.4rem, 17.4vw, 5.6rem);
+    --home-sub-gap: clamp(16px, 2.6svh, 30px);
+    --home-cta-gap: clamp(64px, 8.6svh, 108px);
+    --home-brand-top: clamp(150px, 22svh, 300px);
+    /* La marca ocupa la banda que queda entre el meta y el titular. Atarla
+       al hueco disponible (y no a un vw fijo) evita que se solape con el
+       titular en pantallas altas y que se quede diminuta en las bajas. */
+    --home-brand-h: calc(var(--home-title-top) - var(--home-brand-top) - 20px);
+    --home-brand-w: min(
+      calc(var(--home-brand-h) / 0.628),
+      calc(100vw - (var(--ln-pad) * 2))
+    );
+  }
+
+  .page-home .hero-machine,
+  html.lando-anim .page-home .hero-machine {
+    inset: var(--home-brand-top) var(--ln-pad) auto auto !important;
+    width: var(--home-brand-w) !important;
+    height: var(--home-brand-h) !important;
+  }
+
+  .page-home .statement,
+  html.lando-anim .page-home .statement {
+    width: calc(100vw - (var(--ln-pad) * 2)) !important;
+    max-width: calc(100vw - (var(--ln-pad) * 2)) !important;
+    /* El interletraje negativo (-0.069em) apretaba las mayúsculas de Anton
+       hasta parecer otra fuente. La referencia ancha usa +0.005em. */
+    letter-spacing: 0.005em !important;
+  }
+
+  .page-home .statement .w,
+  .page-home .statement .w-ink,
+  .page-home .statement .w-volt,
+  html.lando-anim .page-home .statement .w,
+  html.lando-anim .page-home .statement .w-ink,
+  html.lando-anim .page-home .statement .w-volt {
+    letter-spacing: 0.005em !important;
+  }
+
+  .page-home .statement-sub,
+  html.lando-anim .page-home .statement-sub {
+    width: min(520px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    max-width: min(520px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    font-size: clamp(0.78rem, 3vw, 0.9rem) !important;
+  }
+
+  /* Los botones caían a 8.6px de cuerpo con 8px de padding: al lado de los
+     54px de alto parecían etiquetas vacías. Con el cuerpo de escritorio
+     (0.72rem) y padding elástico las dos etiquetas caben hasta en 360. */
+  .page-home .hero .hero-ctas,
+  html.lando-anim .page-home .hero .hero-ctas {
+    width: max-content !important;
+    max-width: calc(100vw - (var(--ln-pad) * 2)) !important;
+    gap: clamp(10px, 3vw, 16px) !important;
+  }
+
+  .page-home .hero .hero-ctas .btn {
+    flex: 0 1 auto !important;
+    padding-inline: clamp(14px, 5vw, 24px) !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.13em !important;
+  }
+}
+
+/* ==========================================================================
+   PARIDAD DE FORMATOS — portada en apaisado de teléfono
+   La retícula de dos columnas es la correcta aquí (la pantalla es ancha),
+   pero sus topes mínimos estaban pensados para pantallas altas: con 390px de
+   alto, `clamp(180px, 30.4svh, 340px)` devolvía los 180px del suelo y el
+   titular, la bajada y los botones caían fuera de pantalla — en un iPhone en
+   horizontal sólo se veía "VELOCIDAD Y ADRENALINA A CONTROL".
+
+   Todo lo de abajo está atado al alto disponible, así que el bloque completo
+   —meta, titular, bajada y CTAs— cabe con el mismo aire inferior (~6%) que
+   la referencia ancha.
+   ========================================================================== */
+/* La condición es de ALTO, no de ancho: a 932 x 430 la pantalla entra por la
+   rama de escritorio (≥900) y allí los botones caían 62px por debajo del
+   borde. Cualquier ventana apaisada de 700px o menos usa esta composición. */
+@media (orientation: landscape) and (max-height: 700px) {
+  .page-home .hero,
+  .page-home .hero > .container {
+    /* El suelo de 148px es lo que deja libre el bloque de meta (que arranca a
+       74px y mide 58): con menos, el titular se montaba sobre la píldora de
+       horario. */
+    --home-title-top: clamp(148px, 38svh, 190px);
+    /* El alto manda: 6.6vw solo se aplica cuando la pantalla es tan estrecha
+       que el ancho es el límite real. */
+    --home-copy-size: clamp(1.6rem, min(6.6vw, 9svh), 5.6rem);
+    --home-sub-gap: clamp(8px, 2.6svh, 22px);
+    --home-cta-gap: clamp(38px, 11.3svh, 70px);
+    --home-brand-top: clamp(80px, 24svh, 150px);
+    --home-brand-h: min(46svh, calc(44vw * 0.628));
+  }
+
+  /* El hueco de 28px entre la línea de ciudad y la píldora de horario dejaba
+     el bloque en 81px de alto y el titular se le montaba encima. */
+  .page-home .hero-meta {
+    top: clamp(74px, 17svh, 120px) !important;
+    gap: 8px !important;
+  }
+
+  .page-home .hero-machine,
+  html.lando-anim .page-home .hero-machine {
+    inset: var(--home-brand-top) var(--ln-pad) auto auto !important;
+    width: calc(var(--home-brand-h) / 0.628) !important;
+    height: var(--home-brand-h) !important;
+  }
+
+  .page-home .statement,
+  html.lando-anim .page-home .statement {
+    letter-spacing: 0.005em !important;
+  }
+
+  .page-home .statement .w,
+  .page-home .statement .w-ink,
+  .page-home .statement .w-volt,
+  html.lando-anim .page-home .statement .w,
+  html.lando-anim .page-home .statement .w-ink,
+  html.lando-anim .page-home .statement .w-volt {
+    letter-spacing: 0.005em !important;
+  }
+
+  /* En apaisado sobra ancho: la bajada cabe en una línea como en escritorio,
+     y así no se come el hueco que necesitan los botones. */
+  .page-home .statement-sub,
+  html.lando-anim .page-home .statement-sub {
+    width: min(520px, calc(100vw - (var(--ln-pad) * 2))) !important;
+    max-width: min(520px, calc(100vw - (var(--ln-pad) * 2))) !important;
+  }
+
+  .page-home .hero .hero-ctas,
+  html.lando-anim .page-home .hero .hero-ctas {
+    width: max-content !important;
+    max-width: calc(100vw - (var(--ln-pad) * 2)) !important;
+    gap: 12px !important;
+  }
+
+  .page-home .hero .hero-ctas .btn {
+    flex: 0 1 auto !important;
+    min-height: 46px !important;
+    padding-inline: clamp(14px, 2.6vw, 24px) !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.13em !important;
+  }
+}
+
+/* En apaisado la marca aterriza donde queda el óvalo de la composición de dos
+   columnas. Sin esto se usaba el 74%/32% del retrato, que en horizontal cae
+   muy por encima y a la izquierda del óvalo: la marca «volaba» a un sitio
+   donde no hay nada. */
+@media (orientation: landscape) and (max-height: 700px) {
+  .rh-start-mark {
+    --ln-pad: 24px;
+    --brand-top: clamp(80px, 24svh, 150px);
+    --brand-h: min(46svh, calc(44vw * 0.628));
+    --brand-w: calc(var(--brand-h) / 0.628);
+    --hero-launch-x: calc(100vw - var(--ln-pad) - (var(--brand-w) / 2));
+    --hero-launch-y: calc(var(--brand-top) + (var(--brand-h) / 2));
+  }
+}
+
+@media (orientation: landscape) and (max-height: 700px) and (max-width: 599px) {
+  .rh-start-mark {
+    --ln-pad: 14px;
+  }
+}
