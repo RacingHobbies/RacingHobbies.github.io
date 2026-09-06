@@ -31,6 +31,27 @@ de error y rutas locales del equipo) y en GitHub Pages el repositorio es públic
 El `.gitignore` ya los excluye; para una carga manual usa
 `./scripts/package-production.sh` y sube únicamente `.release/`.
 
+### Dónde está publicado
+
+En <https://racinghobbies.github.io/>, desde el repositorio
+[`RacingHobbies/RacingHobbies.github.io`](https://github.com/RacingHobbies/RacingHobbies.github.io)
+(rama `main`, carpeta raíz, HTTPS forzado).
+
+Es un repositorio *de organización* (`<org>.github.io`) a propósito: las páginas
+enlazan recursos con rutas absolutas de raíz (`/css/…`, `/js/…`), así que el sitio
+**solo funciona servido en la raíz del dominio**. Un repositorio normal lo
+publicaría bajo `/nombre-del-repo/` y todos los CSS, scripts e imágenes darían 404.
+
+Para actualizar basta con empujar a `main`; GitHub Pages reconstruye solo:
+
+```bash
+bash scripts/build-production.sh   # si tocaste css/*.css o js/*.js
+bash scripts/update-sri.sh         # recalcula integrity; sin esto el navegador
+                                   # bloquea el recurso y el fallo es silencioso
+./scripts/security-audit.sh        # debe decir OK antes de publicar
+git add -A && git commit -m "…" && git push
+```
+
 ### Seguridad según el hosting
 
 | Hosting | ¿Lee `_headers`? | Qué protege al usuario |
