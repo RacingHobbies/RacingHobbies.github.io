@@ -12013,8 +12013,12 @@ html.lando-anim .rh-char {
   line-height: 0.96;
 }
 
+/* Escalonado de las frases pares (tras el rebrand, las dos verdes). A 6vw
+   arrancaban ~86px adentro sobre un cuerpo de ~103px: se leían como un bloque
+   desplazado en vez de una sangría. La mitad basta para romper la alineación
+   de lista sin que el color verde parezca irse al lateral. */
 .ln-manifesto-copy > span:nth-child(even) {
-  padding-left: 6vw;
+  padding-left: 3vw;
 }
 
 .ln-manifesto-copy .ln-serif {
