@@ -1018,3 +1018,154 @@ h1[data-reveal-lines] {
 .ln-manifesto-copy > span {
   line-height: 1.12 !important;
 }
+
+/* ==========================================================================
+   MÓVIL: NADA SE VE DE UNO EN UNO
+   El catálogo servía sus 51 productos en una sola columna de 362 × 528 px:
+   unos 27.000 px de scroll para recorrerlo entero. Los carriles horizontales
+   ("Explora por categoría", "Modelos destacados", los pasos de Nosotros y de
+   Servicio técnico) tenían la ficha al 66vw, así que sólo asomaba la
+   siguiente, y las tarjetas de Servicio técnico iban una por fila.
+
+   Queda fuera `.info-list`: son las filas de dirección, teléfonos y horarios.
+   Ahí una por línea es lo correcto, no un defecto.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  /* --- Catálogo: tres por fila ---------------------------------------- */
+  .prod-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  /* La tarjeta tiene que caber en ~114px, así que todo encoge de forma
+     proporcional: el aire de 17-20px era la mitad del ancho disponible. */
+  .prod-grid .prod-card {
+    border-radius: 4px 12px 4px 12px !important;
+  }
+
+  /* La foto llevaba `width` fijo del ancho útil MÁS 7px de margen a cada lado,
+     así que se salía 14px y `overflow:hidden` se la comía por la derecha. Con
+     `width:auto` la estira el propio flex de la tarjeta, ya descontando los
+     márgenes. (El mismo recorte pasa en escritorio, fuera de este bloque.) */
+  .prod-grid .prod-media {
+    width: auto !important;
+    margin: 5px 5px 0 !important;
+    padding: 5px !important;
+  }
+
+  .prod-grid .prod-body {
+    padding: 8px 7px 9px !important;
+    gap: 3px !important;
+  }
+
+  .prod-grid .prod-cat {
+    font-size: 8px !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .prod-grid .prod-name {
+    font-size: 10px !important;
+    line-height: 1.22 !important;
+  }
+
+  /* Tres líneas y puntos suspensivos. Con dos se cortaban casi todos los
+     nombres ("Land Rover Camel…"); con el tope, un nombre largo estiraría su
+     tarjeta y descuadraría la altura de toda la fila. */
+  .prod-grid .prod-name button {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden !important;
+    text-align: left !important;
+    /* "Convergence", "RidgeRunner" o "Combustible" no caben enteras en 101px y
+       se salían de la tarjeta en lugar de partirse. */
+    overflow-wrap: anywhere !important;
+  }
+
+  /* Precio y "Agregar" ya no caben lado a lado: pasan a apilarse. */
+  .prod-grid .prod-foot {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    padding-top: 7px !important;
+  }
+
+  .prod-grid .prod-price {
+    font-size: 15px !important;
+    line-height: 1.1 !important;
+  }
+
+  .prod-grid .prod-price small {
+    font-size: 8px !important;
+  }
+
+  /* 40px de alto: la tarjeta es estrecha, pero el objetivo táctil no se toca. */
+  .prod-grid .add-btn {
+    justify-content: center !important;
+    min-height: 40px !important;
+    padding: 8px 4px !important;
+    gap: 4px !important;
+    font-size: 9.5px !important;
+    letter-spacing: 0.02em !important;
+    border-radius: 8px !important;
+  }
+
+  .prod-grid .add-btn svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .prod-grid .prod-tag {
+    padding: 3px 6px !important;
+    font-size: 7.5px !important;
+  }
+
+  /* --- Carriles horizontales: dos fichas a la vista -------------------- */
+  /* 44vw deja ver dos enteras y el arranque de la tercera, que es lo que
+     cuenta que la fila sigue. Con 66vw sólo cabía una. */
+  html.lando-anim [data-lando-horizontal] {
+    --rh-card-w: min(clamp(300px, 26vw, 380px), 44vw) !important;
+  }
+
+  /* Con la ficha a 44vw, el pie de "Modelos destacados" ya no puede llevar
+     precio y botón en fila: sumaban 155px dentro de 132px y "AGREGAR" se
+     salía por la derecha en las cinco fichas. Mismo apilado que el catálogo. */
+  html.lando-anim [data-lando-htrack] .tile-foot {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .add-btn {
+    justify-content: center !important;
+    min-height: 40px !important;
+    padding: 8px 6px !important;
+    font-size: 10px !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .tile-name {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .tile-cat {
+    font-size: 9px !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .tile-price {
+    font-size: 17px !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .tile-tag {
+    padding: 4px 8px !important;
+    font-size: 8px !important;
+  }
+
+  /* --- Servicio técnico: dos tarjetas por fila ------------------------- */
+  .feature-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
