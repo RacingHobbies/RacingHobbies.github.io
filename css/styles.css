@@ -18878,14 +18878,16 @@ html.js img.img-failed {
   }
 
   /* El escalonado de las frases pares es parte de la composición: sin él las
-     cuatro líneas quedaban alineadas a la izquierda como una lista. */
+     cuatro líneas quedaban alineadas a la izquierda como una lista. En móvil
+     va a la mitad que en escritorio: con 6vw las dos frases verdes arrancaban
+     tan adentro que se leían como un bloque aparte en lugar de una sangría. */
   .ln-manifesto-copy > span,
   .ln-manifesto-copy > span:nth-child(even) {
     padding-left: 0;
   }
 
   .ln-manifesto-copy > span:nth-child(even) {
-    padding-left: 6vw;
+    padding-left: 3vw;
   }
 
   .ln-manifesto-copy .ln-serif {
