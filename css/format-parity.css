@@ -1169,3 +1169,142 @@ h1[data-reveal-lines] {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* ==========================================================================
+   MÓVIL: DATOS DE TIENDA EN REJILLA Y OBJETIVOS TÁCTILES
+   Segunda pasada sobre la versión de celular. `.info-list` era lo último que
+   quedaba en una sola columna: seis tarjetas a lo ancho completo, 605px de
+   alto en Contacto y 307px en la portada. Pasan a dos por fila con el icono
+   encima del texto, que es lo que cabe con dignidad en 160px; a tres, la
+   dirección se parte en ocho líneas y deja de leerse.
+
+   De paso, los enlaces que se tocan con el pulgar: los del pie medían 19px de
+   alto y los de teléfono y email 14px. Ahora rondan los 40px.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .info-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  /* El icono pasa de ir al lado (comía 34px de los 160 disponibles) a ir
+     encima, así el texto dispone del ancho entero de la tarjeta. */
+  /* `stretch` y no `flex-start`: con `flex-start` el bloque de texto se
+     dimensiona a su contenido (fit-content) y en Contacto, que tiene la ficha
+     más estrecha, se salía hasta 75px por la derecha. El icono recupera su
+     alineación con `align-self`. */
+  .info-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 3px !important;
+    padding: 9px 10px 10px !important;
+  }
+
+  .info-item > div {
+    min-width: 0 !important;
+  }
+
+  .info-item > svg {
+    align-self: flex-start !important;
+    width: 17px !important;
+    height: 17px !important;
+  }
+
+  .info-item h3 {
+    font-size: 9px !important;
+    letter-spacing: 0.07em !important;
+  }
+
+  .info-item p {
+    font-size: 11.5px !important;
+    line-height: 1.3 !important;
+    /* "racinghobbiesquito@gmail.com" no cabe entero en 157px y se salía. */
+    overflow-wrap: anywhere !important;
+  }
+
+  /* El enlace ocupa toda la caja: tocar un teléfono o un email deja de ser
+     una diana de 14px de alto. El `min-height` sólo engorda los valores de una
+     línea; en la dirección y los horarios el propio texto ya da de sobra. */
+  .info-item p a {
+    display: inline-block !important;
+    min-height: 30px !important;
+    padding: 6px 0 !important;
+    /* Sin esto el enlace hereda el 1.55 del cuerpo y la dirección se estira a
+       cinco líneas muy separadas dentro de una ficha estrecha. */
+    line-height: 1.3 !important;
+  }
+
+  /* `inline-block` y no `block`: en TELÉFONOS hay dos enlaces con una barra
+     suelta entre medias, y en bloque la barra se iba a su propia línea. Sólo
+     se estira a toda la caja cuando el enlace es el único contenido. */
+  .info-item p > a:only-child {
+    display: block !important;
+  }
+
+  /* La píldora de estado no cabía en una tarjeta de media anchura. */
+  /* La píldora de estado es `inline-flex` y se quedaba en sus 184px de ancho
+     natural dentro de una ficha de 133px. `max-width` + `min-width:0` la
+     obligan a plegarse al ancho real disponible. */
+  .info-item .store-status {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 4px !important;
+    padding: 5px 8px !important;
+    font-size: 8.5px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    text-align: left !important;
+  }
+
+  /* --- Pie: enlaces tocables ------------------------------------------- */
+  .footer-col ul {
+    gap: 2px !important;
+  }
+
+  .footer-col li a {
+    display: block !important;
+    min-height: 38px !important;
+    padding: 10px 0 !important;
+  }
+}
+
+/* ==========================================================================
+   MÓVIL: BARRA DE FILTROS Y REMATES
+   La barra del catálogo apilaba tres controles a lo ancho completo (buscador,
+   marca y orden): ~200px de alto antes de ver un solo producto. Los dos
+   desplegables caben de sobra en media anchura cada uno.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .toolbar {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  /* El buscador sí ocupa la fila entera: es el control principal y con media
+     anchura el placeholder se cortaba. */
+  .toolbar .search-wrap {
+    grid-column: 1 / -1 !important;
+  }
+
+  .toolbar .sort-select {
+    min-width: 0 !important;
+    padding-inline: 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* Los iconos sociales del pie medían 26px de ancho: poco para el pulgar. */
+  .social-links a,
+  .footer-social a {
+    min-width: 40px !important;
+    justify-content: center !important;
+  }
+
+  /* 7.5px era ilegible incluso para una etiqueta. */
+  .prod-grid .prod-tag {
+    font-size: 8.5px !important;
+  }
+}
