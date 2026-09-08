@@ -352,7 +352,7 @@
           const asked = state.query
             ? `Estoy buscando: ${state.query}.`
             : "Estoy buscando un producto que no veo en el catálogo.";
-          cta.href = waLink(`¡Hola Racing Hobbies! 🏁 ${asked} ¿Lo consiguen?`);
+          cta.href = waLink(`¡Hola Racing Hobbies! ${asked} ¿Lo consiguen?`);
           cta.append(
             document.createTextNode("Pídelo por WhatsApp "),
             Object.assign(document.createElement("span"), {

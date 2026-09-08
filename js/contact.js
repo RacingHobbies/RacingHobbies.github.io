@@ -86,7 +86,7 @@
       const message = fields.message.el.value.trim();
 
       const lines = [
-        "¡Hola Racing Hobbies! 🏁",
+        "¡Hola Racing Hobbies!",
         "",
         "Nombre: " + name,
         "Teléfono: " + phone,

@@ -391,7 +391,7 @@
   }
 
   function buildOrderLink() {
-    const lines = ["¡Hola Racing Hobbies! 🏁 Quiero hacer este pedido:", ""];
+    const lines = ["¡Hola Racing Hobbies! Quiero hacer este pedido:", ""];
     cart.forEach((it) => {
       const p = getProduct(it.id);
       if (!p) return;
@@ -794,7 +794,7 @@
     $$("[data-wa-link]").forEach((a) => {
       const msg =
         a.dataset.waLink ||
-        "¡Hola Racing Hobbies! 🏁 Quiero más información sobre sus productos.";
+        "¡Hola Racing Hobbies! Quiero más información sobre sus productos.";
       a.href = waLink(msg);
     });
     $$("[data-tel-link]").forEach((a) => {
