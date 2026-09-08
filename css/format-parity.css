@@ -941,3 +941,80 @@
     height: 23px !important;
   }
 }
+
+/* ==========================================================================
+   AIRE VERTICAL DE LOS TITULARES DISPLAY
+   Bloque único y final —esta hoja carga la última— para no seguir sumando
+   `!important` repartidos. Sobre `.sec-title` había ya nueve declaraciones de
+   `line-height` compitiendo (0.82 a 0.98) y la que ganaba en móvil, 0.88,
+   dejaba las dos líneas pegadas.
+
+   Las medidas salen de analizar los píxeles de la captura, no del ojo: con la
+   tipografía display la tinta de las mayúsculas ocupa 0.87em y las colas de
+   Q, J y coma bajan otros 0.09em, así que por debajo de 0.96 el solape es
+   aritmético. A eso se suman las tildes, que se pintan por encima de la caja
+   de línea. Los valores de aquí dejan entre 4 y 8 px de aire real.
+
+   No es sólo cosa de móvil: a 1440 px "EXPLORA POR CATEGORÍA" y el nombre del
+   modelo destacado también salían fundidos, porque las reglas que mandaban no
+   llevaban media query. Por eso el bloque no está dentro de una.
+   ========================================================================== */
+
+/* `:not(.rh-has-diacritic)` deja fuera los rótulos con tilde: llevan su propia
+   regla justo debajo, con más aire. */
+html.lando-anim .sec-title:not(.rh-has-diacritic),
+html.lando-anim [data-lando-horizontal] .sec-title:not(.rh-has-diacritic),
+html.lando-anim .page-home [data-lando-horizontal] .sec-title:not(.rh-has-diacritic),
+html.lando-anim .page-home .editorial-garage .sec-title:not(.rh-has-diacritic),
+html.lando-anim .page-home .home-showcase .sec-title:not(.rh-has-diacritic),
+.sec-title:not(.rh-has-diacritic),
+.community-section .sec-title:not(.rh-has-diacritic) {
+  line-height: 1.06 !important;
+}
+
+/* Rótulo con tilde. Tiene que estar aquí y no junto a la regla de tildes de
+   `styles.css`: allí quedaba por delante de
+   `html.lando-anim [data-lando-horizontal] .sec-title`, que tiene la misma
+   especificidad y va después en el archivo, así que ganaba el 0.88 y
+   "EXPLORA POR CATEGORÍA" salía con las dos líneas fundidas en una. */
+html.lando-anim .page-home .editorial-garage .sec-title.rh-has-diacritic,
+html.lando-anim .page-home .home-showcase .sec-title.rh-has-diacritic,
+html.lando-anim .page-home [data-lando-horizontal] .sec-title.rh-has-diacritic,
+html.lando-anim [data-lando-horizontal] .sec-title.rh-has-diacritic,
+html.lando-anim .sec-title.rh-has-diacritic,
+.sec-title.rh-has-diacritic {
+  line-height: 1.16 !important;
+}
+
+html.lando-anim .page-home .feature-name,
+.page-home .feature-name,
+.feature-name {
+  line-height: 1.02 !important;
+}
+
+/* El titular de portada no maqueta sus líneas en el propio h1: cada línea es
+   un `span.w` en bloque, y era ese span —no el h1— quien llevaba el 0.9. */
+html.lando-anim .page-home .statement,
+.page-home .statement,
+.statement,
+html.lando-anim .page-home .statement .w,
+.page-home .statement .w,
+.statement .w,
+.page-home .statement .w-ink,
+.page-home .statement .w-volt {
+  line-height: 1.02 !important;
+}
+
+html.lando-anim .page-hero h1,
+.page-hero h1,
+h1[data-reveal-lines] {
+  line-height: 1.04 !important;
+}
+
+/* El manifiesto lleva las tildes reales (no pasa por el troceado que las
+   separa), así que la Í de "EQUÍPALO" sube 1.11em sobre la línea base y se
+   metía dentro de "MODELO IDEAL.". */
+.ln-manifesto-copy,
+.ln-manifesto-copy > span {
+  line-height: 1.12 !important;
+}

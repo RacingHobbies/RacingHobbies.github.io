@@ -9889,9 +9889,19 @@ html body .hero .statement.in .w {
 /* --- Reveal de texto por caracteres (máscara), CSS + IntersectionObserver --- */
 html.lando-anim .rh-word { display: inline-block; white-space: nowrap; }
 html.lando-anim .rh-cmask { display: inline-block; overflow: hidden; vertical-align: top; }
-/* Reserva aire entre líneas solo cuando el titular necesita una tilde. */
+/* Reserva aire entre líneas solo cuando el titular necesita una tilde.
+   Con 1 no bastaba: medido sobre los píxeles, "ELIGE TU PRÓXIMA MÁQUINA"
+   dejaba 1px entre la tilde y la línea de encima, y en los rótulos de sección
+   las dos líneas llegaban a fundirse. El signo se pinta a 0.48em por encima
+   de la caja de línea, así que necesita bastante más que 1.
+
+   Cubre los titulares de página. Los rótulos de sección con tilde NO llegan
+   aquí: `html.lando-anim [data-lando-horizontal] .sec-title` tiene la misma
+   especificidad y va después en este archivo, así que les ganaba con su 0.88.
+   Ese caso se resuelve en el bloque final de `format-parity.css`, que carga
+   la última; el mismo valor está repetido allí a propósito. */
 html.lando-anim [data-reveal-lines].rh-has-diacritic {
-  line-height: 1 !important;
+  line-height: 1.16 !important;
 }
 /* Separamos el signo diacrítico para que quede dentro de su propia línea,
    sin dejar que el glifo completo invada el titular anterior. */
