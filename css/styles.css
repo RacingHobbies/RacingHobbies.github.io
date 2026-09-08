@@ -13412,6 +13412,9 @@ body.rh-route-enabled::before {
   transition:
     opacity 0.66s var(--ease-reveal) var(--d, 0s),
     transform 0.72s var(--ease-reveal) var(--d, 0s),
+    box-shadow 0.72s var(--ease-reveal),
+    border-color 0.68s var(--ease-reveal),
+    background 0.72s var(--ease-reveal),
     clip-path 0.94s var(--ln-ease) var(--clip-delay, 0s) !important;
 }
 
@@ -19311,7 +19314,7 @@ body .static-step-card .step-media::after {
        real de la ficha exterior una vez rotada -14° sobre su base: el ancho
        a secas se queda corto y la esquina superior seguía saliéndose. */
     --fan-card-w: clamp(128px, 36vw, 170px);
-    --fan-span: min(38vw, calc(50vw - var(--fan-card-w) * 0.78));
+    --fan-span: min(38vw, calc(50vw - var(--fan-card-w) * 0.8));
   }
 
   .page-home .community-section .social-fan .deck-card:nth-child(1) {
@@ -19346,7 +19349,7 @@ body .static-step-card .step-media::after {
 @media (min-width: 900px) {
   .community-section .social-fan {
     --fan-card-w: clamp(165px, 15vw, 240px);
-    --fan-fit: calc(50vw - var(--fan-card-w) * 0.78);
+    --fan-fit: calc(50vw - var(--fan-card-w) * 0.8);
   }
 
   .community-section .social-fan .deck-card:nth-child(1) {
@@ -19743,5 +19746,84 @@ body .static-step-card .step-media::after {
     background-color: #000000 !important;
     visibility: visible !important;
     animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   V50 — HOVER UNIFORME ENTRE CAJAS Y BOTONES
+   La caja de consentimiento del mapa (`.map-card`) reaccionaba distinto al
+   resto de la página: `html.js .map-card:hover` anulaba el movimiento con
+   `transform: none` y cambiaba la sombra, pero `box-shadow` no estaba en su
+   lista de transición, así que la sombra SALTABA de golpe mientras cualquier
+   botón la fundía en 0.72s. Aquí las cajas adoptan el mismo gesto y los
+   mismos tiempos que la capa de botones: elevación de 2px y fundido de
+   sombra con `--ease-reveal`.
+
+   Se excluyen a propósito:
+   - `.collage-item` y `.deck-card`, cuyo hover lo dibuja JS (inclinación 3D
+     con transform en línea): forzar aquí un transform con `!important`
+     mataría ese efecto. Sí heredan los tiempos de la regla de máscara.
+   - `.editorial-garage .collage-item`, que es deliberadamente plano.
+   ========================================================================== */
+
+html.js body .map-card.map-card:hover,
+html.js body .map-card.map-card:focus-within,
+html.js body .tile.tile:hover,
+html.js body .tile.tile:focus-within {
+  transform: translateY(-2px) !important;
+}
+
+/* La galería editorial mantiene su tratamiento plano original. */
+html.js body .editorial-garage .collage-item.collage-item:hover,
+html.js body .editorial-garage .collage-item.collage-item:focus-within {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   V51 — APARICIÓN CONDUCIDA POR EL SCROLL
+   Las entradas dejan de ser transiciones con duración fija y pasan a leer
+   `--rv` (0→1), que `paintScrollReveals()` escribe en cada fotograma según
+   la posición de la pieza en la pantalla. Alargar una duración sólo hacía
+   que la pieza TARDARA MÁS EN APARECER; esto hace que la animación DURE a
+   lo largo del scroll, que es cosa distinta.
+
+   Clave del bloque: `opacity` y `translate` NO están en `transition`, así
+   que siguen a `--rv` al instante, sin arrastre. `transform` sí está, y se
+   deja libre para el hover, que conserva la curva de 0.72s de los botones.
+   Por eso el desplazamiento de entrada usa `translate` (propiedad
+   independiente) y no `transform`: así los dos gestos no se pisan.
+   ========================================================================== */
+
+html.rh-scroll-reveal.js .reveal,
+html.rh-scroll-reveal.js .reveal.in {
+  opacity: var(--rv, 0) !important;
+  translate: 0 calc((1 - var(--rv, 0)) * 30px) !important;
+  filter: none !important;
+  transition:
+    transform 0.72s var(--ease-reveal),
+    box-shadow 0.72s var(--ease-reveal),
+    border-color 0.68s var(--ease-reveal),
+    background 0.72s var(--ease-reveal) !important;
+}
+
+/* La máscara de las imágenes editoriales se abre con el mismo progreso, para
+   que foto y caja vayan en el mismo gesto y no con dos relojes distintos. */
+html.rh-scroll-reveal.js .rh-clip-reveal.reveal,
+html.rh-scroll-reveal.js .rh-clip-reveal.reveal.in {
+  clip-path: inset(0 0 calc((1 - var(--rv, 0)) * 100%) 0 round 4px) !important;
+}
+
+/* Sin movimiento: la pieza está siempre visible y `--rv` no pinta nada. */
+@media (prefers-reduced-motion: reduce) {
+  html.rh-scroll-reveal.js .reveal,
+  html.rh-scroll-reveal.js .reveal.in {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+
+  html.rh-scroll-reveal.js .rh-clip-reveal.reveal,
+  html.rh-scroll-reveal.js .rh-clip-reveal.reveal.in {
+    clip-path: none !important;
   }
 }

@@ -591,6 +591,86 @@
       );
     }
     els.forEach((el) => revealObserver.observe(el));
+    collectScrollReveals();
+  }
+
+  /* ---------- Aparición conducida por el scroll ----------
+     Antes cada `.reveal` era una transición CSS de duración fija que se
+     disparaba al entrar en pantalla: alargarla no la hacía "durar más
+     mientras scrolleas", sólo la hacía tardar más en aparecer, y si bajabas
+     rápido te la perdías entera.
+
+     Aquí el progreso NO depende del reloj sino de dónde está la pieza en la
+     pantalla: `--rv` va de 0 a 1 mientras su borde superior recorre el tramo
+     entre el 94% y el 60% del alto del viewport. La animación avanza a tu
+     ritmo, se puede parar a medias y retroceder; nunca "se pasa rápido" ni
+     te deja esperando delante de un hueco en blanco.
+
+     `opacity` y `translate` quedan FUERA de la lista de `transition` (ver
+     el bloque V51 del CSS) para que sigan a `--rv` fotograma a fotograma;
+     `transform` se reserva para el hover, que conserva su curva de 0.72s. */
+
+  const REVEAL_START = 0.94; // el borde superior entra por aquí (× alto de pantalla)
+  const REVEAL_END = 0.6;    // y aquí la pieza ya está totalmente asentada
+  let scrollRevealItems = [];
+  let scrollRevealFrame = null;
+  let scrollRevealOn = false;
+
+  function collectScrollReveals() {
+    if (!scrollRevealOn) return;
+    scrollRevealItems = $$(".reveal");
+  }
+
+  function paintScrollReveals() {
+    scrollRevealFrame = null;
+    const vh = window.innerHeight || 1;
+    const from = vh * REVEAL_START;
+    const span = vh * (REVEAL_START - REVEAL_END) || 1;
+    for (let i = 0; i < scrollRevealItems.length; i++) {
+      const el = scrollRevealItems[i];
+      const rect = el.getBoundingClientRect();
+      // Fuera de pantalla con margen: no se toca. Lo que ya pasó conserva su
+      // último valor (1) y lo que aún no llega se queda sin `--rv`, o sea en 0.
+      if (rect.bottom < -240 || rect.top > vh + 240) continue;
+      let p = (from - rect.top) / span;
+      p = p < 0 ? 0 : p > 1 ? 1 : p;
+      el.style.setProperty("--rv", p.toFixed(4));
+      // `.in` sigue gobernando los acentos que se dibujan una vez (la línea
+      // del kicker, el subrayado del titular). Se enciende en cuanto la pieza
+      // asoma, para que vayan en el mismo gesto y no con dos tiempos.
+      if (p > 0 && !el.classList.contains("in")) el.classList.add("in");
+    }
+  }
+
+  function queueScrollReveals() {
+    if (scrollRevealFrame) return;
+    scrollRevealFrame = requestAnimationFrame(paintScrollReveals);
+  }
+
+  function initScrollReveals() {
+    if (REDUCED) return;
+    scrollRevealOn = true;
+    collectScrollReveals();
+    if (!scrollRevealItems.length) {
+      scrollRevealOn = false;
+      return;
+    }
+    // Se pinta ANTES de declarar el modo: si algo fallara aquí, la clase no
+    // llega a ponerse y el sitio se queda con las transiciones de siempre en
+    // vez de con todo invisible esperando un `--rv` que nadie escribe.
+    paintScrollReveals();
+    document.documentElement.classList.add("rh-scroll-reveal");
+
+    // El scroll suave lo mueve Lenis dentro del ticker de GSAP: engancharse
+    // ahí da un valor por fotograma ya sincronizado. Sin GSAP se cae al
+    // evento de scroll con rAF, que es el patrón del resto del archivo.
+    if (window.gsap && window.gsap.ticker) {
+      window.gsap.ticker.add(paintScrollReveals);
+    } else {
+      window.addEventListener("scroll", queueScrollReveals, { passive: true });
+    }
+    window.addEventListener("resize", queueScrollReveals, { passive: true });
+    window.addEventListener("load", paintScrollReveals);
   }
 
   function unobserveReveals(container) {
@@ -1159,10 +1239,10 @@
     // Previews editoriales: cada imagen representa la sección que activa.
     // Se mantienen en WebP reducido para que el panel siga abriendo rápido.
     const navShots = [
-    ["assets/img/menu-catalog.webp?v=3", "Selección de modelos RC de catálogo"],
-    ["assets/img/menu-service.webp?v=3", "Técnico ajustando el chasis de un auto RC"],
+    ["assets/img/menu-catalog.webp?v=4", "Selección de modelos RC de catálogo"],
+    ["assets/img/menu-service.webp?v=4", "Técnico ajustando el chasis de un auto RC"],
     ["assets/img/menu-about.webp?v=4", "Rincón del taller de Racing Hobbies con autos RC y logo de la marca"],
-    ["assets/img/menu-contact.webp?v=3", "Cliente contactando a Racing Hobbies desde su teléfono"],
+    ["assets/img/menu-contact.webp?v=4", "Cliente contactando a Racing Hobbies desde su teléfono"],
     ];
     navShots.forEach(([src, alt], index) => {
       const shot = document.createElement("div");
@@ -2838,6 +2918,7 @@
     initStatement();
     initStagger();
     initReveals();
+    initScrollReveals();
     initParallax();
     initTilt();
     initMagnetic();
