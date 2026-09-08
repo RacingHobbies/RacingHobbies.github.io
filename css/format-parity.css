@@ -410,8 +410,14 @@
     padding-block: 9svh 4svh !important;
   }
 
+  /* La retícula de la referencia reserva `minmax(420px, 1.1fr)` para la foto:
+     sobre un contenedor de 619px (667 de pantalla) eso dejaba la columna de
+     texto en 138px, el nombre del producto se partía en cinco líneas y las
+     acciones caían 56px por debajo del borde de la escena. Aquí las dos
+     columnas se reparten el ancho y ninguna tiene suelo en píxeles. */
   .page-home .feature-inner {
     display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) !important;
     flex-direction: row !important;
     min-height: 0 !important;
     height: 100% !important;
@@ -438,11 +444,17 @@
     line-height: 0.86 !important;
   }
 
+  /* Alto definido, no `100%`: como la sección es de alto automático, un
+     `height: 100%` se resolvía en `auto` y la foto pasaba a medir lo que le
+     pedía su proporción (392px sobre un viewport de 430). Eso estiraba la
+     sección a 470 y cortaba el botón "Ver ficha". 81svh es justo la banda que
+     dejan los rellenos (15svh arriba, 3svh abajo) con un par de píxeles de
+     margen. */
   .page-home .feature-visual {
     order: 0 !important;
     flex: none !important;
     width: 100% !important;
-    height: 100% !important;
+    height: 81svh !important;
     min-height: 0 !important;
     max-height: none !important;
   }
@@ -635,5 +647,297 @@
   html.lando-anim body:not(.page-home) [data-lando-htrack] > .rh-hcard .rh-card-num {
     top: 8% !important;
     left: 11% !important;
+  }
+}
+
+/* ==========================================================================
+   PANTALLAS BAJAS — apaisado de teléfono y ventanas cortas
+   En vertical las tres escenas de pantalla completa ya miden 100svh, pero con
+   390px de alto (un teléfono girado) los suelos de las fórmulas anteriores
+   —92px de relleno, un abanico de 300px, una tarjeta de mapa de 279px— sumaban
+   663px en comunidad y 476px en ubicación. Aquí todo pasa a estar acotado por
+   ALTO además de por ancho. Se activa por `max-height`, así que ningún
+   escritorio ni tablet en vertical entra: a 900px o 1024px de alto no aplica.
+   ========================================================================== */
+@media (max-height: 620px) and (min-width: 600px) {
+  .page-home .community-section {
+    padding-block: clamp(20px, 6svh, 92px) clamp(10px, 3svh, 46px) !important;
+  }
+
+  .page-home .community-section .sec-title {
+    font-size: min(clamp(3.35rem, 14vw, 5.1rem), 10svh) !important;
+  }
+
+  .page-home .community-section .social-fan {
+    height: min(clamp(342px, 99vw, 456px), 41svh) !important;
+    margin-block: clamp(10px, 3svh, 42px) clamp(8px, 2svh, 24px) !important;
+  }
+
+  .page-home .community-section .social-fan .deck-card {
+    width: min(clamp(128px, 36vw, 188px), 30svh) !important;
+    height: min(clamp(195px, 54vw, 285px), 44svh) !important;
+  }
+
+  .page-home .community-section .social-links {
+    margin-block: 0 clamp(8px, 2svh, 24px) !important;
+  }
+
+  .page-home .home-location {
+    padding: clamp(20px, 6svh, 118px) 0 clamp(10px, 2.5svh, 42px) !important;
+  }
+
+  .page-home .home-location .sec-title {
+    font-size: min(clamp(2.1rem, 10.6vw, 3.6rem), 9.6svh) !important;
+  }
+
+  .page-home .home-location .sec-head {
+    margin-bottom: clamp(6px, 1.6svh, 26px) !important;
+  }
+
+  /* Dos columnas: la fila mide lo que el más alto de los dos bloques, así que
+     ambos tienen que caber en el hueco que deja el rótulo. */
+  .page-home .home-location .info-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(12px, 2vw, 30px) !important;
+  }
+
+  .page-home .home-location .info-item {
+    gap: 10px !important;
+    padding: clamp(1px, 0.5svh, 8px) 6px !important;
+  }
+
+  .page-home .home-location .info-item h3 {
+    margin-bottom: 1px !important;
+    font-size: 0.58rem !important;
+  }
+
+  .page-home .home-location .info-item p,
+  .page-home .home-location .info-item a {
+    font-size: 0.7rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .page-home .home-location .map-card {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .page-home .home-location .map-consent {
+    position: static !important;
+    gap: 4px !important;
+    padding: clamp(8px, 2svh, 28px) 14px clamp(64px, 18svh, 92px) !important;
+  }
+
+  .page-home .home-location .map-consent h3 {
+    font-size: min(clamp(1.3rem, 5.3vw, 2.4rem), 7.5svh) !important;
+  }
+
+  .page-home .home-location .map-pin {
+    width: clamp(26px, 7svh, 48px) !important;
+    height: clamp(26px, 7svh, 48px) !important;
+  }
+
+  .page-home .home-location .map-pin svg {
+    width: 45% !important;
+    height: 45% !important;
+  }
+
+  /* El producto protagonista y las galerías ya se ciñen a 100svh, pero su
+     relleno superior dejaba el rótulo pegado a la cabecera fija. */
+  .page-home .feature-hero {
+    padding: clamp(52px, 15svh, 128px) 0 clamp(12px, 3svh, 56px) !important;
+  }
+
+  html.lando-anim [data-lando-horizontal] {
+    padding: clamp(52px, 15svh, 112px) 0 clamp(10px, 3svh, 52px) !important;
+  }
+}
+
+/* El botón flotante del mapa mide 50px + 16 de separación: la reserva
+   inferior del aviso tiene que superarlos o asoma por debajo del borde. */
+@media (max-height: 620px) and (min-width: 600px) {
+  .page-home .home-location .map-card .map-cta {
+    left: 14px !important;
+    bottom: 12px !important;
+    min-height: 42px !important;
+    padding-inline: 16px !important;
+    font-size: 0.62rem !important;
+  }
+}
+
+/* El hero en pantallas bajas. La retícula de dos columnas se conserva, pero
+   sus medidas verticales tenían suelos en píxeles (180px de arranque, 76px de
+   hueco antes de las acciones) pensados para un teléfono en vertical: sobre
+   390px de alto empujaban las acciones al 93-97%, contra el 76-89% de la
+   referencia ancha. Aquí cada tramo pasa a estar acotado por `svh`. */
+@media (max-height: 620px) and (min-width: 600px) {
+  .page-home .hero-meta {
+    /* Por debajo del logotipo de la cabecera (22px + 54 de alto). */
+    top: clamp(80px, 15svh, 168px) !important;
+  }
+
+  .page-home .hero,
+  .page-home .hero > .container {
+    /* El suelo de 152px no es decorativo: el bloque de meta arranca a 80px y
+       mide 61 (ciudad + píldora de horario), así que acaba en 141. Sin el
+       suelo, `31svh` devolvía 121px a 844x390 y 116 a 667x375 y el titular se
+       pintaba ENCIMA de la píldora de horario. Por encima de 500px de alto el
+       `min()` sigue mandando y el valor no se mueve (182 a 1024x600, 190 a
+       1440x700). */
+    --home-title-top: max(152px, min(clamp(180px, 30.4svh, 340px), 31svh));
+    --home-copy-size: min(clamp(1.5rem, 7.9vw, 5.6rem), 10svh);
+    --home-sub-gap: clamp(8px, 2.4svh, 40px);
+    --home-cta-gap: clamp(30px, 9svh, 200px);
+  }
+
+  .page-home .hero .hero-ctas .btn {
+    min-height: 42px !important;
+  }
+
+  /* Los últimos 14px de ubicación a 667x375. */
+  .page-home .home-location .info-list {
+    gap: 0 !important;
+  }
+}
+
+/* Teléfonos pequeños girados (667x375): la lista de seis datos es la columna
+   más alta y dejaba la sección 11px por encima de la pantalla. */
+@media (max-height: 400px) and (min-width: 600px) {
+  .page-home .home-location {
+    padding-top: 16px !important;
+  }
+
+  .page-home .home-location .info-item h3 {
+    font-size: 0.54rem !important;
+  }
+
+  .page-home .home-location .info-item p,
+  .page-home .home-location .info-item a {
+    font-size: 0.66rem !important;
+    line-height: 1.16 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Carrito con productos en apaisado de teléfono
+   El pie del carrito (total, botón de pedido, vaciar y nota legal) mide 237px
+   fijos. En pantalla completa eso es el 30% de un cajón de 792px y a la lista
+   le quedan 466. Sobre 390 de alto el cajón mide 343, el pie sigue midiendo
+   237 y a la lista le quedaban **21px**: el carrito se abría con el total y el
+   botón, pero sin ningún producto a la vista.
+
+   El cajón pasa a ocupar la pantalla completa (en apaisado no hay sitio para
+   dejarlo por debajo de la cabecera, y además la píldora de navegación se le
+   pintaba encima), y cabecera y pie se comprimen hasta devolver a la lista el
+   ~60% del alto que tiene en la referencia ancha.
+   -------------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .cart-drawer {
+    top: 0 !important;
+    height: 100svh !important;
+    max-height: 100svh !important;
+    z-index: 10040 !important;
+  }
+
+  .cart-head {
+    padding: 10px 18px !important;
+  }
+
+  .cart-items {
+    padding-block: 6px !important;
+  }
+
+  .cart-foot {
+    padding: 10px 18px 12px !important;
+    gap: 8px !important;
+  }
+
+  .cart-note {
+    font-size: 0.62rem !important;
+    line-height: 1.25 !important;
+  }
+}
+
+/* El rótulo "Categorías · desliza para explorar →" se mostraba en todos los
+   formatos, pero el carril de categorías sólo se desliza por debajo de 560px:
+   por encima las categorías se reparten en dos filas y la instrucción era
+   falsa. Se muestra sólo donde el gesto existe. */
+@media (min-width: 561px) {
+  .catalog-rail-hint {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. Remates de la capa de pantallas bajas
+   Dos cosas que la retícula de dos columnas y el abanico todavía no resolvían
+   con 375–430px de alto.
+   -------------------------------------------------------------------------- */
+
+/* a) Las acciones del producto destacado. A 932x430 la columna izquierda mide
+   354px y los dos botones piden 381: se partían en dos filas, la sección
+   crecía a 470px sobre un viewport de 430 y "Ver ficha" quedaba cortada. Con
+   el relleno atado al ancho caben en una fila, como en pantalla completa. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .page-home .feature-hero .hero-ctas {
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+  }
+
+  .page-home .feature-hero .hero-ctas .btn {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    padding-inline: clamp(10px, 1.6vw, 22px) !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* b) El abanico de la comunidad. Las fichas son más altas que la caja del
+   abanico y su escalonado vertical (`--fan-y`) va en píxeles fijos pensados
+   para una caja de 400px: sobre una de 154 las empujaba por encima del
+   titular y por debajo del borde de la escena. Ficha y escalonado pasan a
+   `svh` conservando las proporciones de la referencia ancha (19% / 11% / 4.5%
+   del alto del abanico). */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  .page-home .community-section .social-fan .deck-card {
+    width: min(clamp(128px, 36vw, 188px), 21svh) !important;
+    height: min(clamp(195px, 54vw, 285px), 32svh) !important;
+  }
+
+  .page-home .community-section .social-fan .deck-card:nth-child(1),
+  .page-home .community-section .social-fan .deck-card:nth-child(7) {
+    --fan-y: 7.8svh;
+  }
+
+  .page-home .community-section .social-fan .deck-card:nth-child(2),
+  .page-home .community-section .social-fan .deck-card:nth-child(6) {
+    --fan-y: 4.6svh;
+  }
+
+  .page-home .community-section .social-fan .deck-card:nth-child(3),
+  .page-home .community-section .social-fan .deck-card:nth-child(5) {
+    --fan-y: 1.85svh;
+  }
+
+  .page-home .community-section .social-fan .deck-card:nth-child(4) {
+    --fan-y: 0;
+  }
+}
+
+/* En teléfonos muy estrechos y bajos (por ejemplo 320 × 568), el control
+   flotante coincidía con la segunda acción del hero. Se conserva un objetivo
+   táctil de 44 px y se apoya en el borde inferior para liberar el CTA. */
+@media (orientation: portrait) and (max-width: 340px) and (max-height: 650px) {
+  .wa-float {
+    right: 4px !important;
+    bottom: 0 !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+  }
+
+  .wa-float::before {
+    width: 23px !important;
+    height: 23px !important;
   }
 }

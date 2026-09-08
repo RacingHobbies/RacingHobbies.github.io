@@ -275,7 +275,10 @@
   }
 }
 
-/* Entrada tipográfica: ritmo corto para que el mensaje entre con energía. */
+/* Entrada tipográfica: ritmo pausado (2x del original) para que el titular se
+   pueda leer entrando, en lugar de aterrizar antes de que lo mires. Esta regla
+   es la que MANDA sobre los caracteres: gana en especificidad y por orden de
+   carga a `html.lando-anim .rh-char` de styles.css. */
 html.lando-anim [data-reveal-lines] .rh-char {
   transition-duration: 0.58s !important;
   transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1) !important;

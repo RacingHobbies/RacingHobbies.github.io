@@ -384,8 +384,16 @@ body.rh-intro-complete .page-home .hero-proof {
     --home-title-top: clamp(240px, 42svh, 520px);
     /* 5em es el ancho de `Y ADRENALINA`, la línea más larga: 17.4vw la deja
        a ~23px del margen en 390 y a ~19px en 360. El tope de 5.6rem es el
-       mismo de escritorio, así que la portada nunca crece más que allí. */
-    --home-copy-size: clamp(2.4rem, 17.4vw, 5.6rem);
+       mismo de escritorio, así que la portada nunca crece más que allí.
+
+       El segundo término (`8.2svh`) es un techo por ALTO, no por ancho. En
+       tablet vertical (600x800, 480x800, 768x1024) el titular llegaba al tope
+       de 5.6rem y sus cuatro líneas empujaban las acciones hasta el 92-97%
+       del alto, contra el 76-89% de la referencia ancha; el objetivo del 85%
+       que persigue este bloque sólo se cumplía en teléfono. Con el techo por
+       alto se cumple en todo el rango, y en 390x844 no cambia nada porque
+       ahí sigue mandando 17.4vw. */
+    --home-copy-size: clamp(2.4rem, min(17.4vw, 8.2svh), 5.6rem);
     --home-sub-gap: clamp(16px, 2.6svh, 30px);
     --home-cta-gap: clamp(64px, 8.6svh, 108px);
     --home-brand-top: clamp(150px, 22svh, 300px);
