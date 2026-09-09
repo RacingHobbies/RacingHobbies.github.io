@@ -2251,6 +2251,13 @@
             onUpdate: (self) => {
               fill.style.transform = "scaleX(" + self.progress.toFixed(4) + ")";
             },
+            // La barra vive en el `.container`, que es mucho más alto que la
+            // pantalla fijada, así que al soltarse el pin se quedaba colgada
+            // sola en una franja vacía: una raya verde bajo el logo sin nada
+            // alrededor. Sólo debe existir mientras su carril está activo.
+            onToggle: (self) => {
+              sec.classList.toggle("rh-rail-live", self.isActive);
+            },
           },
         });
 

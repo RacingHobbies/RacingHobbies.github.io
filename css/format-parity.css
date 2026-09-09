@@ -1426,3 +1426,27 @@ h1[data-reveal-lines] {
     z-index: -1;
   }
 }
+
+/* ==========================================================================
+   LA BARRA DE PROGRESO SÓLO EXISTE MIENTRAS SU CARRIL ESTÁ ACTIVO
+   `.rh-hbar` se posiciona contra el `.container` del carril, que mide casi dos
+   pantallas. Al soltarse el pin la barra seguía ahí, barriendo el viewport
+   sola: una raya verde de 2px bajo el logo, sin fichas ni título alrededor.
+   El JS marca la sección con `rh-rail-live` mientras el carril está activo.
+   ========================================================================== */
+
+html.lando-anim .rh-hbar {
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+html.lando-anim .rh-rail-live .rh-hbar {
+  opacity: 1;
+}
+
+/* Sin animación no hay pin ni barra que seguir: se queda visible como antes. */
+@media (prefers-reduced-motion: reduce) {
+  html.lando-anim .rh-hbar {
+    opacity: 1;
+  }
+}
