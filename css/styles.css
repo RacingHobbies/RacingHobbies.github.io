@@ -5109,6 +5109,17 @@ body::before {
   overflow: hidden;
 }
 
+/* `overflow: hidden` no basta: Safari en iOS lo ignora para el scroll táctil y
+   el fondo avanzaba junto con la ficha del producto. Con el body fijo la
+   prioridad es de la capa abierta y el fondo no se mueve. `top` lo pone el JS
+   con la posición guardada, que es lo que evita el salto al inicio. */
+.scroll-locked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
 .cart-item-price small {
   color: var(--txt-dim2);
   font-size: 0.68rem;

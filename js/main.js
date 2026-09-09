@@ -270,6 +270,40 @@
   let cartHideTimer = null;
   let modalHideTimer = null;
 
+  /* --- Bloqueo real del scroll de fondo ---------------------------------
+     `overflow: hidden` sobre el body NO ata el scroll táctil en Safari de iOS:
+     el fondo seguía avanzando a la vez que la ficha, en vez de cederle la
+     prioridad. Fijar el body y compensar con `top` sí lo detiene en todos los
+     navegadores. Al soltar se restituye la posición exacta y se resincroniza
+     Lenis, que si no volvería con la que tenía guardada.
+
+     El estado se deduce de las clases y no de un booleano suelto, para que
+     abrir el carrito desde el menú (dos capas a la vez) no desbloquee el
+     fondo al cerrar sólo una de ellas. */
+  let lockedScrollY = 0;
+  let scrollLocked = false;
+
+  function syncPageScrollLock() {
+    const body = document.body;
+    const shouldLock =
+      body.classList.contains("overlay-open") ||
+      body.classList.contains("menu-open");
+    if (shouldLock === scrollLocked) return;
+    scrollLocked = shouldLock;
+    if (shouldLock) {
+      lockedScrollY = window.scrollY || window.pageYOffset || 0;
+      body.style.top = `-${lockedScrollY}px`;
+      body.classList.add("scroll-locked");
+    } else {
+      body.classList.remove("scroll-locked");
+      body.style.top = "";
+      window.scrollTo(0, lockedScrollY);
+      if (window.rhLenis) {
+        window.rhLenis.scrollTo(lockedScrollY, { immediate: true, force: true });
+      }
+    }
+  }
+
   function setBackgroundInert(active) {
     Array.from(document.body.children).forEach((child) => {
       if (child.id !== "rh-global-ui" && child.tagName !== "SCRIPT") {
@@ -277,6 +311,7 @@
       }
     });
     document.body.classList.toggle("overlay-open", active);
+    syncPageScrollLock();
   }
 
   function openCart(returnFocus) {
@@ -1343,6 +1378,7 @@
       menuBtn.setAttribute("aria-expanded", "false");
       menuBtn.setAttribute("aria-label", "Abrir menú");
       document.body.classList.remove("menu-open");
+      syncPageScrollLock();
       clearPreview();
       if (restoreFocus) menuBtn.focus();
     };
@@ -1353,6 +1389,7 @@
       menuBtn.setAttribute("aria-expanded", "true");
       menuBtn.setAttribute("aria-label", "Cerrar menú");
       document.body.classList.add("menu-open");
+      syncPageScrollLock();
       clearPreview();
       window.setTimeout(() => {
         const current = $('[aria-current="page"]', panel) || panelLinks[0];
