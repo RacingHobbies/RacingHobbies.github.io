@@ -1719,7 +1719,10 @@ body .static-step-card .step-media::after {
 /* --- 4. "Estamos en Quito" cabe en una pantalla ------------------------
    Medía 854px sobre un viewport de 844: los últimos 10px de la tarjeta del
    mapa quedaban siempre fuera, y con ellos el borde inferior redondeado. */
-@media (max-width: 899px) {
+/* Sólo en vertical: en apaisado manda el bloque de pantallas bajas, que la
+   comprime bastante más. Sin acotar, esta regla lo pisaba por ir después en
+   el archivo y la sección crecía a 430px sobre un viewport de 390. */
+@media (max-width: 899px) and (orientation: portrait) {
   .page-home .home-location {
     padding-top: clamp(56px, 7.8svh, 92px) !important;
     padding-bottom: clamp(12px, 1.8svh, 34px) !important;
@@ -1773,5 +1776,145 @@ body .static-step-card .step-media::after {
     height: 100% !important;
     max-height: none !important;
 
+  }
+}
+
+/* --- 7. La lista de datos en apaisado, a tres columnas -----------------
+   A 667x375 la sección de ubicación pedía 416px sobre un viewport de 375.
+   El bulto es `.info-list`: seis datos en dos columnas son tres filas de
+   ~90px. A lo ancho hay sitio de sobra —tres columnas salen a 210px cada
+   una, no a los 120 que las romperían en un teléfono vertical— y pasa a dos
+   filas. Se ahorran 90px y la escena vuelve a caber en una pantalla. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  .page-home .home-location .info-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ===========================================================================
+   TELÉFONO: CADA ENTRADA OCUPA UNA PANTALLA, Y LA OCUPA BIEN
+   Las escenas cortas heredaban mínimos de 62–75svh y mostraban la siguiente
+   sección antes de terminar el mensaje. Se les puso 100svh, pero eso solo
+   resolvió la mitad: el contenedor heredaba mal el mínimo (ver más abajo) y las
+   secciones acababan midiendo 1014px sobre 844 con el contenido apelotonado
+   arriba. Aquí se cierran las dos cosas: la sección mide exactamente una
+   pantalla y su contenido se reparte dentro, en vez de flotar en un hueco.
+   Medido a 390x844 (relleno = % de la pantalla con contenido):
+     franja de marcas   12% y un hueco de 620px  ->  banda de 271px al 38%
+     comunidad, pit-band, CTA y visión: 1014px   ->  844px exactos
+     cabeceras internas 22–30%                   ->  33–40%
+   ========================================================================== */
+
+@media (max-width: 899px) and (orientation: portrait) {
+  body:not(.page-home) .page-hero,
+  .page-home .community-section,
+  body:not(.page-home) .pit-band,
+  body:not(.page-home) .service-cta-section,
+  body:not(.page-home) .about-vision-section,
+  .page-error .error-page {
+    box-sizing: border-box;
+    min-height: 100svh !important;
+  }
+
+  /* Igualamos la especificidad de las reglas antiguas de ritmo compacto;
+     de otro modo su `min-height: 62svh !important` prevalecía en estas cuatro
+     escenas aunque la regla nueva estuviera más abajo. */
+  html body main > section.race-sector.community-section,
+  html body main > section.race-sector.pit-band,
+  html body main > section.race-sector.service-cta-section,
+  html body main > section.race-sector.about-vision-section {
+    min-height: 100svh !important;
+  }
+
+  /* --- El contenedor mide contra el hueco, no contra la pantalla --------
+     `min-height: inherit` copiaba el valor COMPUTADO del padre —844px, ya
+     resuelto— y el navegador se lo volvía a sumar al padding de la sección.
+     Las cinco bandas acababan midiendo 1014px sobre una pantalla de 844: no
+     cabía ninguna entera, y como el contenedor era más alto que su contenido
+     éste se apelotonaba arriba dejando un agujero de hasta 620px debajo.
+     Con `flex: 1` el contenedor ocupa exactamente el hueco que deja el padding
+     y reparte dentro de él, así que la sección vuelve a medir una pantalla. */
+  .page-home .community-section,
+  body:not(.page-home) .pit-band,
+  body:not(.page-home) .service-cta-section,
+  body:not(.page-home) .about-vision-section,
+  .page-error .error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-home .community-section > .container,
+  body:not(.page-home) .pit-band > .container,
+  body:not(.page-home) .service-cta-section > .container,
+  body:not(.page-home) .about-vision-section > .container,
+  .page-error .error-page > .container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 0;
+  }
+
+  /* --- La franja de marcas es una banda, no una escena ------------------
+     Rótulo y marquesina suman 104px de contenido. Estirados a una pantalla
+     entera daban un 12% de relleno y un hueco de 620px: el peor reparto del
+     sitio. Vuelve a medir por su contenido y sirve de respiro entre dos
+     escenas completas, que es lo que una franja de marcas tiene que hacer. */
+  .page-home .brands-strip,
+  html body main > section.race-sector.brands-strip {
+    min-height: 0 !important;
+    padding-top: clamp(54px, 8.5svh, 86px) !important;
+    padding-bottom: clamp(54px, 8.5svh, 86px) !important;
+  }
+
+  /* --- Las cabeceras de las páginas internas ---------------------------
+     Centrar un bloque de 288px sobre un lienzo de 668 lo dejaba como una isla:
+     en nosotros la tinta iba de 298 a 628 —330px de los 844 de pantalla— con
+     ~290px de negro muerto encima y ~200px debajo (22% de relleno; 30% en
+     contacto y garantía). El bloque sigue centrado, pero ahora es mucho más
+     alto —el titular crece y reparte en más líneas— y el respiro superior baja
+     de 118px a 100px, así que ocupa la escena en vez de flotar en ella.
+     Repartirlo con `margin-bottom: auto` se probó y se descartó: separaba el
+     titular del texto de entrada con un vacío de 480px, peor que la isla. */
+  body:not(.page-home) .page-hero {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: calc(var(--header-h) + 26px) !important;
+    padding-bottom: 44px !important;
+  }
+
+  body:not(.page-home) .page-hero > .container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  /* El antetítulo se queda pegado a su titular; todo lo que va detrás del
+     titular baja en bloque al pie. */
+  body:not(.page-home) .page-hero > .container > .kicker {
+    margin: 0 0 14px !important;
+  }
+
+  /* El titular crece hasta donde da el ancho del teléfono, y su medida se
+     estrecha a la vez. Las dos cosas juntas: la del sitio está en `em`, así que
+     al agrandar la letra la medida crecía igual y el titular salía con las
+     mismas líneas —más grandes, pero el bloque no ganaba alto; contacto incluso
+     perdía una línea—. Con 4.6em el titular reparte en más líneas y ocupa la
+     escena, como el `statement` de la portada. La medida va en `em` y no en
+     `ch` a propósito: `ch` cambia con la fuente que acabe resolviéndose y
+     movería los cortes. */
+  body:not(.page-home) .page-hero > .container > h1 {
+    font-size: clamp(48px, 16vw, 66px) !important;
+    line-height: 1.03 !important;
+    margin: 0 !important;
+    max-width: 4.6em !important;
+  }
+
+  body:not(.page-home) .page-hero > .container > h1 ~ * {
+    margin-top: clamp(18px, 3svh, 28px) !important;
   }
 }
