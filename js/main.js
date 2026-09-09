@@ -8,6 +8,13 @@
   "use strict";
 
   const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Las animaciones decorativas no deben competir con el gesto de scroll en
+  // equipos con poca memoria o pocos núcleos. Lenis y las pausas de lectura se
+  // conservan; sólo se omiten capas visuales que el CSS ya sabe mostrar de
+  // forma estática.
+  const LOW_POWER_DEVICE =
+    Number(navigator.deviceMemory || 8) <= 4 ||
+    Number(navigator.hardwareConcurrency || 8) <= 4;
 
   // Señala que JS está activo: habilita las animaciones en CSS.
   document.documentElement.classList.add("js");
@@ -700,12 +707,15 @@
   const REVEAL_START = 0.94; // el borde superior entra por aquí (× alto de pantalla)
   const REVEAL_END = 0.6;    // y aquí la pieza ya está totalmente asentada
   let scrollRevealItems = [];
+  let scrollRevealActive = [];
   let scrollRevealFrame = null;
   let scrollRevealOn = false;
+  let scrollRevealObserver = null;
+  const scrollRevealActiveSet = new Set();
   // Medidas y valores de la pasada anterior. Se reaprovechan los mismos arrays
   // para no generar basura en cada frame del ticker.
   const scrollRevealTops = [];
-  const scrollRevealValues = [];
+  const scrollRevealValues = new WeakMap();
   let lastRevealScroll = -1;
   let lastRevealVh = -1;
   let lastRevealDoc = -1;
@@ -713,8 +723,33 @@
   function collectScrollReveals() {
     if (!scrollRevealOn) return;
     scrollRevealItems = $$(".reveal");
-    // Al cambiar la lista, los valores memorizados por índice dejan de valer.
-    scrollRevealValues.length = 0;
+    if (!("IntersectionObserver" in window)) {
+      scrollRevealActive = scrollRevealItems;
+      return;
+    }
+
+    if (!scrollRevealObserver) {
+      // Sólo las piezas que pueden aparecer durante el siguiente gesto se
+      // miden por frame. En portada evita leer el layout de todas las tarjetas
+      // y secciones, incluso cuando están varios pantallazos lejos.
+      scrollRevealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) scrollRevealActiveSet.add(entry.target);
+            else scrollRevealActiveSet.delete(entry.target);
+          });
+          scrollRevealActive = Array.from(scrollRevealActiveSet);
+          lastRevealScroll = -1;
+          queueScrollReveals();
+        },
+        { rootMargin: "55% 0px 55% 0px" }
+      );
+    }
+
+    scrollRevealObserver.disconnect();
+    scrollRevealActiveSet.clear();
+    scrollRevealActive = [];
+    scrollRevealItems.forEach((item) => scrollRevealObserver.observe(item));
   }
 
   /* Esto corre en CADA frame del ticker de GSAP, así que el coste se nota. Tres
@@ -727,9 +762,14 @@
        sin mover un solo píxel.
      Los valores de `--rv` y el momento en que se aplican son los mismos: la
      animación no cambia, sólo el trabajo que cuesta pintarla. */
-  function paintScrollReveals() {
+  function paintScrollReveals(options) {
     scrollRevealFrame = null;
-    const total = scrollRevealItems.length;
+    // GSAP y requestAnimationFrame pasan su tiempo actual como argumento. Sólo
+    // el arranque pide explícitamente la pasada completa; de otro modo ese
+    // número convertiría por accidente todos los reveals en activos.
+    const forceAll = options === true;
+    const items = forceAll ? scrollRevealItems : scrollRevealActive;
+    const total = items.length;
     if (!total) return;
 
     const vh = window.innerHeight || 1;
@@ -745,7 +785,7 @@
 
     // 1. Sólo medidas.
     for (let i = 0; i < total; i++) {
-      const rect = scrollRevealItems[i].getBoundingClientRect();
+      const rect = items[i].getBoundingClientRect();
       // Fuera de pantalla con margen: no se toca. Lo que ya pasó conserva su
       // último valor (1) y lo que aún no llega se queda sin `--rv`, o sea en 0.
       scrollRevealTops[i] =
@@ -756,12 +796,12 @@
     for (let i = 0; i < total; i++) {
       const top = scrollRevealTops[i];
       if (top === null) continue;
-      const el = scrollRevealItems[i];
+      const el = items[i];
       let p = (from - top) / span;
       p = p < 0 ? 0 : p > 1 ? 1 : p;
       const value = p.toFixed(4);
-      if (scrollRevealValues[i] !== value) {
-        scrollRevealValues[i] = value;
+      if (scrollRevealValues.get(el) !== value) {
+        scrollRevealValues.set(el, value);
         el.style.setProperty("--rv", value);
       }
       // `.in` sigue gobernando los acentos que se dibujan una vez (la línea
@@ -784,7 +824,7 @@
   }
 
   function initScrollReveals() {
-    if (REDUCED) return;
+    if (REDUCED || LOW_POWER_DEVICE) return;
     scrollRevealOn = true;
     collectScrollReveals();
     if (!scrollRevealItems.length) {
@@ -794,7 +834,7 @@
     // Se pinta ANTES de declarar el modo: si algo fallara aquí, la clase no
     // llega a ponerse y el sitio se queda con las transiciones de siempre en
     // vez de con todo invisible esperando un `--rv` que nadie escribe.
-    paintScrollReveals();
+    paintScrollReveals(true);
     document.documentElement.classList.add("rh-scroll-reveal");
 
     // El scroll suave lo mueve Lenis dentro del ticker de GSAP: engancharse
@@ -827,7 +867,7 @@
   /* ---------- Profundidad editorial ---------- */
 
   function initParallax() {
-    if (REDUCED) return;
+    if (REDUCED || LOW_POWER_DEVICE) return;
     const elements = $$("[data-plx]");
     if (elements.length === 0) return;
     let ticking = false;
@@ -1515,6 +1555,14 @@
       clearPreview();
       if (restoreFocus) menuBtn.focus();
     };
+
+    // El panel de navegación cubre toda la pantalla. Si se abre el carrito
+    // desde allí, primero se retira el panel para no dejar dos capas activas
+    // ni devolver foco a un control que quedó detrás del diálogo.
+    const cartButton = $("[data-open-cart]");
+    if (cartButton) {
+      cartButton.addEventListener("click", () => closeMenu(false));
+    }
 
     const openMenu = () => {
       warmNavShots();
@@ -2534,24 +2582,29 @@
     rail.setAttribute("aria-hidden", "true");
     rail.innerHTML = "<span></span>";
     document.body.appendChild(rail);
-    const railFill = rail.firstElementChild;
-
-    const updateRail = () => {
-      const max = scrollRange();
-      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-      railFill.style.transform = "scaleY(" + progress.toFixed(4) + ")";
-    };
-    let railFrame = null;
-    const queueRail = () => {
-      if (railFrame) return;
-      railFrame = requestAnimationFrame(() => {
-        railFrame = null;
-        updateRail();
-      });
-    };
-    window.addEventListener("scroll", queueRail, { passive: true });
-    window.addEventListener("resize", queueRail, { passive: true });
-    updateRail();
+    // La hoja actual oculta este raíl. No mantenemos un listener de scroll ni
+    // una lectura de altura para actualizar algo que no llega a pintarse.
+    if (getComputedStyle(rail).display === "none") {
+      rail.remove();
+    } else {
+      const railFill = rail.firstElementChild;
+      const updateRail = () => {
+        const max = scrollRange();
+        const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        railFill.style.transform = "scaleY(" + progress.toFixed(4) + ")";
+      };
+      let railFrame = null;
+      const queueRail = () => {
+        if (railFrame) return;
+        railFrame = requestAnimationFrame(() => {
+          railFrame = null;
+          updateRail();
+        });
+      };
+      window.addEventListener("scroll", queueRail, { passive: true });
+      window.addEventListener("resize", queueRail, { passive: true });
+      updateRail();
+    }
 
     // Cortina entre páginas internas. Se ignoran enlaces externos, descargas,
     // anclas, controles con JS y clics con teclas modificadoras. La cortina no
@@ -2932,36 +2985,42 @@
     indicator.setAttribute("aria-hidden", "true");
     indicator.innerHTML = "<span></span>";
     document.body.appendChild(indicator);
-    const thumb = indicator.firstElementChild;
-    let indicatorTimer = null;
-    let indicatorFrame = null;
+    // Igual que el raíl lateral: su CSS lo desactiva en el diseño final. Al
+    // retirarlo evitamos cálculos y timers en cada desplazamiento.
+    if (getComputedStyle(indicator).display === "none") {
+      indicator.remove();
+    } else {
+      const thumb = indicator.firstElementChild;
+      let indicatorTimer = null;
+      let indicatorFrame = null;
 
-    const paintIndicator = (show) => {
-      const max = Math.max(1, scrollRange());
-      const ratio = Math.min(0.28, Math.max(0.11, window.innerHeight / docHeight()));
-      const progress = Math.min(1, Math.max(0, window.scrollY / max));
-      const travel = indicator.clientHeight * (1 - ratio);
-      indicator.style.setProperty("--rh-thumb-size", (ratio * 100).toFixed(3) + "%");
-      thumb.style.transform =
-        "translate3d(0," + (progress * travel).toFixed(2) + "px,0)";
-      if (show) {
-        indicator.classList.add("is-scrolling");
-        clearTimeout(indicatorTimer);
-        indicatorTimer = window.setTimeout(
-          () => indicator.classList.remove("is-scrolling"),
-          620
-        );
-      }
-      indicatorFrame = null;
-    };
+      const paintIndicator = (show) => {
+        const max = Math.max(1, scrollRange());
+        const ratio = Math.min(0.28, Math.max(0.11, window.innerHeight / docHeight()));
+        const progress = Math.min(1, Math.max(0, window.scrollY / max));
+        const travel = indicator.clientHeight * (1 - ratio);
+        indicator.style.setProperty("--rh-thumb-size", (ratio * 100).toFixed(3) + "%");
+        thumb.style.transform =
+          "translate3d(0," + (progress * travel).toFixed(2) + "px,0)";
+        if (show) {
+          indicator.classList.add("is-scrolling");
+          clearTimeout(indicatorTimer);
+          indicatorTimer = window.setTimeout(
+            () => indicator.classList.remove("is-scrolling"),
+            620
+          );
+        }
+        indicatorFrame = null;
+      };
 
-    const queueIndicator = () => {
-      if (indicatorFrame) return;
-      indicatorFrame = requestAnimationFrame(() => paintIndicator(true));
-    };
-    window.addEventListener("scroll", queueIndicator, { passive: true });
-    window.addEventListener("resize", () => paintIndicator(false), { passive: true });
-    paintIndicator(false);
+      const queueIndicator = () => {
+        if (indicatorFrame) return;
+        indicatorFrame = requestAnimationFrame(() => paintIndicator(true));
+      };
+      window.addEventListener("scroll", queueIndicator, { passive: true });
+      window.addEventListener("resize", () => paintIndicator(false), { passive: true });
+      paintIndicator(false);
+    }
 
     /* La cabecera cambia de lenguaje cromático al cruzar sectores claros o de
        acento, como la navegación sensible al tema de la referencia. */
@@ -3087,7 +3146,12 @@
        assets propios del proyecto. */
     const hero = $(".hero");
     const heroVisual = $(".hero-brand-visual");
-    if (hero && heroVisual && window.matchMedia("(pointer:fine)").matches) {
+    if (
+      !LOW_POWER_DEVICE &&
+      hero &&
+      heroVisual &&
+      window.matchMedia("(pointer:fine)").matches
+    ) {
       let heroPointerFrame = null;
       let heroPointerEvent = null;
       hero.addEventListener("pointermove", (event) => {
@@ -3127,7 +3191,7 @@
 
     /* El fondo de cada sector se desplaza a distinta velocidad, replicando el
        cambio continuo de escena/color del lienzo de la referencia. */
-    if (ST) {
+    if (ST && !LOW_POWER_DEVICE) {
       $$(".race-sector .race-atmosphere").forEach((atmosphere) => {
         g.fromTo(
           atmosphere,

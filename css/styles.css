@@ -10198,6 +10198,12 @@ body.menu-open {
   overflow: hidden;
 }
 
+/* El menú inmersivo ocupa toda la ventana. El acceso al carrito se mantiene
+   por encima de esa capa para que siga siendo pulsable en teléfono. */
+body.menu-open .header-actions {
+  z-index: 10011;
+}
+
 body.menu-open::before {
   display: none;
 }
