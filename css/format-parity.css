@@ -227,6 +227,76 @@
   }
 }
 
+/* ===========================================================================
+   TELÉFONO: PANELES DE ACCIÓN A PANTALLA COMPLETA
+   En un teléfono, el carrito y la ficha no son elementos secundarios: son el
+   siguiente paso de la navegación. Abrirlos como tarjetas estrechas dejaba
+   controles de la cabecera visibles por detrás y desperdiciaba espacio útil.
+   Se convierten en vistas completas sólo por debajo de 600px; tablet y
+   escritorio conservan el comportamiento de panel lateral / diálogo.
+   ========================================================================== */
+
+@media (max-width: 599px) {
+  .modal-backdrop {
+    z-index: 10040 !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+
+  .modal {
+    width: 100% !important;
+    min-height: 100svh !important;
+    max-height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .modal-body {
+    padding: 22px 20px calc(22px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .modal-close {
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: 16px !important;
+  }
+
+  .cart-drawer {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100vw !important;
+    min-height: 100svh !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10050 !important;
+  }
+
+  .cart-head {
+    padding: max(16px, env(safe-area-inset-top)) 20px 16px !important;
+  }
+
+  .cart-items {
+    padding-inline: 20px !important;
+  }
+
+  .cart-empty {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding-block: 24px !important;
+  }
+
+  .cart-foot {
+    padding: 16px 20px max(20px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
 /* --------------------------------------------------------------------------
    6. Fotos de las tarjetas de proceso (Nosotros / Servicio técnico)
    El -18px de sangrado está pensado para una tarjeta con 18px de relleno
