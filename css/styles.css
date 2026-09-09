@@ -16502,14 +16502,14 @@ body.rh-intro-running.page-home .hero-meta {
   opacity: 0.2;
   background-image:
     linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.7)),
-    url("../assets/img/atmosphere/racing-line-clean.webp?v=2") !important;
+    url("../assets/img/atmosphere/racing-line-clean.webp?v=8") !important;
   background-position: center;
 }
 
 .race-sector:nth-of-type(7n + 1) {
   background-image:
     linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.62) 58%, rgba(0, 0, 0, 0.86)),
-    url("../assets/img/atmosphere/racing-line-clean.webp?v=2") !important;
+    url("../assets/img/atmosphere/racing-line-clean.webp?v=8") !important;
   background-position: center;
   background-size: cover;
 }
@@ -16693,15 +16693,15 @@ body.rh-intro-running.page-home .hero-meta {
    sin autos ni productos.
    ========================================================================== */
 .page-home main .hero {
-  --sector-art: url("../assets/img/atmosphere/racing-line-clean.webp?v=2");
+  --sector-art: url("../assets/img/atmosphere/racing-line-clean.webp?v=8");
 }
 
 .page-home main .ln-manifesto {
-  --sector-art: url("../assets/img/atmosphere/start-grid-reflections.webp?v=2");
+  --sector-art: url("../assets/img/atmosphere/start-grid-reflections.webp?v=8");
 }
 
 .page-home main .editorial-garage {
-  --sector-art: url("../assets/img/atmosphere/curb-stripes-clean.webp?v=2");
+  --sector-art: url("../assets/img/atmosphere/curb-stripes-clean.webp?v=8");
 }
 
 .page-home main .feature-hero {
@@ -16709,7 +16709,7 @@ body.rh-intro-running.page-home .hero-meta {
 }
 
 .page-home main .home-showcase {
-  --sector-art: url("../assets/img/atmosphere/pitlane-geometry.webp?v=2");
+  --sector-art: url("../assets/img/atmosphere/pitlane-geometry.webp?v=8");
 }
 
 .page-home main .brands-strip {
@@ -16780,19 +16780,19 @@ body.rh-intro-running.page-home .hero-meta {
 }
 
 .page-about main .about-story-section {
-  --section-art: url("../assets/img/atmosphere/chicane-sunrise.webp?v=2");
+  --section-art: url("../assets/img/atmosphere/chicane-sunrise.webp?v=8");
 }
 
 .page-about main .about-values-section {
-  --section-art: url("../assets/img/atmosphere/circuit-tunnel.webp?v=2");
+  --section-art: url("../assets/img/atmosphere/circuit-tunnel.webp?v=8");
 }
 
 .page-about main .about-vision-section {
-  --section-art: url("../assets/img/atmosphere/flag-fabric-close.webp?v=2");
+  --section-art: url("../assets/img/atmosphere/flag-fabric-close.webp?v=8");
 }
 
 .page-service main .page-hero {
-  --section-art: url("../assets/img/atmosphere/starting-grid-overhead.webp?v=2");
+  --section-art: url("../assets/img/atmosphere/starting-grid-overhead.webp?v=8");
 }
 
 .page-service main .service-catalog-section {
@@ -16800,7 +16800,7 @@ body.rh-intro-running.page-home .hero-meta {
 }
 
 .page-service main .service-process-section {
-  --section-art: url("../assets/img/atmosphere/paddock-entrance.webp?v=2");
+  --section-art: url("../assets/img/atmosphere/paddock-entrance.webp?v=8");
 }
 
 .page-service main .service-cta-section {
@@ -17811,7 +17811,7 @@ body.rh-intro-complete .statement {
 .rh-loader {
   background-image:
     linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-    url("../assets/img/atmosphere/racing-line-clean.webp?v=2") !important;
+    url("../assets/img/atmosphere/racing-line-clean.webp?v=8") !important;
   background-position: 50% !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
@@ -17908,7 +17908,7 @@ body.rh-intro-release .rh-loader::after {
   right: -48px !important;
   background:
     linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-    url("../assets/img/atmosphere/racing-line-clean.webp?v=2") center / cover no-repeat !important;
+    url("../assets/img/atmosphere/racing-line-clean.webp?v=8") center / cover no-repeat !important;
   background-color: #000000 !important;
   transition: opacity 0.78s cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
@@ -17934,7 +17934,7 @@ body.rh-intro-release .rh-loader {
   right: -48px !important;
   background:
     linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-    url("../assets/img/atmosphere/racing-line-clean.webp?v=2") center / cover no-repeat !important;
+    url("../assets/img/atmosphere/racing-line-clean.webp?v=8") center / cover no-repeat !important;
   background-color: #000000 !important;
   visibility: visible !important;
   animation: none !important;
@@ -19503,15 +19503,15 @@ body .static-step-card .step-media::after {
 
 @media (max-width: 900px) {
   .page-home main .hero {
-    --sector-art: url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2");
+    --sector-art: url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8");
   }
 
   .page-home main .ln-manifesto {
-    --sector-art: url("../assets/img/atmosphere/start-grid-reflections-960.webp?v=2");
+    --sector-art: url("../assets/img/atmosphere/start-grid-reflections-960.webp?v=8");
   }
 
   .page-home main .editorial-garage {
-    --sector-art: url("../assets/img/atmosphere/curb-stripes-clean-960.webp?v=2");
+    --sector-art: url("../assets/img/atmosphere/curb-stripes-clean-960.webp?v=8");
   }
 
   .page-home main .feature-hero {
@@ -19519,7 +19519,7 @@ body .static-step-card .step-media::after {
   }
 
   .page-home main .home-showcase {
-    --sector-art: url("../assets/img/atmosphere/pitlane-geometry-960.webp?v=2");
+    --sector-art: url("../assets/img/atmosphere/pitlane-geometry-960.webp?v=8");
   }
 
   .page-home main .brands-strip {
@@ -19559,19 +19559,19 @@ body .static-step-card .step-media::after {
   }
 
   .page-about main .about-story-section {
-    --section-art: url("../assets/img/atmosphere/chicane-sunrise-960.webp?v=2");
+    --section-art: url("../assets/img/atmosphere/chicane-sunrise-960.webp?v=8");
   }
 
   .page-about main .about-values-section {
-    --section-art: url("../assets/img/atmosphere/circuit-tunnel-960.webp?v=2");
+    --section-art: url("../assets/img/atmosphere/circuit-tunnel-960.webp?v=8");
   }
 
   .page-about main .about-vision-section {
-    --section-art: url("../assets/img/atmosphere/flag-fabric-close-960.webp?v=2");
+    --section-art: url("../assets/img/atmosphere/flag-fabric-close-960.webp?v=8");
   }
 
   .page-service main .page-hero {
-    --section-art: url("../assets/img/atmosphere/starting-grid-overhead-960.webp?v=2");
+    --section-art: url("../assets/img/atmosphere/starting-grid-overhead-960.webp?v=8");
   }
 
   .page-service main .service-catalog-section {
@@ -19579,7 +19579,7 @@ body .static-step-card .step-media::after {
   }
 
   .page-service main .service-process-section {
-    --section-art: url("../assets/img/atmosphere/paddock-entrance-960.webp?v=2");
+    --section-art: url("../assets/img/atmosphere/paddock-entrance-960.webp?v=8");
   }
 
   .page-service main .service-cta-section {
@@ -19658,14 +19658,14 @@ body .static-step-card .step-media::after {
     opacity: 0.2;
     background-image:
       linear-gradient(90deg, rgba(0, 0, 0, 0.74), rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.7)),
-      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2") !important;
+      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8") !important;
     background-position: center;
   }
 
   .race-sector:nth-of-type(7n + 1) {
     background-image:
       linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.62) 58%, rgba(0, 0, 0, 0.86)),
-      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2") !important;
+      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8") !important;
     background-position: center;
     background-size: cover;
   }
@@ -19748,7 +19748,7 @@ body .static-step-card .step-media::after {
   .rh-loader {
     background-image:
       linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2") !important;
+      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8") !important;
     background-position: 50% !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
@@ -19759,7 +19759,7 @@ body .static-step-card .step-media::after {
     right: -48px !important;
     background:
       linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2") center / cover no-repeat !important;
+      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8") center / cover no-repeat !important;
     background-color: #000000 !important;
     transition: opacity 0.78s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
@@ -19769,7 +19769,7 @@ body .static-step-card .step-media::after {
     right: -48px !important;
     background:
       linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)),
-      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=2") center / cover no-repeat !important;
+      url("../assets/img/atmosphere/racing-line-clean-960.webp?v=8") center / cover no-repeat !important;
     background-color: #000000 !important;
     visibility: visible !important;
     animation: none !important;

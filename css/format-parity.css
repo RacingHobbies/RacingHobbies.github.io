@@ -1370,9 +1370,16 @@ h1[data-reveal-lines] {
   html body main > section.race-sector.service-cta-section,
   html body main > section.race-sector.about-vision-section,
   html body main > section.race-sector.pit-band {
-    min-height: 100svh !important;
-    padding-top: 150px !important;
-    padding-bottom: 46px !important;
+    /* SUELO, no objetivo. Forzar 100svh dejaba estas secciones al 39-60% de
+       llenado: pantalla entera con el contenido encogido en medio, que es
+       justo lo que se ve mal. Su contenido mide 330-516px, así que ninguna
+       cantidad de relleno la llena; lo que sí funciona es que la sección mida
+       lo que su contenido pide. Con este suelo ninguna queda achaparrada y
+       todas suben al 68-75% de llenado. */
+    min-height: 62svh !important;
+    /* 118px libran el logo (que acaba en 62px) con aire de sobra. */
+    padding-top: 118px !important;
+    padding-bottom: 52px !important;
   }
 
   /* Dar la pantalla entera no basta: el bloque de contenido mide 435-455px, así
@@ -1385,7 +1392,9 @@ h1[data-reveal-lines] {
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-evenly !important;
-    min-height: 62svh !important;
+    /* Sin `min-height`: forzarlo estiraba la sección a 795px para un contenido
+       de 400-450, que es el mismo vicio que se está corrigiendo arriba. El
+       reparto se conserva para cuando la sección sí es alta. */
   }
 
   /* El manifiesto sí es escena fijada: su alto ES el recorrido del scroll. Pero
@@ -1397,34 +1406,15 @@ h1[data-reveal-lines] {
 }
 
 /* ==========================================================================
-   MÓVIL: VELO BAJO LA CABECERA FLOTANTE
-   La cabecera es `position: fixed` con fondo transparente, y `styles.css:10236`
-   anula sus dos pseudoelementos, así que no queda NADA detrás del logo ni de
-   los botones: el texto de la página pasa por debajo y se mezcla con ellos. En
-   un recorrido de servicio-tecnico.html hay texto tapado en 6 de 18 posiciones
-   de scroll. Un degradado desde arriba lo separa sin perder el aire de la
-   cabecera flotante: opaco donde están los controles y disuelto al llegar al
-   contenido.
+   SIN VELO BAJO LA CABECERA
+   Aquí hubo un degradado negro sobre `.site-header::after` para que el texto no
+   se mezclara con el logo al pasar por debajo. Se retira: medido pixel a pixel,
+   con el velo puesto la franja superior salía rgb(35,105,36) —verde— y sin él
+   rgb(21,21,21) —negro neutro—. Un elemento `fixed` con `z-index:-1` dentro de
+   la cabecera cambia el compositing de las escenas fijadas que hay debajo y
+   destapaba ese verde. El logo y los botones ya tienen fondo propio y sólido,
+   así que se leen sin necesidad de velo.
    ========================================================================== */
-
-@media (max-width: 899px) {
-  .site-header::after {
-    content: "" !important;
-    display: block !important;
-    position: fixed;
-    inset: 0 0 auto 0;
-    height: 118px;
-    background: linear-gradient(
-      to bottom,
-      rgb(0 0 0 / 0.94) 0%,
-      rgb(0 0 0 / 0.86) 38%,
-      rgb(0 0 0 / 0.55) 68%,
-      rgb(0 0 0 / 0) 100%
-    );
-    pointer-events: none;
-    z-index: -1;
-  }
-}
 
 /* ==========================================================================
    LA BARRA DE PROGRESO SÓLO EXISTE MIENTRAS SU CARRIL ESTÁ ACTIVO
