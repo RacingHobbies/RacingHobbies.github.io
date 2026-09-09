@@ -19,7 +19,7 @@ command -v openssl >/dev/null 2>&1 || fail "OpenSSL es necesario para validar ha
 command -v sha256sum >/dev/null 2>&1 || fail "sha256sum es necesario para validar dependencias vendorizadas."
 bash -n scripts/verify-production-security.sh scripts/verify-domain-security.sh ||
   fail "La sintaxis de un verificador de seguridad es inválida."
-bash -n scripts/update-sri.sh scripts/build-production.sh scripts/package-production.sh ||
+bash -n scripts/update-sri.sh scripts/build-production.sh scripts/package-production.sh scripts/package-cloudflare.sh ||
   fail "La sintaxis del flujo de build/SRI es inválida."
 
 html_files=( *.html )
@@ -49,6 +49,9 @@ rg -q 'Strict-Transport-Security:' _headers || fail "Falta HSTS en las cabeceras
 rg -q 'X-Content-Type-Options: nosniff' _headers || fail "Falta nosniff en las cabeceras de hosting."
 rg -q 'Permissions-Policy:' _headers || fail "Falta Permissions-Policy en las cabeceras de hosting."
 rg -q 'X-Frame-Options: DENY' _headers || fail "Falta X-Frame-Options DENY en las cabeceras de hosting."
+rg -Fq 'https://:project.pages.dev/*' _headers || fail "Falta noindex para el dominio gratuito de Cloudflare Pages."
+rg -Fq 'https://:version.:project.pages.dev/*' _headers || fail "Falta noindex para previews de Cloudflare Pages."
+rg -q 'X-Robots-Tag: noindex, nofollow' _headers || fail "Los dominios de prueba de Cloudflare son indexables."
 rg -q "img-src 'self';" _headers || fail "La CSP del hosting permite imágenes fuera de self."
 rg -q "img-src 'self';" nginx-security-headers.conf.example ||
   fail "La plantilla Nginx permite imágenes fuera de self."
@@ -99,7 +102,7 @@ for apache_directive in \
   'Header always set X-Frame-Options "DENY"' \
   'RewriteRule (^|/)\.(?!well-known' \
   'LimitExcept GET HEAD OPTIONS' \
-  'FilesMatch "^(?:\.|.*\.(?:bak|old|orig|swp|swo|map))$"' \
+  'FilesMatch "(?i)^(?:\..*|.*\.(?:bak|old|orig|swp|swo|map))$"' \
   'Require all denied'; do
   rg -Fq "$apache_directive" .htaccess ||
     fail "Falta en .htaccess la defensa Apache: $apache_directive"

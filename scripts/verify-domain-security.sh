@@ -43,28 +43,13 @@ caa_records="$(dig +short CAA "$DOMAIN")"
 [[ -n "$caa_records" ]] ||
   fail "$DOMAIN no tiene política CAA."
 
-unexpected_caa="$(printf '%s\n' "$caa_records" | awk '
-  $3 == "issue" || $3 == "issuewild" {
-    value = $4
-    gsub(/"/, "", value)
-    if (value != "letsencrypt.org") print
-  }
-')"
-[[ -z "$unexpected_caa" ]] ||
-  fail "CAA permite autoridades distintas de letsencrypt.org: $unexpected_caa"
-
+# dig +short devuelve flags, etiqueta y valor (sin nombre ni TTL).
+# La CA legitima depende del hosting; issuewild es opcional.
 printf '%s\n' "$caa_records" | awk '
-  $3 == "issue" {
-    value = $4
-    gsub(/"/, "", value)
-    if (value == "letsencrypt.org") issue = 1
-  }
-  $3 == "issuewild" {
-    value = $4
-    gsub(/"/, "", value)
-    if (value == "letsencrypt.org") issuewild = 1
-  }
-  END { exit !(issue && issuewild) }
-' || fail "CAA debe permitir explícitamente issue e issuewild solo para letsencrypt.org."
+  $2 == "issue" { issue = 1 }
+  END { exit !issue }
+' || fail "No se encontró una política CAA issue explícita en este dominio."
 
-echo "Seguridad DNS verificada: DNSSEC activo y CAA restringido a Let's Encrypt para $DOMAIN"
+echo "Comprobaciones DNS básicas superadas para $DOMAIN."
+echo "CAA observado (confirmar con el proveedor que permite renovar todos los certificados):"
+printf '%s\n' "$caa_records"
