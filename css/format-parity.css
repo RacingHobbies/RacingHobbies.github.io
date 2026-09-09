@@ -1643,6 +1643,10 @@ body .static-step-card .step-media::after {
   .info-item p a {
     min-height: 38px !important;
     padding: 10px 0 !important;
+  }
+}
+
+/* ==========================================================================
    MÓVIL: RITMO DE PANTALLA ÚNICO
    Tres medidas, tres problemas distintos, todos del mismo origen: en móvil la
    composición se dimensiona por ANCHO (vw) mientras la escena se dimensiona
@@ -1724,7 +1728,10 @@ body .static-step-card .step-media::after {
    el archivo y la sección crecía a 430px sobre un viewport de 390. */
 @media (max-width: 899px) and (orientation: portrait) {
   .page-home .home-location {
-    padding-top: clamp(56px, 7.8svh, 92px) !important;
+    /* 7.8svh daban 66px y la sección medía 856 sobre 844: los enlaces de la
+       lista pasaron a 38px de alto mínimo por objetivo táctil y sumaron 12px
+       que antes no estaban. El respiro superior los devuelve. */
+    padding-top: clamp(46px, 6.3svh, 80px) !important;
     padding-bottom: clamp(12px, 1.8svh, 34px) !important;
   }
 }
@@ -1856,6 +1863,12 @@ body .static-step-card .step-media::after {
     min-height: 0;
   }
 
+  /* Los márgenes propios de cada pieza se dejan como están. Anularlos para que
+     repartiera sólo el contenedor se probó y se descartó: en pit-band, CTA y
+     visión no cambiaba nada, y en comunidad empeoraba —el abanico de tarjetas
+     se apoya en ellos porque sus fichas están posicionadas y desbordan la caja
+     del `.deck`, así que un reparto uniforme hundía el titular 200px—. */
+
   /* --- La franja de marcas es una banda, no una escena ------------------
      Rótulo y marquesina suman 104px de contenido. Estirados a una pantalla
      entera daban un 12% de relleno y un hueco de 620px: el peor reparto del
@@ -1916,5 +1929,77 @@ body .static-step-card .step-media::after {
 
   body:not(.page-home) .page-hero > .container > h1 ~ * {
     margin-top: clamp(18px, 3svh, 28px) !important;
+  }
+}
+
+/* ===========================================================================
+   TELÉFONO EN HORIZONTAL: LA CABECERA Y EL 404 CABEN EN LA PANTALLA
+   Aquí se rompe por ALTO, no por ancho. Con la escala de vertical, la cabecera
+   de una página interna medía 526px sobre un viewport de 375 y el 404 llegaba a
+   607: se entraba a la página sin poder leer el titular entero. La letra baja a
+   escala de apaisado y los respiros se ajustan al alto disponible.
+   ========================================================================== */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  body:not(.page-home) .page-hero {
+    padding-top: calc(var(--header-h) + 10px) !important;
+    padding-bottom: 18px !important;
+  }
+
+  body:not(.page-home) .page-hero > .container > h1 {
+    font-size: clamp(26px, 4.8vw, 34px) !important;
+    line-height: 1.06 !important;
+    margin: 6px 0 10px !important;
+  }
+
+  body:not(.page-home) .page-hero > .container > p:not(.kicker) {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+    margin-top: 0 !important;
+  }
+
+  /* El "404" ocupaba 156px de alto con 173px de cuerpo: en apaisado es la
+     pieza que desborda la pantalla ella sola. */
+  .page-error .error-page {
+    padding-top: calc(var(--header-h) + 8px) !important;
+    padding-bottom: 18px !important;
+  }
+
+  .page-error .error-code {
+    font-size: clamp(60px, 11vw, 92px) !important;
+    line-height: 1 !important;
+    margin: 2px 0 6px !important;
+  }
+
+  .page-error .error-title {
+    font-size: clamp(18px, 3.2vw, 24px) !important;
+    margin: 0 0 6px !important;
+  }
+
+  .page-error .error-sub {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+    margin: 0 0 12px !important;
+  }
+}
+
+/* ===========================================================================
+   PANTALLAS BAJAS EN VERTICAL: COMUNIDAD RECOGE SUS MÁRGENES
+   Los botones de redes traen `margin-top: 104px` y `margin-bottom: 70px` para
+   dar aire al abanico, cuyas fichas están posicionadas y desbordan la caja del
+   `.deck`. En una pantalla de 844 ese aire es correcto y por eso no se toca
+   allí; en una de 667 son 174px de margen puro que sacan la sección a 725px.
+   Se recortan sólo donde estorban, sin llegar a cero: a cero el abanico se
+   comía los botones (probado al anular los márgenes en todas las bandas).
+   ========================================================================== */
+
+@media (max-width: 899px) and (orientation: portrait) and (max-height: 760px) {
+  .page-home .community-section .social-links {
+    margin-top: 44px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .page-home .community-section .deck {
+    margin-bottom: 14px !important;
   }
 }
