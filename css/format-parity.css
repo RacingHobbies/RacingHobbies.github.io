@@ -1349,20 +1349,44 @@ h1[data-reveal-lines] {
    ========================================================================== */
 
 @media (max-width: 899px) {
-  /* Héroe de las páginas interiores. `body:not(.page-home) .page-hero` fijaba
-     100svh sin media query y le ganaba a la regla móvil que ya intentaba
-     72svh. Con 330-420px de contenido quedaban ~250px vacíos por arriba y
-     ~170 por abajo: más de la mitad del alto era aire. */
-  body:not(.page-home) .page-hero {
-    min-height: 64svh !important;
-    padding-top: 128px !important;
-    padding-bottom: 56px !important;
+  /* --- Ritmo uniforme: una pantalla por sección ------------------------
+     Estas cinco secciones se quedaban entre el 64% y el 76% de la pantalla,
+     así que al pasarlas quedaba media sección visible y la siguiente asomando:
+     ni una cosa ni la otra. Pasan a ocupar una pantalla exacta.
+
+     Lo que hace que una pantalla llena NO se sienta vacía es dónde cae el
+     contenido. Ya son `flex` centradas, así que sólo hay que compensar la
+     cabecera flotante: con relleno simétrico el bloque se centraba respecto a
+     la caja entera y quedaba alto, medio metido bajo el logo. Con 150 arriba y
+     46 abajo el centro óptico cae en 474px, casi exactamente el medio del área
+     visible por debajo de la cabecera (481px).
+
+     Los selectores van tan cargados por necesidad, no por gusto: el relleno de
+     92px lo fija `body:not(.page-home) main > section:not(.page-hero)`, que
+     suma dos clases y tres elementos. Un `main > .service-cta-section` pierde
+     y el contenido se quedaba 50px alto dentro de la pantalla. */
+  body:not(.page-home) .page-hero,
+  html body main > section.race-sector.community-section,
+  html body main > section.race-sector.service-cta-section,
+  html body main > section.race-sector.about-vision-section,
+  html body main > section.race-sector.pit-band {
+    min-height: 100svh !important;
+    padding-top: 150px !important;
+    padding-bottom: 46px !important;
   }
 
-  /* Esta sección NO está fijada —no genera pin-spacer—, así que su 100svh era
-     altura muerta: 393px de contenido en 844px de caja. */
-  main > .community-section {
-    min-height: 0 !important;
+  /* Dar la pantalla entera no basta: el bloque de contenido mide 435-455px, así
+     que sólo con relleno quedaban ~200px muertos arriba y otros tantos abajo.
+     Aquí el contenedor toma una altura mínima y REPARTE sus bloques dentro,
+     de modo que la sección se llena con contenido y no con aire. */
+  html body main > section.race-sector.community-section > .container,
+  html body main > section.race-sector.service-cta-section > .container,
+  html body main > section.race-sector.about-vision-section > .container,
+  html body main > section.race-sector.pit-band > .container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-evenly !important;
+    min-height: 62svh !important;
   }
 
   /* El manifiesto sí es escena fijada: su alto ES el recorrido del scroll. Pero
@@ -1370,5 +1394,35 @@ h1[data-reveal-lines] {
      sensación de "esta sección no se acaba nunca". */
   .ln-manifesto {
     min-height: 150svh !important;
+  }
+}
+
+/* ==========================================================================
+   MÓVIL: VELO BAJO LA CABECERA FLOTANTE
+   La cabecera es `position: fixed` con fondo transparente, y `styles.css:10236`
+   anula sus dos pseudoelementos, así que no queda NADA detrás del logo ni de
+   los botones: el texto de la página pasa por debajo y se mezcla con ellos. En
+   un recorrido de servicio-tecnico.html hay texto tapado en 6 de 18 posiciones
+   de scroll. Un degradado desde arriba lo separa sin perder el aire de la
+   cabecera flotante: opaco donde están los controles y disuelto al llegar al
+   contenido.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .site-header::after {
+    content: "" !important;
+    display: block !important;
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 118px;
+    background: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.94) 0%,
+      rgb(0 0 0 / 0.86) 38%,
+      rgb(0 0 0 / 0.55) 68%,
+      rgb(0 0 0 / 0) 100%
+    );
+    pointer-events: none;
+    z-index: -1;
   }
 }
