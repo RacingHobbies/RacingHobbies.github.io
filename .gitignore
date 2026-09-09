@@ -12,6 +12,14 @@ Thumbs.db
 .claude/
 output/
 .release/
+.release-staging-*/
+.release-backup-*/
+.release-artifacts-*/
+.apache-artifacts-*/
+.cloudflare-pages/
+.cloudflare-pages-staging-*/
+.cloudflare-pages-backup-*/
+.cloudflare-artifacts-*/
 
 # Notas de diseño internas
 docs/

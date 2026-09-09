@@ -25,13 +25,42 @@ python3 -m http.server 8080
 
 ## Publicación
 
+### Vista de prueba segura en Cloudflare Pages
+
+La versión revisada está desplegada gratuitamente en
+<https://racing-hobbies-preview.pages.dev/>. Es una vista de prueba en
+Cloudflare Pages: no se compró ni conectó ningún dominio, no se modificaron DNS
+y no se añadió ningún método de pago. Las respuestas aplican las reglas de
+`_headers`, incluidas CSP estricta, HSTS, protección anti-clickjacking y
+políticas de permisos. Además, el subdominio gratuito lleva
+`X-Robots-Tag: noindex, nofollow` para que los buscadores no lo traten como el
+sitio comercial definitivo.
+
+El proyecto se creó mediante **Direct Upload**, sin conceder a Cloudflare
+acceso al repositorio de GitHub. Para preparar una actualización manual:
+
+```bash
+./scripts/package-cloudflare.sh
+# subir el contenido de .cloudflare-pages/ en el proyecto
+# racing-hobbies-preview del panel de Cloudflare Pages
+```
+
+La salida de Cloudflare excluye `.htaccess`, que solo corresponde a Apache, y
+conserva `_headers`. Antes de subirla, el empaquetador valida archivos, rutas e
+integridad SRI. Direct Upload es apropiado para estas pruebas; si después se
+quieren despliegues automáticos desde GitHub, se crea un proyecto conectado al
+repositorio al pasar al dominio definitivo.
+
 Sube **solo los archivos del sitio**, nunca la carpeta entera: `.playwright-cli/`,
 `output/`, `.claude/` y `docs/` son material de trabajo (capturas, logs con trazas
 de error y rutas locales del equipo) y en GitHub Pages el repositorio es público.
 El `.gitignore` ya los excluye; para una carga manual usa
-`./scripts/package-production.sh` y sube únicamente `.release/`.
+`./scripts/package-production.sh`, extrae el comprimido indicado en una carpeta
+vacía y sube únicamente su contenido, incluidos los archivos ocultos. No subas
+el comprimido ni su manifiesto al directorio público. Consulta `SECURITY.md`
+para identificar el entregable verificado y los pendientes del hosting.
 
-### Dónde está publicado
+### Publicación anterior en GitHub Pages
 
 En <https://racinghobbies.github.io/>, desde el repositorio
 [`RacingHobbies/RacingHobbies.github.io`](https://github.com/RacingHobbies/RacingHobbies.github.io)
@@ -98,7 +127,8 @@ la documentación del repositorio.
 | `nginx-security-headers.conf.example` | Cabeceras listas para Nginx/OpenResty |
 | `.htaccess` | HTTPS, cabeceras, 404 y bloqueo de archivos sensibles para Apache/cPanel |
 | `VENDOR-SHA256SUMS` | Huellas SHA-256 de los bundles de terceros y del guardia anti-clickjacking |
-| `scripts/verify-domain-security.sh` | Comprueba DNSSEC y restringe CAA a Let's Encrypt |
+| `scripts/verify-domain-security.sh` | Comprueba SPF, DMARC, DNSSEC y presencia de CAA; no modifica DNS |
+| `scripts/security-regression.test.mjs` | Pruebas del empaquetador, reglas Apache, página 404 y verificador CAA |
 | `assets/img/` | Fotos reales de productos y logos de marcas |
 | `assets/img/social/` | Pósters de los reels de Instagram que salen en "Lo que pasa en redes" |
 | `assets/fonts/` | Anton y Archivo (woff2 locales, licencia OFL) |
@@ -110,7 +140,8 @@ la documentación del repositorio.
 | `robots.txt` / `sitemap.xml` | Descubrimiento e indexación |
 | `scripts/build-production.sh` | Regenera CSS/JS minificados tras editar fuentes |
 | `scripts/update-sri.sh` | Recalcula automáticamente la integridad SRI del HTML |
-| `scripts/package-production.sh` | Genera una carpeta publicable sin artefactos internos |
+| `scripts/package-production.sh` | Genera una carpeta publicable y un comprimido único con manifiesto SHA-256 |
+| `scripts/package-cloudflare.sh` | Genera y valida `.cloudflare-pages/` para una carga directa, sin archivos exclusivos de Apache |
 
 ## Datos reales configurados
 
@@ -187,9 +218,10 @@ por Servientrega).
 - Antes de publicar, ejecuta `./scripts/security-audit.sh`; detecta regresiones
   de CSP, iframes no autorizados, scripts remotos, enlaces `_blank` inseguros,
   hashes JSON-LD desactualizados y errores de sintaxis JavaScript.
-- Después de publicar, ejecuta `./scripts/verify-production-security.sh
-  https://racinghobbiesec.com/`; el despliegue debe aplicar realmente `_headers`
-  y servir esta versión del sitio.
+- Después de publicar, ejecuta `./scripts/verify-production-security.sh URL`;
+  el despliegue debe aplicar realmente `_headers` y servir esta versión del
+  sitio. La vista gratuita actual supera la comprobación con
+  `https://racing-hobbies-preview.pages.dev/`.
 - Las páginas informativas y los enlaces de contacto siguen siendo útiles sin
   JavaScript; catálogo dinámico, carrito y validación enriquecida requieren JS.
 

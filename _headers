@@ -4,6 +4,14 @@
 # frame-ancestors, X-Frame-Options, HSTS y Permissions-Policy solo existen como
 # cabecera. Para tenerlas de verdad hay que poner Cloudflare (plan gratuito)
 # delante del dominio, o migrar a Netlify/Cloudflare Pages, que sí leen esto.
+
+# Las URLs gratuitas y sus previews son para pruebas, no para indexación.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
 /*
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-elem 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; worker-src 'self'; frame-src https://www.google.com; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Cross-Origin-Opener-Policy: same-origin

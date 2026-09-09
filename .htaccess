@@ -44,21 +44,24 @@ ErrorDocument 404 /404.html
   <LimitExcept GET HEAD OPTIONS>
     Require all denied
   </LimitExcept>
-  <FilesMatch "^(?:\.|.*\.(?:bak|old|orig|swp|swo|map))$">
+  <FilesMatch "(?i)^(?:\..*|.*\.(?:bak|old|orig|swp|swo|map))$">
     Require all denied
   </FilesMatch>
-  <FilesMatch "^(?:package\.json|config\.json)$">
+  <FilesMatch "(?i)^(?:package\.json|config\.json)$">
     Require all denied
   </FilesMatch>
-  <FilesMatch "\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$">
+  <FilesMatch "(?i)\.(?:php[0-9]?|phtml|phar|cgi|pl|py|sh)$">
     Require all denied
   </FilesMatch>
 </IfModule>
 
 # El contenido versionado puede cachearse; el HTML siempre debe revalidarse.
 <IfModule mod_headers.c>
-  <FilesMatch "\.(?:css|js|woff2)$">
+  <FilesMatch "\.woff2$">
     Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(?:css|js)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
   <FilesMatch "\.(?:webp|png|svg)$">
     Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"

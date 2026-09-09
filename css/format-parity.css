@@ -227,6 +227,76 @@
   }
 }
 
+/* ===========================================================================
+   TELÉFONO: PANELES DE ACCIÓN A PANTALLA COMPLETA
+   En un teléfono, el carrito y la ficha no son elementos secundarios: son el
+   siguiente paso de la navegación. Abrirlos como tarjetas estrechas dejaba
+   controles de la cabecera visibles por detrás y desperdiciaba espacio útil.
+   Se convierten en vistas completas sólo por debajo de 600px; tablet y
+   escritorio conservan el comportamiento de panel lateral / diálogo.
+   ========================================================================== */
+
+@media (max-width: 599px) {
+  .modal-backdrop {
+    z-index: 10040 !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+  }
+
+  .modal {
+    width: 100% !important;
+    min-height: 100svh !important;
+    max-height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .modal-body {
+    padding: 22px 20px calc(22px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .modal-close {
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: 16px !important;
+  }
+
+  .cart-drawer {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100vw !important;
+    min-height: 100svh !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10050 !important;
+  }
+
+  .cart-head {
+    padding: max(16px, env(safe-area-inset-top)) 20px 16px !important;
+  }
+
+  .cart-items {
+    padding-inline: 20px !important;
+  }
+
+  .cart-empty {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding-block: 24px !important;
+  }
+
+  .cart-foot {
+    padding: 16px 20px max(20px, env(safe-area-inset-bottom)) !important;
+  }
+}
+
 /* --------------------------------------------------------------------------
    6. Fotos de las tarjetas de proceso (Nosotros / Servicio técnico)
    El -18px de sangrado está pensado para una tarjeta con 18px de relleno
@@ -1573,5 +1643,135 @@ body .static-step-card .step-media::after {
   .info-item p a {
     min-height: 38px !important;
     padding: 10px 0 !important;
+   MÓVIL: RITMO DE PANTALLA ÚNICO
+   Tres medidas, tres problemas distintos, todos del mismo origen: en móvil la
+   composición se dimensiona por ANCHO (vw) mientras la escena se dimensiona
+   por ALTO (svh), así que nunca encajan.
+
+     · Ficha del carril: 172 x 275 dentro de un carril de 570px de alto.
+       296px muertos, el 52% del carril. En escritorio sobran 15.
+     · La barra de progreso del carril queda como una raya verde suelta.
+     · Las secciones miden 734 / 844 / 854 px según su contenido, así que al
+       hacer scroll siempre ves la cola de una y la cabeza de la siguiente.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  /* --- 1. La ficha llena el carril, como en la referencia ancha ---------
+     El alto manda y el ancho lo sigue. `min()` con `svh` evita que en una
+     tablet vertical la ficha se vaya a 500px de ancho. */
+  /* La vitrina sí gana con el estirado: su ficha es foto + datos + botón, y
+     el reparto interno absorbe el alto. */
+  html.lando-anim .home-showcase [data-lando-htrack] > .rh-hcard {
+    width: min(62vw, 30svh) !important;
+    height: 100% !important;
+    max-height: none !important;
+  }
+
+  /* Categorías no: su foto es CUADRADA con `object-fit: contain`, así que
+     estirar la ficha a 570px sólo añade 139px de negro arriba y otros tantos
+     abajo. Lo que agranda la foto es el ANCHO. La ficha crece a lo ancho y
+     conserva su alto natural (foto + rótulo), y la escena centra el bloque
+     para que el aire sobrante quede repartido y no como un hueco al pie. */
+  /* Categorías no: su foto es CUADRADA con `object-fit: contain`, así que
+     estirar la ficha a 570px sólo añadía 139px de negro arriba y otros tantos
+     abajo. Lo que agranda la foto aquí es el ANCHO: la ficha crece a lo ancho
+     y conserva su alto natural (foto + rótulo), centrada en el carril para
+     que el aire sobrante quede repartido y no como un hueco al pie.
+
+     Probado y descartado: repartirlas en dos filas llena mejor el alto, pero
+     deja el carril en 604px de ancho y `main.js` desactiva cualquier riel con
+     menos de 300px de recorrido — la sección dejaba de estar fijada, crecía a
+     898px y el titular saltaba a 58px. Ver [[landscape-phone-breakpoint]]. */
+  html.lando-anim .editorial-garage [data-lando-htrack] > .rh-hcard {
+    width: min(76vw, 36svh) !important;
+    height: auto !important;
+    max-height: 100% !important;
+  }
+
+  html.lando-anim .editorial-garage [data-lando-htrack] {
+    align-items: center !important;
+  }
+
+  /* --- 2. Fuera la barra de progreso -----------------------------------
+     En una pantalla estrecha el propio desplazamiento de las fichas ya dice
+     dónde estás; la barra sólo aportaba una raya verde de 2px a todo lo
+     ancho, que es lo que se veía suelto bajo la cabecera. */
+  html.lando-anim .rh-hbar {
+    display: none !important;
+  }
+}
+
+/* --- 3. La filigrana del producto vuelve a ser filigrana ---------------
+   En pantalla completa la palabra fantasma mide 345px contra los 90 del
+   titular: 3.8 veces más grande, recortada por el borde, y se lee como
+   textura de fondo. En móvil medía 117 contra 61 —menos del doble— y con el
+   mismo recorte central: no parecía una marca de agua sino el titular
+   duplicado y desplazado. Se le devuelve la proporción y el anclaje al
+   borde izquierdo de la referencia ancha. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .page-home .feature-hero .ghost {
+    top: 20% !important;
+    left: -0.03em !important;
+    font-size: 58vw !important;
+  }
+}
+
+/* --- 4. "Estamos en Quito" cabe en una pantalla ------------------------
+   Medía 854px sobre un viewport de 844: los últimos 10px de la tarjeta del
+   mapa quedaban siempre fuera, y con ellos el borde inferior redondeado. */
+@media (max-width: 899px) {
+  .page-home .home-location {
+    padding-top: clamp(56px, 7.8svh, 92px) !important;
+    padding-bottom: clamp(12px, 1.8svh, 34px) !important;
+  }
+}
+
+/* --- 5. La "barra verde" era la fila de botones "Agregar" --------------
+   Medido: en pantalla completa el pie de la ficha de vitrina es una FILA
+   (precio a la izquierda, botón a la derecha) y el botón ocupa el 34% de la
+   ficha — el 9% de la pantalla. En móvil pasaba a COLUMNA con `stretch`, así
+   que el botón se estiraba al 85% de la ficha y al 53% de la pantalla: dos
+   fichas contiguas y su verde se junta en una banda de 40px a todo lo ancho
+   que barre la pantalla al hacer scroll. Eso es la barra verde.
+
+   La ficha de vitrina mide 242px, de sobra para la fila de la referencia
+   ancha. (La del catálogo sí se apila: allí la ficha mide 114px y no cabe.) */
+@media (max-width: 899px) {
+  /* Especificidad por encima de `html.lando-anim [data-lando-htrack]
+     .tile-foot`, que fija la columna para el carril. */
+  html.lando-anim [data-lando-htrack] .vitrina-grid .tile .tile-foot,
+  html.lando-anim .home-showcase [data-lando-htrack] .tile-foot {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  html.lando-anim .home-showcase [data-lando-htrack] .tile-foot .add-btn {
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding-inline: clamp(10px, 3.4vw, 18px) !important;
+  }
+
+  html.lando-anim .home-showcase [data-lando-htrack] .tile-foot .prod-price,
+  html.lando-anim .home-showcase [data-lando-htrack] .tile-foot .tile-price {
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+}
+
+/* --- 6. El mismo hueco en los carriles de las páginas internas ---------
+   Medido en Nosotros y Servicio técnico: ficha de 172 x 275 dentro de un
+   carril de 579px de alto — 304px muertos, el 52%. En pantalla completa la
+   ficha mide 389 x 499 y no sobra ni un píxel. La tarjeta de proceso es foto
+   + título + texto, así que reparte bien el alto extra, igual que la de
+   vitrina. */
+@media (max-width: 899px) {
+  html.lando-anim body:not(.page-home) [data-lando-htrack] > .static-step-card {
+    width: min(62vw, 30svh) !important;
+    height: 100% !important;
+    max-height: none !important;
+
   }
 }

@@ -49,13 +49,9 @@ if printf '%s\n' "$body" | rg -q 'aes\.js|slowAES|__test='; then
   fail "El servidor responde el challenge legado de OpenResty en vez del sitio."
 fi
 
-# El sitio es estático: ningún método que cambie datos debe terminar en 2xx.
-for method in POST PUT PATCH DELETE TRACE CONNECT; do
-  method_status="$(curl -ksS -o /dev/null -w '%{http_code}' --max-time 20 \
-    -A 'RacingHobbiesSecurityCheck/1.0' -X "$method" "$TARGET_URL" || true)"
-  [[ "$method_status" =~ ^(400|403|404|405|501)$ ]] ||
-    fail "El servidor acepta $method con HTTP $method_status; un sitio estático debe rechazarlo."
-done
+# Los métodos de escritura se prueban solo en el servidor aislado de
+# security-regression.test.mjs. En producción este verificador es de lectura:
+# un DELETE sobre la raíz no es un diagnóstico seguro de un servidor desconocido.
 
 http_url="${TARGET_URL/https:/http:}"
 http_headers="$(curl -fsSI --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "$http_url")" ||
@@ -65,7 +61,8 @@ target_origin="https://$target_host"
 not_found_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "$target_origin/__racing_hobbies_security_probe__.html" || true)"
 [[ "$not_found_status" == "404" ]] ||
   fail "Una ruta inexistente no devuelve 404 real: HTTP $not_found_status."
-not_found_headers="$(curl -ksS -D - -o /dev/null --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "$target_origin/__racing_hobbies_security_probe__.html" || true)"
+not_found_headers="$(curl -sS -D - -o /dev/null --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "$target_origin/__racing_hobbies_security_probe__.html")" ||
+  fail "No se pudo verificar la respuesta 404."
 not_found_headers_lower="$(printf '%s\n' "$not_found_headers" | tr '[:upper:]' '[:lower:]')"
 for error_header in 'content-security-policy:' 'x-frame-options: deny' 'x-content-type-options: nosniff'; do
   printf '%s\n' "$not_found_headers_lower" | rg -q -F "$error_header" ||
@@ -74,8 +71,8 @@ done
 
 for probe_path in /.env /.git/HEAD /package.json /config.json /server-status /nginx_status; do
   probe_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "$target_origin$probe_path" || true)"
-  [[ ! "$probe_status" =~ ^2 ]] ||
-    fail "Ruta sensible accesible con HTTP $probe_status: $probe_path"
+  [[ "$probe_status" == 403 || "$probe_status" == 404 ]] ||
+    fail "No se pudo confirmar el bloqueo de $probe_path: HTTP $probe_status"
 done
 
 printf '%s\n' "$http_headers" | rg -q '^HTTP/[0-9.]+ (301|302|307|308) ' ||
@@ -84,7 +81,10 @@ printf '%s\n' "$http_headers" | rg -q '^HTTP/[0-9.]+ (301|302|307|308) ' ||
 printf '%s\n' "$http_headers" | tr '[:upper:]' '[:lower:]' | rg -q '^location: https://' ||
   fail "La redirección HTTP no apunta a HTTPS: $http_url"
 
-if [[ "$target_host" != www.* ]]; then
+# pages.dev es un dominio técnico de Cloudflare: no existe ni debe existir un
+# alias "www" por proyecto. La comprobación sigue siendo obligatoria para el
+# dominio comercial cuando se conecte más adelante.
+if [[ "$target_host" != www.* && "$target_host" != *.pages.dev ]]; then
   www_headers="$(curl -fsSIL --max-time 20 -A 'RacingHobbiesSecurityCheck/1.0' "https://www.$target_host/")" ||
     fail "No se pudo consultar el alias www."
   printf '%s\n' "$www_headers" | rg -q '^HTTP/[0-9.]+ (301|302|307|308) ' ||
@@ -128,7 +128,7 @@ for directive in "${csp_directives[@]}"; do
     printf '%s\n' "$headers_lower" | rg -q -F "$directive" ||
     fail "La CSP de producción no contiene: $directive"
 done
-printf '%s\n' "$headers_lower" | rg -q 'strict-transport-security:.*max-age=[1-9][0-9]*.*includeSubDomains' ||
+printf '%s\n' "$headers_lower" | rg -q 'strict-transport-security:.*max-age=[1-9][0-9]*.*includesubdomains' ||
   fail "HSTS no tiene max-age positivo e includeSubDomains."
 
 cookie_headers="$(printf '%s\n' "$headers_lower" | rg '^set-cookie:' || true)"
