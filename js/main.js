@@ -304,6 +304,51 @@
     }
   }
 
+  /* --- La cabecera se retira al bajar y vuelve al subir -----------------
+     El logo y los botones son `fixed`, así que el contenido pasaba por detrás
+     de ellos: medido recorriendo las siete páginas, había texto bajo la
+     cabecera en 86 posiciones de scroll. Un velo por detrás no vale (el que
+     hubo aquí destapaba un verde en las escenas fijadas), y agrandar los
+     márgenes de cada sección tampoco: el choque ocurre a mitad de recorrido,
+     no en los bordes. Retirar la cabecera al bajar lo resuelve de raíz y
+     además devuelve esos 62px de pantalla mientras se lee. */
+  (function cabeceraQueSeRetira() {
+    const raiz = document.documentElement;
+    let ultimo = window.scrollY || 0;
+    let pedido = false;
+
+    const evaluar = () => {
+      pedido = false;
+      const y = window.scrollY || 0;
+      const delta = y - ultimo;
+      // Con una capa abierta el fondo está bloqueado: la cabecera se queda.
+      const bloqueado =
+        document.body.classList.contains("menu-open") ||
+        document.body.classList.contains("cart-open") ||
+        document.body.classList.contains("overlay-open");
+
+      if (bloqueado || y < 170) {
+        raiz.classList.remove("rh-cabecera-oculta");
+      } else if (delta > 6) {
+        raiz.classList.add("rh-cabecera-oculta");
+      } else if (delta < -6) {
+        raiz.classList.remove("rh-cabecera-oculta");
+      }
+      // El umbral de 6px evita que el rebote del scroll suave la haga parpadear.
+      if (Math.abs(delta) > 6) ultimo = y;
+    };
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (pedido) return;
+        pedido = true;
+        window.requestAnimationFrame(evaluar);
+      },
+      { passive: true }
+    );
+  })();
+
   function setBackgroundInert(active) {
     Array.from(document.body.children).forEach((child) => {
       if (child.id !== "rh-global-ui" && child.tagName !== "SCRIPT") {

@@ -1512,3 +1512,66 @@ body .static-step-card .step-media::after {
     margin-top: 104px !important;
   }
 }
+
+/* ==========================================================================
+   CABECERA QUE SE RETIRA AL BAJAR
+   El logo y los botones son `fixed` y el contenido les pasaba por detrás: 86
+   posiciones de scroll con texto tapado en las siete páginas. Se retiran al
+   bajar y vuelven al subir, que resuelve el choque sin poner nada encima del
+   contenido y devuelve la franja superior mientras se lee.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .site-header .logo,
+  .header-actions {
+    transition:
+      transform 0.34s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.26s ease !important;
+    will-change: transform;
+  }
+
+  /* Gana a `.site-header .logo { transform: none !important }` de
+     community-fix.css sumando la clase de la raíz. */
+  html.rh-cabecera-oculta .site-header .logo,
+  html.rh-cabecera-oculta .header-actions {
+    transform: translateY(-160%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Sin movimiento la cabecera no se esconde: quien lo pide no quiere sorpresas. */
+@media (prefers-reduced-motion: reduce) {
+  html.rh-cabecera-oculta .site-header .logo,
+  html.rh-cabecera-oculta .header-actions {
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* ==========================================================================
+   OBJETIVOS TÁCTILES QUE FALTABAN
+   Recorridas las siete páginas midiendo cada enlace y botón: quedaban los
+   legales del pie a 54x20, el "Agregar" de las fichas del carril a 117x34 y
+   los teléfonos a 79x30. Los nombres de producto dentro de una tarjeta se
+   dejan como están: la tarjeta entera ya es el objetivo.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .footer-legal a {
+    display: inline-block !important;
+    min-height: 38px !important;
+    padding-block: 9px !important;
+  }
+
+  html.lando-anim [data-lando-htrack] .add-btn,
+  .vitrina-grid .tile .add-btn {
+    min-height: 42px !important;
+  }
+
+  .info-item p a {
+    min-height: 38px !important;
+    padding: 10px 0 !important;
+  }
+}
