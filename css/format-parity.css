@@ -1308,3 +1308,35 @@ h1[data-reveal-lines] {
     font-size: 8.5px !important;
   }
 }
+
+/* ==========================================================================
+   MÓVIL: LA FICHA DE PRODUCTO CABE EN PANTALLA
+   Con la foto a 350x350 —el 42% del alto del modal— el precio y el botón de
+   "Agregar" quedaban por debajo del borde: había que desplazar para comprar.
+   Con la foto a 200px el contenido entra entero en una pantalla de 844px, y
+   cuando la descripción es larga el desplazamiento ya funciona (el atributo
+   `data-lenis-prevent` del modal, en main.js).
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  .modal-media {
+    min-height: 0 !important;
+    height: 200px !important;
+    padding: 10px 16px !important;
+  }
+
+  /* La imagen iba a `width:100%`, así que con proporción cuadrada arrastraba
+     el alto del contenedor. Ahora manda el alto y el ancho se adapta. */
+  .modal-media img {
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  /* Al llegar al final del modal, el gesto dejaba de encadenarse al fondo. */
+  .modal,
+  .cart-drawer {
+    overscroll-behavior: contain !important;
+  }
+}

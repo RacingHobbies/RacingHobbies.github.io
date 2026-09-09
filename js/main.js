@@ -220,9 +220,16 @@
     const host = document.createElement("div");
     host.id = "rh-global-ui";
     // Solo markup estático controlado por el sitio: sin datos externos.
+    // `data-lenis-prevent` en el modal y en el carrito: Lenis arranca con
+    // `syncTouch`, así que se apropia del gesto táctil de toda la página. Al
+    // abrir un overlay sólo se llama a `lenis.stop()`, que impide mover el
+    // fondo pero NO retira sus escuchadores, de modo que también se comía el
+    // arrastre dentro de la ficha: 82px de contenido —el precio y el botón de
+    // "Agregar"— quedaban inalcanzables en el móvil. Este atributo es la vía
+    // que Lenis define para que un contenedor con scroll propio se libre.
     host.innerHTML = `
       <div class="drawer-backdrop" id="rh-drawer-backdrop" hidden></div>
-      <aside class="cart-drawer" id="rh-cart-drawer" role="dialog" aria-modal="true" aria-labelledby="rh-cart-title" aria-describedby="rh-cart-note" hidden>
+      <aside class="cart-drawer" id="rh-cart-drawer" role="dialog" aria-modal="true" aria-labelledby="rh-cart-title" aria-describedby="rh-cart-note" data-lenis-prevent hidden>
         <div class="cart-head">
           <h2 id="rh-cart-title">Tu carrito</h2>
           <button class="modal-close" type="button" data-close-cart aria-label="Cerrar carrito">✕</button>
@@ -241,7 +248,7 @@
         </div>
       </aside>
       <div class="modal-backdrop" id="rh-modal-backdrop" hidden>
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rh-modal-title">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rh-modal-title" data-lenis-prevent>
           <button class="modal-close" type="button" data-close-modal aria-label="Cerrar detalle">✕</button>
           <div class="modal-media" id="rh-modal-media"></div>
           <div class="modal-body" id="rh-modal-body"></div>
