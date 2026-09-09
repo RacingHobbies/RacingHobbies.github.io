@@ -1379,7 +1379,6 @@ h1[data-reveal-lines] {
      que sólo con relleno quedaban ~200px muertos arriba y otros tantos abajo.
      Aquí el contenedor toma una altura mínima y REPARTE sus bloques dentro,
      de modo que la sección se llena con contenido y no con aire. */
-  html body main > section.race-sector.community-section > .container,
   html body main > section.race-sector.service-cta-section > .container,
   html body main > section.race-sector.about-vision-section > .container,
   html body main > section.race-sector.pit-band > .container {
@@ -1448,5 +1447,78 @@ html.lando-anim .rh-rail-live .rh-hbar {
 @media (prefers-reduced-motion: reduce) {
   html.lando-anim .rh-hbar {
     opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   FUERA EL VELO VERDE
+   Tres capas distintas teñían de verde todo lo que hay debajo. Medido sobre
+   los píxeles (desviación del canal verde respecto a la media de rojo y azul):
+
+     fotos de comunidad   +47   `hue-rotate(62deg)` sobre la imagen
+     foto del taller      +19   la foto va en `multiply` y absorbe el fondo
+     pasos del taller     +18   capa verde en `multiply` sobre la miniatura
+     producto              -1   limpio, y así se queda
+
+   La capa de fondo `.race-atmosphere` es la que alimenta las dos primeras:
+   rayas diagonales verdes y un halo radial al 68% de opacidad, animados en
+   bucle sobre TODAS las secciones. Se retira entera: las secciones ya tienen
+   su propia fotografía y su propio negro, que es lo que sostiene el diseño.
+   ========================================================================== */
+
+.race-atmosphere,
+.race-atmosphere::before,
+.race-atmosphere::after {
+  display: none !important;
+}
+
+/* `multiply` es correcto para un producto recortado sobre blanco —funde su
+   fondo con el de la ficha— pero sobre una fotografía editorial la convierte
+   en el color de lo que tenga detrás. Se restringe a los productos. */
+.collage-item img,
+html.lando-anim [data-lando-htrack] .collage-item img,
+.step-media img,
+.static-step-card .step-media img,
+.about-story-section img,
+.feature-visual img {
+  mix-blend-mode: normal !important;
+}
+
+/* El `hue-rotate(62deg)` dejaba las fotos de comunidad en verde fosforito.
+   Se conserva la desaturación, que sí es del lenguaje del sitio. */
+body .community-section .social-fan .deck-card img {
+  filter: grayscale(0.34) contrast(1.05) brightness(0.94) !important;
+}
+
+/* De la miniatura de los pasos se va la capa verde; queda el oscurecido
+   neutro, que es lo que da contraste al texto de encima. */
+body .static-step-card .step-media::after {
+  background: linear-gradient(
+    135deg,
+    rgba(4, 10, 8, 0.34),
+    transparent 48%,
+    rgba(3, 8, 5, 0.24)
+  ) !important;
+}
+
+/* ==========================================================================
+   COMUNIDAD: LOS BOTONES DEJAN DE PISAR EL ABANICO DE TARJETAS
+   Las tarjetas del abanico van rotadas, así que ocupan 246px de alto reales
+   dentro de una caja que sólo declara 156: el navegador no reserva el espacio
+   que la transformación necesita. Encima, `.social-links` subía con un margen
+   negativo de -27px. Resultado: Instagram y Facebook quedaban encima de dos
+   tarjetas cada uno.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  /* Las tarjetas son `position: absolute` dentro del abanico, así que crecer su
+     caja las arrastra a ellas también: no sirve de nada. Lo que sí separa es
+     dar a los botones el hueco que las tarjetas invaden (85px medidos) más
+     aire. Y la sección queda fuera del reparto `space-evenly` de arriba,
+     porque ese reparto se comía cualquier margen. */
+  .community-section .social-links {
+    position: relative;
+    z-index: 3;
+    margin-top: 104px !important;
   }
 }

@@ -1283,7 +1283,7 @@
     const navShots = [
     ["assets/img/menu-catalog.webp?v=4", "Selección de modelos RC de catálogo"],
     ["assets/img/menu-service.webp?v=4", "Técnico ajustando el chasis de un auto RC"],
-    ["assets/img/menu-about.webp?v=4", "Rincón del taller de Racing Hobbies con autos RC y logo de la marca"],
+    ["assets/img/menu-about.webp?v=8", "Rincón del taller de Racing Hobbies con autos RC y logo de la marca"],
     ["assets/img/menu-contact.webp?v=4", "Cliente contactando a Racing Hobbies desde su teléfono"],
     ];
     navShots.forEach(([src, alt], index) => {
