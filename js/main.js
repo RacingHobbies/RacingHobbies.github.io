@@ -2232,13 +2232,18 @@
 
         // Recorrido más largo que la distancia: cada píxel lateral cuesta más
         // scroll, así el desplazamiento se siente amplio y cinematográfico.
+        // En móvil ese 1.4 no compensa: la sección fijada ya vale una pantalla
+        // entera, y con el multiplicador el carril pedía casi dos pantallas de
+        // scroll para pasar cinco fichas. A 1 cada píxel lateral cuesta uno
+        // vertical, que se lee como un gesto directo y acorta la escena.
+        const travelFactor = () => (window.innerWidth <= 899 ? 1 : 1.4);
         const scrollTween = g.to(track, {
           x: () => -distance(),
           ease: "none",
           scrollTrigger: {
             trigger: sec,
             start: "top top",
-            end: () => "+=" + distance() * 1.4,
+            end: () => "+=" + distance() * travelFactor(),
             scrub: true,
             pin: true,
             anticipatePin: 1,

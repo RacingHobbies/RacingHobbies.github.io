@@ -1340,3 +1340,35 @@ h1[data-reveal-lines] {
     overscroll-behavior: contain !important;
   }
 }
+
+/* ==========================================================================
+   MÓVIL: ALTURAS PROPORCIONALES AL CONTENIDO
+   Medidas las secciones de las ocho páginas a 390x844, dos vicios opuestos:
+   escenas que pedían más de una pantalla de scroll para pasar, y secciones a
+   pantalla completa con la mitad vacía. Se corrigen las tres causas.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  /* Héroe de las páginas interiores. `body:not(.page-home) .page-hero` fijaba
+     100svh sin media query y le ganaba a la regla móvil que ya intentaba
+     72svh. Con 330-420px de contenido quedaban ~250px vacíos por arriba y
+     ~170 por abajo: más de la mitad del alto era aire. */
+  body:not(.page-home) .page-hero {
+    min-height: 64svh !important;
+    padding-top: 128px !important;
+    padding-bottom: 56px !important;
+  }
+
+  /* Esta sección NO está fijada —no genera pin-spacer—, así que su 100svh era
+     altura muerta: 393px de contenido en 844px de caja. */
+  main > .community-section {
+    min-height: 0 !important;
+  }
+
+  /* El manifiesto sí es escena fijada: su alto ES el recorrido del scroll. Pero
+     220svh obligaba a 2,2 pantallas para cuatro frases, que es justo la
+     sensación de "esta sección no se acaba nunca". */
+  .ln-manifesto {
+    min-height: 150svh !important;
+  }
+}
