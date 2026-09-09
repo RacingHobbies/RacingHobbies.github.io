@@ -702,31 +702,80 @@
   let scrollRevealItems = [];
   let scrollRevealFrame = null;
   let scrollRevealOn = false;
+  // Medidas y valores de la pasada anterior. Se reaprovechan los mismos arrays
+  // para no generar basura en cada frame del ticker.
+  const scrollRevealTops = [];
+  const scrollRevealValues = [];
+  let lastRevealScroll = -1;
+  let lastRevealVh = -1;
+  let lastRevealDoc = -1;
 
   function collectScrollReveals() {
     if (!scrollRevealOn) return;
     scrollRevealItems = $$(".reveal");
+    // Al cambiar la lista, los valores memorizados por índice dejan de valer.
+    scrollRevealValues.length = 0;
   }
 
+  /* Esto corre en CADA frame del ticker de GSAP, así que el coste se nota. Tres
+     detalles evitan que el navegador rehaga el layout una vez por pieza:
+     - si la página está quieta y el documento mide lo mismo, ninguna medida
+       puede haber cambiado y el frame se salta entero;
+     - primero se mide todo y sólo después se escribe (alternarlo obligaba a un
+       recálculo síncrono en cada vuelta del bucle);
+     - no se reescribe un valor idéntico al anterior, que invalidaría el estilo
+       sin mover un solo píxel.
+     Los valores de `--rv` y el momento en que se aplican son los mismos: la
+     animación no cambia, sólo el trabajo que cuesta pintarla. */
   function paintScrollReveals() {
     scrollRevealFrame = null;
+    const total = scrollRevealItems.length;
+    if (!total) return;
+
     const vh = window.innerHeight || 1;
+    const y = window.scrollY;
+    const doc = docHeight();
+    if (y === lastRevealScroll && vh === lastRevealVh && doc === lastRevealDoc) return;
+    lastRevealScroll = y;
+    lastRevealVh = vh;
+    lastRevealDoc = doc;
+
     const from = vh * REVEAL_START;
     const span = vh * (REVEAL_START - REVEAL_END) || 1;
-    for (let i = 0; i < scrollRevealItems.length; i++) {
-      const el = scrollRevealItems[i];
-      const rect = el.getBoundingClientRect();
+
+    // 1. Sólo medidas.
+    for (let i = 0; i < total; i++) {
+      const rect = scrollRevealItems[i].getBoundingClientRect();
       // Fuera de pantalla con margen: no se toca. Lo que ya pasó conserva su
       // último valor (1) y lo que aún no llega se queda sin `--rv`, o sea en 0.
-      if (rect.bottom < -240 || rect.top > vh + 240) continue;
-      let p = (from - rect.top) / span;
+      scrollRevealTops[i] =
+        rect.bottom < -240 || rect.top > vh + 240 ? null : rect.top;
+    }
+
+    // 2. Sólo escrituras.
+    for (let i = 0; i < total; i++) {
+      const top = scrollRevealTops[i];
+      if (top === null) continue;
+      const el = scrollRevealItems[i];
+      let p = (from - top) / span;
       p = p < 0 ? 0 : p > 1 ? 1 : p;
-      el.style.setProperty("--rv", p.toFixed(4));
+      const value = p.toFixed(4);
+      if (scrollRevealValues[i] !== value) {
+        scrollRevealValues[i] = value;
+        el.style.setProperty("--rv", value);
+      }
       // `.in` sigue gobernando los acentos que se dibujan una vez (la línea
       // del kicker, el subrayado del titular). Se enciende en cuanto la pieza
       // asoma, para que vayan en el mismo gesto y no con dos tiempos.
       if (p > 0 && !el.classList.contains("in")) el.classList.add("in");
     }
+  }
+
+  // Repintado forzado: lo usan los eventos que sí pueden mover las piezas sin
+  // que cambie el scroll (redimensionar, `load`, rehacer la lista).
+  function repaintScrollReveals() {
+    lastRevealScroll = -1;
+    paintScrollReveals();
   }
 
   function queueScrollReveals() {
@@ -756,8 +805,8 @@
     } else {
       window.addEventListener("scroll", queueScrollReveals, { passive: true });
     }
-    window.addEventListener("resize", queueScrollReveals, { passive: true });
-    window.addEventListener("load", paintScrollReveals);
+    window.addEventListener("resize", repaintScrollReveals, { passive: true });
+    window.addEventListener("load", repaintScrollReveals);
   }
 
   function unobserveReveals(container) {
@@ -782,16 +831,33 @@
     const elements = $$("[data-plx]");
     if (elements.length === 0) return;
     let ticking = false;
+    // El factor no cambia nunca: se resuelve una vez y no en cada frame.
+    const factors = elements.map(
+      (element) => Number.parseFloat(element.dataset.plx) || 0.2
+    );
+    const centers = [];
+    const values = [];
 
+    // Igual que en los reveals: medir todo, escribir después. El navegador
+    // maqueta una vez por frame en lugar de una vez por elemento.
     function update() {
       const viewportHeight = window.innerHeight;
-      elements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        if (rect.bottom < -120 || rect.top > viewportHeight + 120) return;
-        const factor = Number.parseFloat(element.dataset.plx) || 0.2;
-        const progress = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
-        element.style.setProperty("--plx-y", (progress * factor * -38).toFixed(1) + "px");
-      });
+      for (let i = 0; i < elements.length; i++) {
+        const rect = elements[i].getBoundingClientRect();
+        centers[i] =
+          rect.bottom < -120 || rect.top > viewportHeight + 120
+            ? null
+            : rect.top + rect.height / 2;
+      }
+      for (let i = 0; i < elements.length; i++) {
+        const center = centers[i];
+        if (center === null) continue;
+        const progress = (center - viewportHeight / 2) / viewportHeight;
+        const value = (progress * factors[i] * -38).toFixed(1) + "px";
+        if (values[i] === value) continue;
+        values[i] = value;
+        elements[i].style.setProperty("--plx-y", value);
+      }
       ticking = false;
     }
 
@@ -1336,7 +1402,7 @@
       shot.className = "rh-nav-shot";
       shot.dataset.navPreview = String(index);
       const img = document.createElement("img");
-      img.src = src;
+      img.dataset.src = src;
       img.alt = alt;
       img.width = 640;
       img.height = 800;
@@ -1346,17 +1412,39 @@
       gallery.appendChild(shot);
     });
 
-    // El panel nace oculto, así que su lazy loading sólo arranca al abrirlo y
-    // el primer clic se ve en blanco. Al primer gesto de intención sobre el
-    // botón se precargan, de modo que la animación de apertura las tape.
-    let navShotsWarmed = SAVE_DATA;
+    // El panel está fuera de pantalla pero maquetado, y ahí `loading="lazy"`
+    // no salva nada: el navegador bajaba las cuatro fotos —240 KB— durante la
+    // carga inicial aunque nadie llegara a abrir el menú. Nacen sin `src` y se
+    // piden al primer gesto de intención sobre el botón, con los 460 ms de la
+    // apertura por delante para taparlas. Abrir el menú las pide también, por
+    // si no hubo gesto previo o si el ahorro de datos frenó el adelanto.
+    const navShotImages = $$("img", gallery);
+    let navShotsWarmed = false;
     const warmNavShots = () => {
       if (navShotsWarmed) return;
       navShotsWarmed = true;
-      navShots.forEach(([src]) => queuePreload(src).catch(() => {}));
+      navShotImages.forEach((img) => {
+        const src = img.dataset.src;
+        if (!src) return;
+        delete img.dataset.src;
+        // `trackImage` ya la marcó cuando todavía no tenía origen, y con una
+        // imagen vacía se dio por completa. Se le quita la marca para que al
+        // asignar el origen recupere su fundido de entrada.
+        delete img.dataset.asyncImg;
+        // Nació diferida para que el navegador no la pidiera durante la carga.
+        // Ahora la queremos ya: dentro de un panel fuera de pantalla, una
+        // imagen `lazy` no se descarga por mucho que reciba un origen.
+        img.loading = "eager";
+        img.src = src;
+        trackImage(img);
+      });
     };
-    menuBtn.addEventListener("pointerenter", warmNavShots, { once: true });
-    menuBtn.addEventListener("focus", warmNavShots, { once: true });
+    const warmNavShotsAhead = () => {
+      if (!SAVE_DATA) warmNavShots();
+    };
+    menuBtn.addEventListener("pointerenter", warmNavShotsAhead, { once: true });
+    menuBtn.addEventListener("pointerdown", warmNavShotsAhead, { once: true });
+    menuBtn.addEventListener("focus", warmNavShotsAhead, { once: true });
 
     const content = document.createElement("div");
     content.className = "rh-nav-content";
@@ -1429,6 +1517,7 @@
     };
 
     const openMenu = () => {
+      warmNavShots();
       panel.classList.add("is-open");
       panel.setAttribute("aria-hidden", "false");
       menuBtn.setAttribute("aria-expanded", "true");
@@ -1465,6 +1554,50 @@
       }
     });
 
+  }
+
+  /* ---------- Adelanto de la siguiente página ----------
+     Al cambiar de página, CSS y JS ya están en caché: lo único que se espera es
+     el documento. Cuando el puntero se posa sobre un enlace interno se pide por
+     adelantado y con prioridad baja, así el clic lo encuentra descargado y la
+     cortina de transición no acaba tapando una pantalla en blanco. No cambia
+     nada de lo que se ve ni de lo que se anima. */
+  function initRoutePrefetch() {
+    if (SAVE_DATA) return;
+    const probe = document.createElement("link");
+    if (!probe.relList || !probe.relList.supports || !probe.relList.supports("prefetch")) {
+      return;
+    }
+
+    // Una sola petición por página de destino, y un tope por si alguien pasea
+    // el puntero por todo el pie.
+    const asked = new Set([window.location.pathname]);
+    let budget = 5;
+
+    const consider = (target) => {
+      if (budget <= 0) return;
+      const link = target && target.closest ? target.closest("a[href]") : null;
+      if (!link || link.target || link.hasAttribute("download")) return;
+      let url;
+      try {
+        url = new URL(link.href, window.location.href);
+      } catch {
+        return;
+      }
+      if (url.origin !== window.location.origin) return;
+      if (url.pathname !== "/" && !/\.html$/.test(url.pathname)) return;
+      if (asked.has(url.pathname)) return;
+      asked.add(url.pathname);
+      budget -= 1;
+      const hint = document.createElement("link");
+      hint.rel = "prefetch";
+      hint.href = url.origin + url.pathname + url.search;
+      document.head.appendChild(hint);
+    };
+
+    document.addEventListener("pointerover", (event) => consider(event.target), { passive: true });
+    document.addEventListener("touchstart", (event) => consider(event.target), { passive: true });
+    document.addEventListener("focusin", (event) => consider(event.target));
   }
 
   function confirmAddButton(button) {
@@ -2516,28 +2649,53 @@
         hasScrollIntent = true;
       };
 
+      // `pauseAtSectionEdge` corre en cada frame del scroll suave. Resolver ahí
+      // un selector de catorce partes, y preguntar `matches` sección por
+      // sección, era el gasto más caro del recorrido. La lista y sus dos rasgos
+      // fijos se calculan una vez y se rehacen sólo si `main` cambia de hijos.
+      let pauseSections = null;
+      const readPauseSections = () => {
+        if (!pauseSections) {
+          pauseSections = $$(pauseSectionSelector).map((section) => ({
+            el: section,
+            isHero: section.matches(".hero, .page-hero"),
+            isManifesto: section.matches(".ln-manifesto"),
+          }));
+        }
+        return pauseSections;
+      };
+      const mainRegion = $("main");
+      if (mainRegion && "MutationObserver" in window) {
+        new MutationObserver(() => {
+          pauseSections = null;
+        }).observe(mainRegion, { childList: true });
+      }
+
       const pauseAtSectionEdge = (instance) => {
         const current = instance.scroll;
-        const edgeTolerance = Math.min(42, window.innerHeight * 0.05);
-        const sections = $$(pauseSectionSelector);
+        const viewportHeight = window.innerHeight;
+        const edgeTolerance = Math.min(42, viewportHeight * 0.05);
+        const sections = readPauseSections();
 
         if (instance.direction <= 0) {
-          sections.forEach((section, index) => {
-            if (index === 0 && section.matches(".hero, .page-hero")) return;
-            if (section.getBoundingClientRect().bottom - window.innerHeight > edgeTolerance) {
-              sectionPauseArmed.set(section, true);
+          for (let index = 0; index < sections.length; index += 1) {
+            const entry = sections[index];
+            if (index === 0 && entry.isHero) continue;
+            if (entry.el.getBoundingClientRect().bottom - viewportHeight > edgeTolerance) {
+              sectionPauseArmed.set(entry.el, true);
             }
-          });
+          }
           return;
         }
 
         if (!hasScrollIntent || sectionPauseActive) return;
 
         for (let index = 0; index < sections.length; index += 1) {
-          const section = sections[index];
+          const entry = sections[index];
+          const section = entry.el;
           const rect = section.getBoundingClientRect();
           const armed = sectionPauseArmed.get(section) ?? index > 0;
-          const edgeDistance = rect.bottom - window.innerHeight;
+          const edgeDistance = rect.bottom - viewportHeight;
           const previousEdge = sectionPreviousEdges.get(section);
           sectionPreviousEdges.set(section, edgeDistance);
           const crossedViewportEdge = previousEdge > 0 && edgeDistance <= 0;
@@ -2545,7 +2703,7 @@
           // del borde, el sticky empieza a liberarse y el texto sube antes de
           // que llegue la pausa. Lo detenemos unos píxeles antes para mantener
           // la composición fija y que la lectura sea limpia.
-          const pauseLead = section.matches(".ln-manifesto") ? 32 : 0;
+          const pauseLead = entry.isManifesto ? 32 : 0;
           const isNearViewportEdge = edgeDistance <= pauseLead && edgeDistance >= -edgeTolerance;
 
           if (edgeDistance > edgeTolerance) {
@@ -2555,7 +2713,7 @@
           // La primera escena ya está detenida al cargar la página. Las demás
           // se detienen cuando su borde inferior llega al borde inferior visible.
           if (
-            section.matches(".hero, .page-hero") ||
+            entry.isHero ||
             !armed ||
             (!crossedViewportEdge && !isNearViewportEdge)
           ) continue;
@@ -3009,6 +3167,7 @@
     initLoader();
     injectGlobalUI();
     initHeader();
+    initRoutePrefetch();
     initEvents();
     wireContactLinks();
     initStoreStatus();
