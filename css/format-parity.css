@@ -161,11 +161,10 @@
     height: clamp(126px, 33.75vw, 168px) !important;
   }
 
-  /* -56px estaba calculado para el abanico de tablet; sobre uno más corto los
-     botones caían en mitad de las fichas en vez de apoyarse en su base. */
-  .community-section .social-links {
-    margin-top: clamp(-56px, -7vw, -20px) !important;
-  }
+  /* (Aquí hubo un `margin-top` negativo para los botones sociales. Retirado:
+     el bloque "los botones dejan de pisar el abanico", al final de esta hoja,
+     fija 104px y va después, así que éste nunca llegaba a aplicarse. Eran
+     nueve declaraciones compitiendo por la misma propiedad.) */
 }
 
 /* Las fichas del abanico están ancladas al pie de `.social-fan`, así que el
@@ -1659,12 +1658,16 @@ body .static-step-card .step-media::after {
        hacer scroll siempre ves la cola de una y la cabeza de la siguiente.
    ========================================================================== */
 
-@media (max-width: 899px) {
-  /* --- 1. La ficha llena el carril, como en la referencia ancha ---------
-     El alto manda y el ancho lo sigue. `min()` con `svh` evita que en una
-     tablet vertical la ficha se vaya a 500px de ancho. */
-  /* La vitrina sí gana con el estirado: su ficha es foto + datos + botón, y
-     el reparto interno absorbe el alto. */
+/* --- 1. La ficha llena el carril, como en la referencia ancha -----------
+   SÓLO EN VERTICAL. En apaisado manda el bloque de pantallas bajas, que ya
+   dimensiona la ficha por alto. Sin acotar, el `36svh` de aquí dejaba las
+   fichas de categorías en 140px sobre un teléfono girado: el carril bajaba a
+   812px de ancho, el recorrido a 52px, y `main.js` desactiva cualquier riel
+   por debajo de 300px — la sección perdía el anclaje y crecía a 515px sobre
+   una pantalla de 390. */
+@media (max-width: 899px) and (orientation: portrait) {
+  /* La vitrina gana con el estirado: su ficha es foto + datos + botón, y el
+     reparto interno absorbe el alto. */
   html.lando-anim .home-showcase [data-lando-htrack] > .rh-hcard {
     width: min(62vw, 30svh) !important;
     height: 100% !important;
@@ -1672,20 +1675,13 @@ body .static-step-card .step-media::after {
   }
 
   /* Categorías no: su foto es CUADRADA con `object-fit: contain`, así que
-     estirar la ficha a 570px sólo añade 139px de negro arriba y otros tantos
-     abajo. Lo que agranda la foto es el ANCHO. La ficha crece a lo ancho y
-     conserva su alto natural (foto + rótulo), y la escena centra el bloque
-     para que el aire sobrante quede repartido y no como un hueco al pie. */
-  /* Categorías no: su foto es CUADRADA con `object-fit: contain`, así que
-     estirar la ficha a 570px sólo añadía 139px de negro arriba y otros tantos
-     abajo. Lo que agranda la foto aquí es el ANCHO: la ficha crece a lo ancho
-     y conserva su alto natural (foto + rótulo), centrada en el carril para
-     que el aire sobrante quede repartido y no como un hueco al pie.
+     estirar la ficha sólo añadía 139px de negro arriba y otros tantos abajo.
+     Lo que agranda la foto aquí es el ANCHO: la ficha crece a lo ancho y
+     conserva su alto natural (foto + rótulo), centrada en el carril para que
+     el aire sobrante quede repartido y no como un hueco al pie.
 
      Probado y descartado: repartirlas en dos filas llena mejor el alto, pero
-     deja el carril en 604px de ancho y `main.js` desactiva cualquier riel con
-     menos de 300px de recorrido — la sección dejaba de estar fijada, crecía a
-     898px y el titular saltaba a 58px. Ver [[landscape-phone-breakpoint]]. */
+     deja el carril en 604px de ancho y cae por el mismo umbral de 300px. */
   html.lando-anim .editorial-garage [data-lando-htrack] > .rh-hcard {
     width: min(76vw, 36svh) !important;
     height: auto !important;
@@ -1695,7 +1691,9 @@ body .static-step-card .step-media::after {
   html.lando-anim .editorial-garage [data-lando-htrack] {
     align-items: center !important;
   }
+}
 
+@media (max-width: 899px) {
   /* --- 2. Fuera la barra de progreso -----------------------------------
      En una pantalla estrecha el propio desplazamiento de las fichas ya dice
      dónde estás; la barra sólo aportaba una raya verde de 2px a todo lo

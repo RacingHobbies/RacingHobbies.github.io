@@ -2554,7 +2554,12 @@
     updateRail();
 
     // Cortina entre páginas internas. Se ignoran enlaces externos, descargas,
-    // anclas, controles con JS y clics con teclas modificadoras.
+    // anclas, controles con JS y clics con teclas modificadoras. La cortina no
+    // debe convertirse en una espera artificial: antes se retenía el clic
+    // 680 ms para completar su animación y cada cambio de página se sentía
+    // como un lag. Se deja pintar sólo un frame para que haya respuesta visual
+    // inmediata y se inicia la navegación enseguida.
+    let routeNavigationPending = false;
     document.addEventListener("click", (event) => {
       if (
         event.defaultPrevented ||
@@ -2579,6 +2584,8 @@
           url.hash
       ) return;
       event.preventDefault();
+      if (routeNavigationPending) return;
+      routeNavigationPending = true;
       const x = event.clientX || window.innerWidth / 2;
       const y = event.clientY || window.innerHeight / 2;
       routeCurtain.style.setProperty("--route-x", x + "px");
@@ -2592,11 +2599,12 @@
       }
       routeCurtain.classList.add("is-active");
       document.body.classList.add("rh-page-exit");
-      window.setTimeout(() => {
-        window.location.href = url.href;
-      }, REDUCED ? 0 : 680);
+      window.requestAnimationFrame(() => {
+        window.location.assign(url.href);
+      });
     });
     window.addEventListener("pageshow", () => {
+      routeNavigationPending = false;
       document.body.classList.remove("rh-page-exit");
       routeCurtain.classList.remove("is-active");
     });
