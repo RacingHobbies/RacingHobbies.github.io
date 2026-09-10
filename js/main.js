@@ -1648,6 +1648,74 @@
     document.addEventListener("focusin", (event) => consider(event.target));
   }
 
+  /* ---------- "Inicio" cuando ya estás en Inicio ----------
+     En la portada el enlace de Inicio apunta a `index.html`, que es la URL que
+     el navegador ya tiene abierta. Ir a una URL idéntica no es cambiar de
+     página: Safari de iOS lo resuelve como una recarga y, al recargar, devuelve
+     el scroll al punto donde estabas. De ahí que pulsar "Inicio" en el menú del
+     celular te dejara en el manifiesto ("Encuentra tu modelo ideal") en lugar
+     del hero. Aquí no se navega: se sube al principio, que es lo que significa
+     esa pulsación, y así el resultado no depende de lo que cada navegador
+     decida restituir.
+
+     `/` e `/index.html` son la misma página aunque el enlace escriba una y la
+     barra de direcciones muestre la otra, por eso se comparan normalizadas.
+
+     Escucha en captura para adelantarse a la cortina de transición —que se
+     retira sola al ver `defaultPrevented`— y el desplazamiento se aplaza un
+     frame: el panel móvil se cierra en el mismo clic y al soltar el bloqueo de
+     fondo restituye la posición guardada, que si no llegaría después y ganaría. */
+  function samePagePath(url) {
+    return url.pathname.replace(/(^|\/)index\.html$/, "$1");
+  }
+
+  function initSamePageLinks() {
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (
+          event.defaultPrevented ||
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) return;
+        const target = event.target;
+        const link = target && target.closest ? target.closest("a[href]") : null;
+        if (!link || link.target || link.hasAttribute("download")) return;
+        let url;
+        try {
+          url = new URL(link.href, window.location.href);
+        } catch {
+          return;
+        }
+        // Los anclas (`#seccion`) tienen su propio camino y su propio destino.
+        if (url.hash) return;
+        if (
+          url.origin !== window.location.origin ||
+          url.search !== window.location.search ||
+          samePagePath(url) !== samePagePath(window.location)
+        ) return;
+        event.preventDefault();
+        // Con el menú abierto la pantalla está cubierta: el salto seco imita el
+        // cambio de página. Sin él, el recorrido suave mantiene la referencia.
+        const instant = REDUCED || document.body.classList.contains("menu-open");
+        requestAnimationFrame(() => {
+          if (window.rhLenis) {
+            window.rhLenis.scrollTo(
+              0,
+              instant ? { immediate: true, force: true } : { duration: 1.1, force: true }
+            );
+          } else {
+            window.scrollTo({ top: 0, behavior: instant ? "auto" : "smooth" });
+          }
+        });
+      },
+      true
+    );
+  }
+
   function confirmAddButton(button) {
     if (!button) return;
     clearTimeout(Number(button.dataset.feedbackTimer));
@@ -3248,6 +3316,7 @@
     injectGlobalUI();
     initHeader();
     initRoutePrefetch();
+    initSamePageLinks();
     initEvents();
     wireContactLinks();
     initStoreStatus();
