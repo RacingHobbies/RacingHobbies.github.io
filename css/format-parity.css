@@ -2203,3 +2203,497 @@ body .static-step-card .step-media::after {
     overflow-wrap: break-word !important;
   }
 }
+
+/* ==========================================================================
+   AJUSTE FINO DE LAS ESCENAS INDICADAS EN TELÉFONO
+   ========================================================================== */
+@media (max-width: 599px) and (orientation: portrait) {
+  /* Redes: el abanico llegaba a ocupar apenas un tercio de la escena. Se
+     agranda su área y sus tarjetas, mientras el margen que las separa de los
+     enlaces se reduce en la misma medida para mantenerlos independientes. */
+  .page-home .community-section .social-fan {
+    --fan-card-w: clamp(120px, 35vw, 140px) !important;
+    height: clamp(210px, 55vw, 246px) !important;
+  }
+
+  .page-home .community-section .social-fan .deck-card {
+    width: clamp(120px, 35vw, 140px) !important;
+    height: clamp(180px, 54vw, 216px) !important;
+  }
+
+  .page-home .community-section .social-links {
+    margin-top: 40px !important;
+    margin-bottom: 42px !important;
+  }
+
+  /* Ubicación: las dos acciones comparten una fila al pie de la tarjeta. El
+     enlace permanece fuera del aviso de consentimiento, así que no desaparece
+     al cargar el mapa. */
+  .page-home .home-location .map-consent {
+    padding-bottom: 82px !important;
+  }
+
+  .page-home .home-location .map-consent .btn,
+  .page-home .home-location .map-card .map-cta {
+    position: absolute !important;
+    bottom: 16px !important;
+    width: calc(50% - 25px) !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    padding-inline: 10px !important;
+    justify-content: center;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.1em !important;
+    white-space: nowrap;
+  }
+
+  .page-home .home-location .map-consent .btn {
+    left: 16px !important;
+  }
+
+  .page-home .home-location .map-card .map-cta {
+    right: 16px !important;
+    left: auto !important;
+  }
+
+  /* Servicios: cuatro tarjetas caben en una escena sin perder legibilidad. */
+  .page-service .service-catalog-section {
+    box-sizing: border-box;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    overflow: hidden;
+    display: flex;
+    padding: 76px 0 28px !important;
+  }
+
+  .page-service .service-catalog-section > .container {
+    min-height: 0;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+  }
+
+  .page-service .service-catalog-section .sec-head {
+    flex: 0 0 auto;
+    margin-bottom: 14px !important;
+  }
+
+  .page-service .service-catalog-section .sec-title {
+    font-size: clamp(2.35rem, 11vw, 3rem) !important;
+    line-height: 0.9 !important;
+  }
+
+  .page-service .service-catalog-section .feature-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .page-service .service-catalog-section .feature {
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden;
+    padding: 18px 16px !important;
+  }
+
+  .page-service .service-catalog-section .feature svg {
+    width: 25px !important;
+    height: 25px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .page-service .service-catalog-section .feature h3 {
+    font-size: 1rem !important;
+    line-height: 1.12 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .page-service .service-catalog-section .feature p {
+    font-size: 0.82rem !important;
+    line-height: 1.36 !important;
+  }
+
+  /* Historia: en un teléfono esta escena no necesita ocupar un viewport
+     entero. Se conserva el texto completo, pero se compactan sus ritmos y la
+     foto de apoyo para volver a la siguiente sección con naturalidad. */
+  .page-about .about-story-section {
+    box-sizing: border-box;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible;
+    padding: 52px 0 24px !important;
+  }
+
+  .page-about .about-story-section > .container,
+  .page-about .about-story-section .two-col {
+    height: auto;
+    min-height: 0;
+  }
+
+  .page-about .about-story-section .two-col {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 150px !important;
+    gap: 12px !important;
+  }
+
+  .page-about .about-story-section .two-col > .reveal:first-child {
+    min-height: 0;
+    overflow: visible;
+    padding: 18px 16px !important;
+  }
+
+  .page-about .about-story-section .sec-title {
+    font-size: clamp(2.2rem, 9.2vw, 2.5rem) !important;
+    line-height: 0.9 !important;
+    margin-top: 10px !important;
+  }
+
+  .page-about .about-story-section .sec-sub {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    margin-top: 14px !important;
+  }
+
+  .page-about .about-story-section .static-story-visual {
+    min-height: 0 !important;
+    height: 150px !important;
+  }
+
+  .page-about .about-story-section .static-story-visual img {
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* Contacto: el formulario se hace más compacto y la ficha de la tienda se
+     convierte en una escena completa con tarjetas que usan su espacio. */
+  .page-contact .contact-form-section .info-grid > .reveal:first-child {
+    padding: 24px 18px !important;
+  }
+
+  .page-contact .contact-form-section .info-grid > .reveal:first-child .sec-title {
+    font-size: clamp(2.45rem, 10.5vw, 3rem) !important;
+    line-height: 0.92 !important;
+  }
+
+  .page-contact .contact-form-section .info-grid > .reveal:first-child .sec-sub {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .page-contact .contact-form-section .info-grid > .reveal:first-child br {
+    display: none;
+  }
+
+  .page-contact .contact-form-section .form-grid {
+    gap: 12px !important;
+    margin-top: 16px !important;
+  }
+
+  .page-contact .contact-form-section .form-row {
+    gap: 10px !important;
+  }
+
+  .page-contact .contact-form-section .field label {
+    margin-bottom: 4px !important;
+  }
+
+  .page-contact .contact-form-section .field input,
+  .page-contact .contact-form-section .field select {
+    min-height: 48px !important;
+  }
+
+  .page-contact .contact-form-section .field textarea {
+    min-height: 110px !important;
+  }
+
+  .page-contact .contact-form-section .form-grid .btn {
+    min-height: 48px !important;
+  }
+
+  .page-contact .contact-form-section .info-grid > .reveal:nth-child(2) {
+    box-sizing: border-box;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .page-contact .contact-form-section .info-grid > .reveal:nth-child(2) .info-grid {
+    flex: 1 1 auto;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+
+  /* En el cierre de páginas internas, el acceso fijo no puede cubrir ni los
+     botones ni el texto final; WhatsApp continúa disponible en menú y CTAs. */
+  body.page-service .wa-float,
+  body.page-about .wa-float,
+  body.page-catalog .wa-float {
+    display: none !important;
+  }
+}
+
+/* Pie de página: en un teléfono las cuatro columnas ya no tienen espacio
+   horizontal real. Se ordenan como bloques independientes para que las redes,
+   los enlaces y los datos de contacto nunca compartan la misma fila. */
+@media (max-width: 599px) {
+  html .site-footer {
+    min-height: 0 !important;
+    padding: 64px 0 30px !important;
+  }
+
+  html .site-footer .footer-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 38px !important;
+    margin-bottom: 38px !important;
+    padding-top: 36px !important;
+  }
+
+  html .site-footer .footer-brand,
+  html .site-footer .footer-col {
+    min-width: 0 !important;
+  }
+
+  html .site-footer .footer-brand {
+    display: grid;
+    gap: 16px;
+  }
+
+  html .site-footer .footer-brand p,
+  html .site-footer .footer-social {
+    margin: 0 !important;
+  }
+
+  html .site-footer .footer-brand p {
+    max-width: 34ch;
+  }
+
+  html .site-footer .footer-col {
+    padding-top: 28px;
+    border-top: 1px solid var(--ln-border);
+  }
+
+  html .site-footer .footer-col h3 {
+    margin-bottom: 12px !important;
+  }
+
+  html .site-footer .footer-col ul {
+    gap: 2px !important;
+  }
+
+  html .site-footer .footer-col li a {
+    min-height: 44px !important;
+    padding: 11px 0 !important;
+  }
+
+  html .site-footer .footer-bottom {
+    display: grid !important;
+    gap: 14px !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* El refinamiento de la historia necesita prevalecer sobre la variante de
+   revelado tipográfico; sólo ajusta medidas, no sus transiciones. */
+@media (max-width: 599px) and (orientation: portrait) {
+  html.lando-anim .page-about .about-story-section .two-col > .reveal:first-child {
+    padding: 18px 16px !important;
+  }
+
+  html.lando-anim .page-about .about-story-section .sec-title {
+    font-size: clamp(2.2rem, 9.2vw, 2.5rem) !important;
+    line-height: 0.9 !important;
+  }
+
+  /* Contacto: ritmo más compacto, con controles de al menos 44px para que
+     sigan siendo cómodos y fiables al tocar. */
+  html.lando-anim .page-contact .contact-form-section .info-grid > .reveal:first-child {
+    padding: 18px 16px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .sec-title {
+    font-size: clamp(2.2rem, 9.2vw, 2.5rem) !important;
+    line-height: 0.9 !important;
+    margin-top: 10px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .sec-sub {
+    font-size: 0.875rem !important;
+    line-height: 1.38 !important;
+    margin: 14px 0 10px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .form-grid,
+  html.lando-anim .page-contact .contact-form-section .form-row {
+    gap: 8px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .form-grid {
+    margin-top: 10px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .field label {
+    margin-bottom: 3px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .field input,
+  html.lando-anim .page-contact .contact-form-section .field select {
+    min-height: 44px !important;
+    padding: 8px 12px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .field textarea {
+    min-height: 88px !important;
+    padding: 8px 12px !important;
+  }
+
+  html.lando-anim .page-contact .contact-form-section .form-grid .btn {
+    min-height: 46px !important;
+  }
+
+  /* Horarios: una tarjeta de media columna obligaba tanto el horario como el
+     estado a partirse. Al ocupar la fila completa se lee de un vistazo y la
+     píldora deja de competir con el contenido. */
+  html.lando-anim .page-contact .info-item:has(.store-status) {
+    grid-column: 1 / -1;
+    display: grid !important;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: start !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  html.lando-anim .page-contact .info-item:has(.store-status) > svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin-top: 1px;
+  }
+
+  html.lando-anim .page-contact .info-item:has(.store-status) h3 {
+    margin-bottom: 3px !important;
+  }
+
+  html.lando-anim .page-contact .info-item:has(.store-status) p {
+    font-size: 0.78rem !important;
+    line-height: 1.38 !important;
+  }
+
+  html.lando-anim .page-contact .info-item:has(.store-status) .store-status {
+    width: auto !important;
+    max-width: none !important;
+    margin-top: 7px !important;
+    padding: 5px 8px !important;
+    font-size: 0.6rem !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Escenas de portada: en móvil el manifiesto y las dos colecciones deben
+   terminar en una sola pantalla. Las colecciones conservan todos sus enlaces
+   como carriles táctiles, en lugar de apilar tarjetas durante varias pantallas. */
+@media (max-width: 599px) and (orientation: portrait) {
+  body.page-home .ln-manifesto {
+    box-sizing: border-box;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: hidden !important;
+  }
+
+  body.page-home .ln-manifesto-stage {
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  body.page-home .editorial-garage,
+  body.page-home .home-showcase {
+    box-sizing: border-box;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    padding: 78px 0 30px !important;
+    overflow: hidden !important;
+  }
+
+  body.page-home .editorial-garage > .container,
+  body.page-home .home-showcase > .container {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  body.page-home .editorial-garage .sec-head,
+  body.page-home .home-showcase .vitrina-head {
+    flex: 0 0 auto;
+    margin-bottom: 14px !important;
+  }
+
+  body.page-home .editorial-garage .sec-title,
+  body.page-home .home-showcase .sec-title {
+    font-size: clamp(2.2rem, 10vw, 2.6rem) !important;
+    line-height: 0.9 !important;
+  }
+
+  body.page-home .editorial-garage .collage,
+  body.page-home .home-showcase .vitrina-grid {
+    display: flex !important;
+    flex: 1 1 auto;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 0 14px 8px 0 !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.page-home .editorial-garage .collage::-webkit-scrollbar,
+  body.page-home .home-showcase .vitrina-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.page-home .editorial-garage .collage-item,
+  body.page-home .home-showcase .vitrina-grid .tile {
+    flex: 0 0 74vw !important;
+    width: 74vw !important;
+    height: min(56svh, 470px) !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    scroll-snap-align: start;
+  }
+
+  body.page-home .home-showcase .vitrina-grid .tile {
+    padding: 12px !important;
+  }
+
+  body.page-home .home-showcase .vitrina-grid .tile img {
+    min-height: 0 !important;
+    max-height: 42svh;
+  }
+
+  /* La historia conserva su composición compacta, centrada dentro de una
+     escena completa; no vuelve a inflar la tarjeta de texto. */
+  body.page-about .about-story-section {
+    box-sizing: border-box;
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+
+  body.page-about .about-story-section > .container,
+  body.page-about .about-story-section .two-col {
+    height: 100% !important;
+  }
+
+  body.page-about .about-story-section .two-col {
+    align-content: center;
+  }
+}
