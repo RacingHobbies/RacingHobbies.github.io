@@ -2607,11 +2607,22 @@
     }
 
     // Cortina entre páginas internas. Se ignoran enlaces externos, descargas,
-    // anclas, controles con JS y clics con teclas modificadoras. La cortina no
-    // debe convertirse en una espera artificial: antes se retenía el clic
-    // 680 ms para completar su animación y cada cambio de página se sentía
-    // como un lag. Se deja pintar sólo un frame para que haya respuesta visual
-    // inmediata y se inicia la navegación enseguida.
+    // anclas, controles con JS y clics con teclas modificadoras.
+    //
+    // La cortina NO debe convertirse en una espera: es una capa que se pinta
+    // encima de la página que sale MIENTRAS el documento nuevo viaja, no un
+    // trámite previo a pedirlo. Por eso aquí no se llama a `preventDefault()`
+    // ni se aplaza la navegación: el clic sigue su curso nativo y el navegador
+    // empieza a descargar en el mismo tick en que se enciende la cortina.
+    //
+    // Las dos versiones anteriores retenían el clic y disparaban la navegación
+    // desde un reloj — `setTimeout(680)` primero, `requestAnimationFrame`
+    // después. La primera sumaba 680 ms a cada cambio de página; la segunda
+    // quitaba ese retardo pero heredaba el mismo defecto de fondo: con la
+    // pestaña en segundo plano el navegador estrangula los timers y congela
+    // por completo el rAF, así que si cambiabas de app justo después de pulsar
+    // volvías a un "Cargando" clavado que no navegaba. Sin reloj de por medio
+    // no hay nada que estrangular.
     let routeNavigationPending = false;
     document.addEventListener("click", (event) => {
       if (
@@ -2636,7 +2647,6 @@
           url.search === window.location.search &&
           url.hash
       ) return;
-      event.preventDefault();
       if (routeNavigationPending) return;
       routeNavigationPending = true;
       const x = event.clientX || window.innerWidth / 2;
@@ -2652,9 +2662,7 @@
       }
       routeCurtain.classList.add("is-active");
       document.body.classList.add("rh-page-exit");
-      window.requestAnimationFrame(() => {
-        window.location.assign(url.href);
-      });
+      // Sin `preventDefault`: a partir de aquí navega el propio enlace.
     });
     window.addEventListener("pageshow", () => {
       routeNavigationPending = false;

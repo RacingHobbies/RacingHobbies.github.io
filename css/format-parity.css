@@ -167,6 +167,55 @@
      nueve declaraciones compitiendo por la misma propiedad.) */
 }
 
+/* En móvil apaisado la ficha T‑Maxx conservaba una pantalla exacta, pero sus
+   acciones caían 4px fuera del borde inferior. Conservamos la imagen grande
+   y elevamos solo el grupo de acciones dentro del hueco que queda tras el
+   precio. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .page-home .feature-hero .hero-ctas {
+    transform: translateY(-28px) !important;
+  }
+
+  .page-error .error-page {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    padding: 70px 0 8px !important;
+  }
+
+  .page-error .error-page .container {
+    gap: 3px !important;
+    padding: 12px 18px !important;
+  }
+
+  .page-error .error-code {
+    font-size: 5rem !important;
+  }
+
+  .page-error .kicker {
+    display: none !important;
+  }
+
+  .page-error .error-title {
+    margin-top: 0 !important;
+    font-size: 1.5rem !important;
+  }
+
+  .page-error .error-sub {
+    margin: 6px 0 12px !important;
+    font-size: 0.82rem !important;
+  }
+
+  .page-error .hero-ctas .btn {
+    min-height: 42px !important;
+    padding-inline: 16px !important;
+  }
+
+  .page-error .wa-float {
+    display: none !important;
+  }
+}
+
 /* Las fichas del abanico están ancladas al pie de `.social-fan`, así que el
    alto de esa caja es el que decide cuánto aire queda entre el titular y el
    abanico. En pantalla completa ese hueco es del 4% del alto de pantalla; con
@@ -855,8 +904,11 @@
        1440x700). */
     --home-title-top: max(152px, min(clamp(180px, 30.4svh, 340px), 31svh));
     --home-copy-size: min(clamp(1.5rem, 7.9vw, 5.6rem), 10svh);
-    --home-sub-gap: clamp(8px, 2.4svh, 40px);
-    --home-cta-gap: clamp(30px, 9svh, 200px);
+    /* El hueco entre el titular y la bajada: +8px, y las acciones bajan lo
+       mismo para no quedarse pegadas a la bajada. En el bloque de abajo se
+       devuelve ese alto recortando el cuerpo del titular. */
+    --home-sub-gap: clamp(16px, calc(2.4svh + 8px), 48px);
+    --home-cta-gap: clamp(38px, calc(9svh + 8px), 208px);
   }
 
   .page-home .hero .hero-ctas .btn {
@@ -871,6 +923,19 @@
 
 /* Teléfonos pequeños girados (667x375): la lista de seis datos es la columna
    más alta y dejaba la sección 11px por encima de la pantalla. */
+/* Apaisado de teléfono (740x360, 844x390): aquí el titular ya está atado al
+   alto (10svh) y la composición llegaba a 7px del canto inferior, así que los
+   8px de aire que gana la bajada no salían de ninguna parte. Se devuelven
+   recortando el cuerpo del titular un 6%: cuatro líneas a 0.6svh menos liberan
+   ~8px, los mismos que baja el bloque. El titular no pierde presencia y las
+   acciones conservan su margen con el borde. */
+@media (max-height: 430px) and (min-width: 600px) {
+  .page-home .hero,
+  .page-home .hero > .container {
+    --home-copy-size: min(clamp(1.5rem, 7.9vw, 5.6rem), 9.4svh);
+  }
+}
+
 @media (max-height: 400px) and (min-width: 600px) {
   .page-home .home-location {
     padding-top: 16px !important;
@@ -1999,5 +2064,142 @@ body .static-step-card .step-media::after {
 
   .page-home .community-section .deck {
     margin-bottom: 14px !important;
+  }
+}
+
+/* ===========================================================================
+   PORTADA EN TELÉFONO: PRODUCTO PROTAGONISTA SIN SOLAPES
+   La ficha T-Maxx consumía 44svh para la foto y dejaba las acciones en el
+   último tramo de pantalla, justo detrás del acceso flotante de WhatsApp.
+   La imagen sigue siendo protagonista, pero el conjunto reserva ese borde y
+   mantiene los dos botones íntegros y visibles en el primer encuadre.
+   ========================================================================== */
+
+@media (max-width: 599px) and (orientation: portrait) {
+  .page-home .feature-hero {
+    padding-top: clamp(72px, 10svh, 88px) !important;
+    padding-bottom: clamp(82px, 11svh, 96px) !important;
+  }
+
+  .page-home .feature-inner {
+    gap: 8px !important;
+    justify-content: center !important;
+  }
+
+  .page-home .feature-visual {
+    flex: 0 0 auto !important;
+    height: min(38svh, 320px) !important;
+  }
+
+  .page-home .feature-price {
+    margin: 4px 0 8px !important;
+  }
+
+  .page-home .feature-hero .hero-ctas {
+    margin-top: 10px !important;
+  }
+}
+
+/* ==========================================================================
+   REPASO SECCIÓN A SECCIÓN EN MÓVIL
+   ========================================================================== */
+
+/* --- Manifiesto: que la entrada cinética no toque los bordes -----------
+   Cada frase entra desplazada un ±6% de su propio ancho. En pantalla ancha
+   la caja del texto tiene 100px de margen a cada lado y ese 6% (74px) cabe
+   de sobra. En móvil la caja va al 88vw, o sea 23px de margen, y el 6% son
+   21: las frases llegaban a 6px y 387px de una pantalla de 390 — pegadas a
+   los dos bordes durante toda la escena. Al 80vw el margen sube a 39 y el
+   desplazamiento se queda a 20px del borde. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .ln-manifesto-copy {
+    width: min(1240px, 80vw) !important;
+  }
+}
+
+/* --- Producto destacado: aire bajo las acciones ------------------------
+   Las acciones acababan en 840px de una escena de 844: 4px de margen contra
+   los 72 que tienen en pantalla completa. Quedaban pegadas al canto. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .page-home .feature-hero {
+    padding-bottom: clamp(82px, 11svh, 96px) !important;
+  }
+}
+
+/* --- Catálogo: fichas legibles, no miniaturas --------------------------
+   Tres columnas convertían cada producto en una tarjeta de ~114px: nombre,
+   precio y compra quedaban demasiado comprimidos para navegación táctil. */
+@media (max-width: 599px) {
+  .prod-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .prod-grid .prod-media {
+    margin: 6px 6px 0 !important;
+    padding: 7px !important;
+  }
+
+  .prod-grid .prod-body {
+    padding: 10px 9px 11px !important;
+    gap: 4px !important;
+  }
+
+  .prod-grid .prod-cat,
+  .prod-grid .prod-price small {
+    font-size: 9px !important;
+  }
+
+  .prod-grid .prod-name {
+    font-size: 14px !important;
+    line-height: 1.18 !important;
+  }
+
+  .prod-grid .add-btn {
+    min-height: 44px !important;
+    padding: 9px 6px !important;
+    font-size: 10px !important;
+  }
+
+  /* El acceso flotante de volver arriba caía directamente sobre los botones
+     de compra de la columna derecha. En teléfono se evita ese obstáculo: el
+     gesto nativo de desplazamiento mantiene la vuelta al inicio inmediata. */
+  .back-top {
+    display: none !important;
+  }
+
+  /* En el formulario, WhatsApp ya es la acción final. El acceso fijo tapaba
+     el borde del campo de mensaje mientras se escribe. */
+  body.page-contact .wa-float,
+  body.page-garantia .wa-float,
+  body.page-privacy .wa-float {
+    display: none !important;
+  }
+}
+
+/* --- Catálogo, banda "Lo conseguimos por ti": el texto se salía ---------
+   El contenedor mide 362px en móvil, pero el titular llevaba `width: 492px`
+   y el párrafo `max-width: 476px` —medidas heredadas de la referencia
+   ancha—. Al ir centrados, se salían 51px por CADA lado: en pantalla se leía
+   "O / ONSEGUIMO / OR TI" con las palabras cortadas a izquierda y derecha. */
+@media (max-width: 899px) {
+  .page-catalog .pit-band .container > *,
+  .page-catalog .pit-band h2,
+  .page-catalog .pit-band .sec-title,
+  .page-catalog .pit-band p {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* El titular no se partía: llevaba `text-wrap: balance`, que intenta
+     repartir las líneas y aquí dejaba "LO CONSEGUIMOS" entera en una línea de
+     361px dentro de una caja de 324. Con el corte normal parte donde debe, y
+     el cuerpo se topa para que la palabra más larga ("CONSEGUIMOS", ~6em en
+     la display) quepa en los 326px útiles. */
+  .page-catalog .pit-band h2,
+  .page-catalog .pit-band .sec-title {
+    font-size: min(12.5vw, 3.4rem) !important;
+    text-wrap: wrap !important;
+    overflow-wrap: break-word !important;
   }
 }

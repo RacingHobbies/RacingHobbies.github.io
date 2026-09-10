@@ -9939,12 +9939,18 @@ html.lando-anim .rh-cmask-diacritic::after {
 html.lando-anim [data-reveal-lines].rh-in .rh-cmask-diacritic::after {
   transform: translate(-50%, 0);
 }
+/* Sin `will-change`: cada carácter es un <span> propio, así que declararlo
+   aquí promocionaba a capa de composición los 85 caracteres de los titulares
+   de la portada — y otros tantos en cada página interna — durante toda la
+   vida del documento, para una entrada que ocurre UNA vez. Ese árbol de capas
+   se reconstruye en cada navegación y era parte del tirón al cambiar de
+   página. El navegador promociona solo mientras la transición de `transform`
+   está en marcha, que es exactamente el tramo en que hace falta. */
 html.lando-anim .rh-char {
   display: inline-block;
   transform: translateY(115%);
   transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: calc(var(--i, 0) * 0.028s);
-  will-change: transform;
 }
 html.lando-anim [data-reveal-lines].rh-in .rh-char { transform: translateY(0); }
 
@@ -13774,8 +13780,17 @@ html.lando-anim .rh-roll-layer.is-back {
 html.lando-anim .rh-roll-char {
   display: inline-block;
   white-space: pre;
-  will-change: transform;
   backface-visibility: hidden;
+}
+/* El rodillo solo se mueve con el puntero encima o con el foco puesto, así
+   que la promoción a capa se pide en ese momento y no antes: declararla en
+   `.rh-roll-char` a secas dejaba ~92 capas vivas de forma permanente (dos
+   copias de cada rótulo de la cabecera y el pie) para una animación que la
+   mayoría de visitas no llega a disparar. Al reservarla al gesto, se
+   promocionan solo las letras del enlace apuntado. */
+html.lando-anim [data-anim="text-hover"]:hover .rh-roll-char,
+html.lando-anim [data-anim="text-hover"]:focus-visible .rh-roll-char {
+  will-change: transform;
 }
 
 /* --- Barrido de resaltado sobre el texto ---------------------------------

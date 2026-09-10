@@ -52,7 +52,10 @@ body.rh-intro-complete .page-home .hero-proof {
     --ln-pad: calc(1.42vw + 11.2px);
     --home-title-top: 30.4svh;
     --home-copy-size: clamp(3rem, 7vw, 5.6rem);
-    --home-sub-gap: clamp(18px, calc(4.47vw - 22px), 35px);
+    /* El titular y la bajada se leían como un solo bloque: el hueco de 35px
+       lo consumía el interlineado de 0.92 del titular y las dos piezas casi se
+       tocaban. Doce píxeles más las separan sin mover las acciones. */
+    --home-sub-gap: clamp(30px, calc(4.47vw - 10px), 47px);
     --home-cta-gap: clamp(76px, calc(6.84vw + 14px), 102px);
   }
 
@@ -149,7 +152,7 @@ body.rh-intro-complete .page-home .hero-proof {
     /* Los huecos eran fijos: en vertical toda la composición se apelotonaba
        en la mitad superior y dejaba media pantalla vacía debajo. Atados al
        alto, el bloque se reparte como en la referencia ancha. */
-    --home-sub-gap: clamp(18px, 4svh, 40px);
+    --home-sub-gap: clamp(30px, calc(4svh + 12px), 52px);
     --home-cta-gap: clamp(76px, 20svh, 200px);
   }
 
@@ -394,8 +397,10 @@ body.rh-intro-complete .page-home .hero-proof {
        alto se cumple en todo el rango, y en 390x844 no cambia nada porque
        ahí sigue mandando 17.4vw. */
     --home-copy-size: clamp(2.4rem, min(17.4vw, 8.2svh), 5.6rem);
-    --home-sub-gap: clamp(16px, 2.6svh, 30px);
-    --home-cta-gap: clamp(64px, 8.6svh, 108px);
+    /* La bajada baja 12px y las acciones la acompañan: si sólo bajase ella,
+       el hueco que la separa de los botones caía a 5px en 390x844. */
+    --home-sub-gap: clamp(28px, calc(2.6svh + 12px), 42px);
+    --home-cta-gap: clamp(76px, calc(8.6svh + 12px), 120px);
     --home-brand-top: clamp(150px, 22svh, 300px);
     /* La marca ocupa la banda que queda entre el meta y el titular. Atarla
        al hueco disponible (y no a un vw fijo) evita que se solape con el
@@ -482,7 +487,9 @@ body.rh-intro-complete .page-home .hero-proof {
     /* El alto manda: 6.6vw solo se aplica cuando la pantalla es tan estrecha
        que el ancho es el límite real. */
     --home-copy-size: clamp(1.6rem, min(6.6vw, 9svh), 5.6rem);
-    --home-sub-gap: clamp(8px, 2.6svh, 22px);
+    /* En apaisado el margen es menor: +8px, que es lo que cabe sin comerse
+       el hueco hasta las acciones. */
+    --home-sub-gap: clamp(14px, calc(2.6svh + 8px), 30px);
     --home-cta-gap: clamp(38px, 11.3svh, 70px);
     --home-brand-top: clamp(80px, 24svh, 150px);
     --home-brand-h: min(46svh, calc(44vw * 0.628));
