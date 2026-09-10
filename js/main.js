@@ -1564,6 +1564,11 @@
     const panel = document.createElement("aside");
     panel.className = "rh-nav-panel";
     panel.id = "rh-nav-panel";
+    // Aunque visualmente es un panel de navegación, mientras está abierto
+    // se comporta como una capa modal: así los lectores de pantalla anuncian
+    // el cambio de contexto y el foco no se escapa al contenido de la página.
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
     panel.setAttribute("aria-hidden", "true");
     panel.setAttribute("aria-label", "Navegación principal");
 
@@ -1729,7 +1734,9 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeMenu(true);
       if (e.key !== "Tab" || !panel.classList.contains("is-open")) return;
-      const visible = panelLinks.filter((link) => link.offsetParent !== null);
+      // El botón visible de cerrar forma parte del recorrido. Antes el foco
+      // saltaba entre enlaces y para cerrar con teclado había que conocer ESC.
+      const visible = [menuBtn, ...panelLinks.filter((link) => link.offsetParent !== null)];
       if (!visible.length) return;
       const first = visible[0];
       const last = visible[visible.length - 1];

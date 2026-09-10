@@ -19877,6 +19877,97 @@ html.rh-scroll-reveal.js .rh-clip-reveal.reveal.in {
 }
 
 /* ===========================================================================
+   V52 — NAVEGACIÓN MÓVIL COMPACTA
+   La capa inmersiva conserva la cortina, el fondo editorial y el relevo de
+   letras existente. En pantallas de teléfono se ordena como una lista breve:
+   las cinco rutas quedan completas en la primera vista y el enlace largo no
+   rompe el ritmo al ocupar dos renglones.
+   ========================================================================== */
+@media (max-width: 719px) {
+  .rh-nav-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:
+      max(88px, calc(68px + env(safe-area-inset-top)))
+      max(20px, env(safe-area-inset-right))
+      max(28px, calc(20px + env(safe-area-inset-bottom)))
+      max(20px, env(safe-area-inset-left));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rh-nav-gallery {
+    opacity: 0.11;
+  }
+
+  .rh-nav-content {
+    width: min(100%, 430px);
+    padding-block: 12px;
+  }
+
+  .rh-nav-eyebrow {
+    margin-bottom: clamp(12px, 2.6svh, 22px);
+    font-size: 0.61rem;
+    letter-spacing: 0.16em;
+  }
+
+  .rh-nav-links {
+    width: 100%;
+  }
+
+  .rh-nav-link {
+    width: 100%;
+    min-height: clamp(47px, 6.7svh, 56px);
+    padding-inline: 4px;
+    font-size: clamp(2.05rem, 8.7vw, 2.75rem);
+    line-height: 0.96;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+  }
+
+  .rh-nav-meta {
+    gap: 12px clamp(14px, 5vw, 24px);
+    margin-top: clamp(22px, 4svh, 34px);
+    padding-top: clamp(14px, 2.4svh, 20px);
+  }
+
+  .rh-nav-meta a {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* En un móvil apaisado prima que el menú sea de un vistazo, sin cancelar la
+   animación de entrada ni obligar a desplazarse para encontrar Contacto. */
+@media (max-width: 719px) and (orientation: landscape) and (max-height: 500px) {
+  .rh-nav-panel {
+    align-items: flex-start;
+    padding-top: max(66px, calc(50px + env(safe-area-inset-top)));
+  }
+
+  .rh-nav-content {
+    padding-block: 0;
+  }
+
+  .rh-nav-eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .rh-nav-link {
+    min-height: 34px;
+    font-size: min(8vw, 7.2svh);
+  }
+
+  .rh-nav-meta {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+}
+
+
+/* ===========================================================================
    V60 — APERTURA: UN SOLO RELOJ
    `rh-start-fallback-v5` (bloque V49) escondía el overlay por su cuenta a los
    2,28 s, en paralelo al relevo que gobierna `initLoader`. Era un tercer reloj
