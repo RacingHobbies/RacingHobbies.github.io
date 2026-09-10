@@ -2198,7 +2198,7 @@ body .static-step-card .step-media::after {
      la display) quepa en los 326px útiles. */
   .page-catalog .pit-band h2,
   .page-catalog .pit-band .sec-title {
-    font-size: min(12.5vw, 3.4rem) !important;
+    font-size: min(9.5vw, 3.4rem) !important;
     text-wrap: wrap !important;
     overflow-wrap: break-word !important;
   }
