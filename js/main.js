@@ -1371,7 +1371,26 @@
 
     const task = new Promise((resolve, reject) => {
       const img = new Image();
-      img.addEventListener("load", () => resolve(img), { once: true });
+      // `load` sólo dice que los bytes están. Pintar exige además descodificar,
+      // y eso corre en el renderizador cuando le toca: medido en la navegación
+      // a catálogo, la textura tardaba ~600 ms más en aparecer que en abrirse
+      // la compuerta `.atmo-on`, así que salía a destiempo y fuera del velo que
+      // debía cubrir ese cambio. Esperando aquí a `decode()`, el primer pintado
+      // que usa la imagen es inmediato y el relevo queda tapado.
+      img.addEventListener(
+        "load",
+        () => {
+          if (typeof img.decode !== "function") {
+            resolve(img);
+            return;
+          }
+          img.decode().then(
+            () => resolve(img),
+            () => resolve(img)
+          );
+        },
+        { once: true }
+      );
       img.addEventListener("error", () => reject(new Error(src)), { once: true });
       img.src = src;
     });
@@ -1862,6 +1881,115 @@
       true
     );
   }
+
+  /* ---------- Llegar arriba al cambiar de página ----------
+     Pulsar "Inicio" o el logotipo desde otra sección dejaba la portada a medio
+     scroll —en el manifiesto— en vez de en el hero. El enlace está bien: es el
+     navegador restaurando la posición que esa página tenía la última vez, algo
+     que Safari de iOS hace incluso en una navegación normal, no sólo con
+     atrás/adelante.
+
+     Un clic en un enlace es una llegada nueva y debe empezar por el principio,
+     así que aquí se marca la intención al pulsar y en el destino se corrige. Se
+     marca sólo la navegación iniciada por un clic: atrás/adelante no pasan por
+     aquí y conservan su restauración, que ahí sí es lo que se espera.
+
+     El navegador puede restaurar en varios momentos del arranque, y con Lenis
+     de por medio hay dos posiciones que cuadrar (la real y la suya), así que se
+     reafirma en cada hito en lugar de una sola vez — y se deja de insistir en
+     cuanto el usuario mueve la página por su cuenta, para no pelear con él. */
+
+  const NAV_ARRIBA = "rh_nav_arriba";
+
+  function initLlegarArriba() {
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (
+          event.defaultPrevented ||
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) return;
+        const link = event.target && event.target.closest ? event.target.closest("a[href]") : null;
+        if (!link || link.target || link.hasAttribute("download")) return;
+        let url;
+        try {
+          url = new URL(link.href, window.location.href);
+        } catch {
+          return;
+        }
+        // Fuera del sitio, anclas y enlaces a la propia página: no aplican.
+        if (url.origin !== window.location.origin || url.hash) return;
+        if (samePagePath(url) === samePagePath(window.location)) return;
+        try {
+          sessionStorage.setItem(NAV_ARRIBA, "1");
+        } catch {
+          /* sessionStorage no disponible */
+        }
+      },
+      true
+    );
+  }
+
+  function aplicarLlegadaArriba() {
+    let pedido = false;
+    try {
+      pedido = sessionStorage.getItem(NAV_ARRIBA) === "1";
+    } catch {
+      return;
+    }
+    if (!pedido) return;
+    try {
+      sessionStorage.removeItem(NAV_ARRIBA);
+    } catch {
+      /* ignora */
+    }
+    if ("scrollRestoration" in window.history) {
+      try {
+        window.history.scrollRestoration = "manual";
+      } catch {
+        /* ignora */
+      }
+    }
+
+    let sueltaElMando = false;
+    const arriba = () => {
+      if (sueltaElMando) return;
+      window.scrollTo(0, 0);
+      if (window.rhLenis) window.rhLenis.scrollTo(0, { immediate: true, force: true });
+    };
+    const soltar = () => {
+      sueltaElMando = true;
+    };
+    ["wheel", "touchstart", "keydown", "pointerdown"].forEach((tipo) =>
+      window.addEventListener(tipo, soltar, { once: true, passive: true })
+    );
+
+    arriba();
+    window.requestAnimationFrame(arriba);
+    window.setTimeout(arriba, 60);
+    window.setTimeout(arriba, 220);
+    document.addEventListener("DOMContentLoaded", arriba, { once: true });
+    window.addEventListener(
+      "load",
+      () => {
+        arriba();
+        window.requestAnimationFrame(arriba);
+      },
+      { once: true }
+    );
+  }
+
+  // Al volver desde la caché de atrás/adelante el script NO se vuelve a
+  // ejecutar: la página se reanuda tal cual estaba, posición incluida. Safari
+  // sirve así muchas navegaciones normales, no sólo el botón de atrás, y es
+  // justo el caso en que "Inicio" te dejaba a medio scroll. `pageshow` es el
+  // único punto que sí se dispara en esa reanudación.
+  window.addEventListener("pageshow", aplicarLlegadaArriba);
+  aplicarLlegadaArriba();
 
   function confirmAddButton(button) {
     if (!button) return;
@@ -3474,6 +3602,7 @@
     initHeader();
     initRoutePrefetch();
     initSamePageLinks();
+    initLlegarArriba();
     initEvents();
     wireContactLinks();
     initStoreStatus();
