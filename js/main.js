@@ -1662,7 +1662,7 @@
     meta.innerHTML =
       '<a href="https://www.instagram.com/racinghobbies/" target="_blank" rel="noopener noreferrer">Instagram</a>' +
       '<a href="https://www.tiktok.com/@racinghobbies" target="_blank" rel="noopener noreferrer">TikTok</a>' +
-      '<a data-wa-link href="https://wa.me/593989019836" target="_blank" rel="noopener noreferrer">WhatsApp</a>';
+      '<a data-wa-link href="https://wa.me/593998019836" target="_blank" rel="noopener noreferrer">WhatsApp</a>';
 
     content.append(eyebrow, links, meta);
     panel.append(gallery, content);

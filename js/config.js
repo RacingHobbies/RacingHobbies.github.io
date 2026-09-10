@@ -7,7 +7,7 @@
 const RH_CONFIG = Object.freeze({
   // Celular publicado por la tienda (llamadas y WhatsApp).
   phoneDisplay: "099 801 9836",
-  phoneIntl: "+593989019836",
+  phoneIntl: "+593998019836",
   // WhatsApp en formato internacional SIN "+" (requerido por wa.me).
-  whatsapp: "593989019836",
+  whatsapp: "593998019836",
 });
