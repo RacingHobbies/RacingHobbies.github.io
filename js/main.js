@@ -960,19 +960,159 @@
     } catch {
       /* ignora */
     }
-    window.setTimeout(() => {
-      document.body.classList.add("rh-intro-reveal");
-    }, 1820);
-    // Las cinco luces completan la salida y la máscara radial descubre el hero.
-    window.setTimeout(() => {
-      document.body.classList.add("rh-intro-release");
-    }, 2480);
-    window.setTimeout(() => {
+
+    /* Las tres fases van encadenadas al final REAL de la coreografía, no a un
+       reloj aparte. Antes eran `setTimeout(1820/2480/3200)` contados desde
+       `DOMContentLoaded`, mientras las animaciones CSS corrían desde el primer
+       pintado: dos relojes distintos que se separaban tanto como tardase el
+       arranque. Medido en móvil, entre el final del semáforo y el relevo
+       quedaba medio segundo largo de pantalla negra sin nada; y como el hueco
+       depende de la red y del equipo, en un móvil lento crecía sin tope.
+
+       Aquí el relevo arranca cuando la marca termina su salida — la última
+       pieza en moverse — y cada fase dura exactamente lo que declara el CSS,
+       leído del CSS. Los dos relojes ya no pueden separarse porque ahora sólo hay uno. */
+
+    const mark = loader.querySelector(".rh-start-mark");
+
+    const toMs = (value) => {
+      const part = String(value || "").trim();
+      const n = parseFloat(part) || 0;
+      return /ms$/.test(part) ? n : n * 1000;
+    };
+
+    // Duración declarada en CSS de una transición, para no repetir el número
+    // aquí y que un retoque de diseño deje la mitad del relevo desincronizada.
+    const transitionMs = (el, pseudo) => {
+      const cs = window.getComputedStyle(el, pseudo || null);
+      return String(cs.transitionDuration || "0s")
+        .split(",")
+        .reduce((max, part) => Math.max(max, toMs(part)), 0);
+    };
+
+    // Lo que le queda por delante a la coreografía, preguntado a las propias
+    // animaciones. Si el hilo principal se atasca y la línea de tiempo se
+    // retrasa, este número crece solo: el relevo espera en vez de cortar.
+    const choreographyLeft = () => {
+      if (!mark || !mark.getAnimations) return 2200;
+      let left = 0;
+      for (const animation of mark.getAnimations()) {
+        const timing = animation.effect && animation.effect.getComputedTiming
+          ? animation.effect.getComputedTiming()
+          : null;
+        if (!timing || timing.endTime == null) continue;
+        left = Math.max(left, timing.endTime - (animation.currentTime || 0));
+      }
+      return left;
+    };
+
+    let phase = 0;
+    let guard = null;
+    const at = (ms, fn) => {
+      window.clearTimeout(guard);
+      guard = window.setTimeout(fn, Math.max(0, ms));
+    };
+
+    const complete = () => {
+      if (phase > 2) return;
+      phase = 3;
+      window.clearTimeout(guard);
       document.documentElement.classList.remove("rh-intro-lock");
       document.body.classList.remove("rh-intro-running", "rh-intro-reveal", "rh-intro-release");
       document.body.classList.add("rh-intro-complete");
       loader.remove();
-    }, 3200);
+      runMotionLayer();
+    };
+
+    const release = () => {
+      if (phase > 1) return;
+      phase = 2;
+      // Una sola clase, puesta una vez y nunca retirada: es lo que dispara la
+      // entrada del hero (capa V61 del CSS). Va en `<html>` a propósito, para
+      // que las clases de fase que entran y salen de `<body>` no puedan volver
+      // a resolver —y por tanto reiniciar— la entrada a mitad de camino.
+      document.documentElement.classList.add("rh-hero-in");
+      document.body.classList.add("rh-intro-release");
+      at(transitionMs(loader) + 60, complete);
+    };
+
+    const handoff = () => {
+      if (phase > 0) return;
+      phase = 1;
+      // El negro entra por encima de la escena. A partir de aquí no se ve nada
+      // de lo que pase debajo, así que es el hueco donde montar la capa de
+      // movimiento: su reflow queda tapado y el hero aparece ya asentado.
+      document.body.classList.add("rh-intro-reveal");
+      const blackout = transitionMs(loader, "::before");
+      const blackoutStart = performance.now();
+      // Un frame de margen para que el fundido llegue al compositor antes de
+      // que el hilo principal se ocupe: así el negro entra aunque el montaje
+      // de las escenas tarde.
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          runMotionLayer();
+          // La cortina no se levanta hasta que las escenas están montadas y
+          // medidas. Si el montaje termina antes de que el negro acabe de
+          // entrar, se espera a que acabe; si tarda más, se sigue en cuanto
+          // pueda. En los dos casos el hero aparece ya compuesto, sin que nada
+          // se recoloque a la vista.
+          const left = blackout - (performance.now() - blackoutStart);
+          at(Math.max(80, left), release);
+        });
+      });
+      at(blackout + 900, release);
+    };
+
+    if (mark) {
+      mark.addEventListener("animationend", (event) => {
+        if (/launch/i.test(event.animationName)) handoff();
+      });
+    }
+    // Respaldo: si el nombre de la animación cambia o el evento no llega, el
+    // relevo se dispara igualmente en cuanto la coreografía debería haber
+    // terminado. Y un tope duro para que la apertura no pueda quedarse colgada.
+    at(choreographyLeft() + 260, handoff);
+    window.setTimeout(complete, 7000);
+  }
+
+  /* ---------- Cuándo se monta la capa de movimiento ----------
+     `initLando`, `initLandoExperience` e `initReferenceParityMotion` son con
+     diferencia lo más caro del arranque: 349 ms de los 467 que ocupa entero el
+     `DOMContentLoaded` (medido con CPU ×4 sobre un viewport de teléfono).
+
+     Ese bloque caía justo encima de los primeros fotogramas de la apertura, y
+     ahí está el fallo de raíz: mientras el hilo principal está ocupado el
+     navegador no pinta NADA, y la línea de tiempo que gobierna las animaciones
+     CSS sólo avanza cuando hay fotograma. Medido con `getAnimations()`, el
+     semáforo seguía marcando `currentTime = 0` casi 700 ms después de haber
+     arrancado: no iba lento, estaba congelado. Al descongelarse, las cinco
+     luces aparecían ya encendidas de golpe y la secuencia escalonada se perdía
+     entera. No era cuestión de qué propiedad se anima, sino de que no había
+     fotogramas donde animarla.
+
+     Mientras la apertura corre, la página está bloqueada (`rh-intro-lock`) y
+     estas tres funciones sólo sirven al scroll, así que no hacen falta todavía.
+     Se montan al retirarse la cortina, con la maquetación ya asentada — que
+     además es el momento correcto para medirla. Si no hay apertura (visita
+     repetida, movimiento reducido) el orden es exactamente el de siempre. */
+  let motionLayerStarted = false;
+
+  function runMotionLayer() {
+    if (motionLayerStarted) return;
+    motionLayerStarted = true;
+    initLando();
+    initLandoExperience();
+    initReferenceParityMotion();
+  }
+
+  function startMotionLayer() {
+    if (!document.body.classList.contains("rh-intro-running")) {
+      runMotionLayer();
+      return;
+    }
+    // Red de seguridad: si la apertura no llegara a cerrarse, el sitio no puede
+    // quedarse sin scroll suave ni sin sus escenas.
+    window.setTimeout(runMotionLayer, 5000);
   }
 
   /* ---------- (Retirado) Magnetic hover en CTAs primarios ----------
@@ -2022,8 +2162,18 @@
         const inView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
         // Arriba del pliegue se revela al cargar: el titular nunca se queda
         // atascado invisible si el observer tarda.
-        if (inView) setTimeout(reveal, 60);
-        else io.observe(el);
+        if (inView) {
+          // Con la apertura todavía tapando la escena, el titular se compone en
+          // el acto y sin rodaje. Rodarlo detrás del negro no se vería, y en
+          // cambio dejaría el hero a medio escribir en el momento exacto en que
+          // se levanta la cortina: es el hueco por el que antes se colaba un
+          // salto al final de la apertura.
+          if (document.body.classList.contains("rh-intro-reveal")) {
+            el.classList.add("rh-in", "rh-in-instant");
+          } else {
+            setTimeout(reveal, 60);
+          }
+        } else io.observe(el);
       });
     }
 
@@ -3331,9 +3481,7 @@
     initParallax();
     initTilt();
     initMagnetic();
-    initLando();
-    initLandoExperience();
-    initReferenceParityMotion();
+    startMotionLayer();
   });
 
   window.addEventListener("storage", (e) => {

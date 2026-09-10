@@ -19875,3 +19875,120 @@ html.rh-scroll-reveal.js .rh-clip-reveal.reveal.in {
     clip-path: none !important;
   }
 }
+
+/* ===========================================================================
+   V60 — APERTURA: UN SOLO RELOJ
+   `rh-start-fallback-v5` (bloque V49) escondía el overlay por su cuenta a los
+   2,28 s, en paralelo al relevo que gobierna `initLoader`. Era un tercer reloj
+   compitiendo con los otros dos: si la coreografía se retrasaba un poco —y en
+   móvil se retrasaba mucho— el overlay desaparecía de golpe en mitad del
+   fundido, que es justamente el corte que se veía.
+
+   El relevo lo lleva JS, que además tiene su propio tope de seguridad. Este
+   respaldo sólo tiene sentido si el script no llegó a cargar: se reserva a
+   `html:not(.js)`, la clase que `main.js` pone en cuanto se ejecuta.
+   ========================================================================== */
+
+html.js .rh-loader {
+  animation: none !important;
+}
+
+html:not(.js) .rh-loader {
+  animation: rh-start-fallback-v5 0.01s linear 3.4s forwards !important;
+}
+
+/* El titular que se compone bajo la cortina no rueda: aparece ya montado.
+   `.rh-in` es terminal, así que anular aquí la transición no impide ninguna
+   animación posterior — simplemente evita reproducir a ciegas, detrás del
+   negro, un rodaje de casi dos segundos que nadie llegaría a ver. */
+html.lando-anim [data-reveal-lines].rh-in-instant .rh-char,
+html.lando-anim [data-reveal-lines].rh-in-instant .rh-cmask-diacritic::after {
+  transition: none !important;
+}
+
+
+/* ===========================================================================
+   V61 — RELEVO AL HERO: UNA SOLA ENTRADA, IMPOSIBLE DE REINICIAR
+   Las entradas del hero (`rh-intro-ui-in`, `rh-intro-title-in`,
+   `rh-intro-machine-in`, `rh-intro-depth-in-*`) colgaban de
+   `body.rh-intro-running`. Cada fase de la apertura añade una clase MÁS a
+   `body`, y eso vuelve a resolver esas reglas: medido con `getAnimations()`,
+   al entrar `rh-intro-reveal` las cinco animaciones saltaban de
+   `currentTime = 1650 ms` a `0`. Con un retardo de 2,1 s por delante, ya no
+   les daba tiempo a nada: el hero se quedaba en `opacity: 0` hasta que
+   `rh-intro-complete` lo ponía a 1 de golpe. Eso era el salto del final —
+   no una entrada, un encendido.
+
+   Aquí la entrada deja de ser una animación con retardo y pasa a ser una
+   transición gobernada por `html.rh-hero-in`, que JS pone UNA vez al levantar
+   la cortina y no quita nunca. Una transición no se reinicia porque cambien
+   clases ajenas, así que el problema no puede volver por otra puerta.
+   ========================================================================== */
+
+body.rh-intro-running .hero-meta,
+body.rh-intro-running .statement,
+body.rh-intro-running .statement-sub,
+body.rh-intro-running .hero .hero-ctas {
+  /* Anula las entradas viejas y, de paso, hace de red: si algo dejara
+     `rh-intro-running` puesto —un error de JS entre poner la clase y armar el
+     relevo—, el hero no puede quedarse invisible para siempre. */
+  animation: rh-hero-failsafe 0.01s linear 8s forwards !important;
+  opacity: 0;
+  transform: translate3d(0, 15px, 0);
+  transition:
+    opacity 0.6s var(--ln-ease),
+    transform 0.7s var(--ln-ease);
+}
+
+/* `.hero-machine` sólo funde: su encuadre lo fijan varias capas de
+   responsive y meterle un `transform` aquí lo descolocaría. */
+body.rh-intro-running .hero-machine,
+body.rh-intro-running .site-header .logo,
+body.rh-intro-running .header-actions {
+  animation: rh-hero-failsafe 0.01s linear 8s forwards !important;
+  opacity: 0;
+  transition: opacity 0.6s var(--ln-ease);
+}
+
+/* Escalonado corto: el conjunto entra como un gesto, no como una lista. */
+body.rh-intro-running .hero-meta { transition-delay: 0.04s; }
+body.rh-intro-running .statement { transition-delay: 0.08s; }
+body.rh-intro-running .statement-sub { transition-delay: 0.14s; }
+body.rh-intro-running .hero .hero-ctas { transition-delay: 0.2s; }
+body.rh-intro-running .site-header .logo,
+body.rh-intro-running .header-actions { transition-delay: 0.16s; }
+
+html.rh-hero-in body.rh-intro-running .hero-meta,
+html.rh-hero-in body.rh-intro-running .statement,
+html.rh-hero-in body.rh-intro-running .statement-sub,
+html.rh-hero-in body.rh-intro-running .hero .hero-ctas {
+  opacity: 1;
+  transform: none;
+}
+
+html.rh-hero-in body.rh-intro-running .hero-machine,
+html.rh-hero-in body.rh-intro-running .site-header .logo,
+html.rh-hero-in body.rh-intro-running .header-actions {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.rh-intro-running .hero-meta,
+  body.rh-intro-running .statement,
+  body.rh-intro-running .statement-sub,
+  body.rh-intro-running .hero .hero-ctas,
+  body.rh-intro-running .hero-machine,
+  body.rh-intro-running .site-header .logo,
+  body.rh-intro-running .header-actions {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@keyframes rh-hero-failsafe {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
