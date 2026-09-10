@@ -1134,6 +1134,13 @@
       a.href = "tel:" + RH_CONFIG.phoneIntl;
       if (!a.textContent.trim()) a.textContent = RH_CONFIG.phoneDisplay;
     });
+    // Un precio escrito a mano en el HTML acaba desfasado en cuanto cambia en
+    // el catálogo. El texto del marcado queda como respaldo sin JavaScript;
+    // con JavaScript manda `RH_PRODUCTS`, la misma fuente que el carrito.
+    $$("[data-price-of]").forEach((el) => {
+      const p = getProduct(el.dataset.priceOf);
+      if (p) el.textContent = formatUSD(p.price);
+    });
     $$("[data-year]").forEach((el) => {
       el.textContent = String(new Date().getFullYear());
     });
@@ -1156,6 +1163,9 @@
     const weekdayIndex = {
       Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
     };
+    const weekdayName = [
+      "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado",
+    ];
     const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone: "America/Guayaquil",
       weekday: "short",
@@ -1183,17 +1193,29 @@
       if (isOpen) {
         label = "Abierto — Cierra a las " + today.close;
       } else {
+        // Decir sólo la hora engaña: un sábado a las 17:00 "Abre a las 10:00"
+        // se lee como "en un rato", cuando en realidad abre el lunes.
         let nextOpening = null;
         for (let offset = 0; offset < 7; offset += 1) {
           const nextDay = (day + offset) % 7;
           if (schedule[nextDay]) {
             if (offset > 0 || now < toMinutes(schedule[nextDay].open)) {
-              nextOpening = schedule[nextDay].open;
+              nextOpening = { offset, day: nextDay, open: schedule[nextDay].open };
               break;
             }
           }
         }
-        label = nextOpening ? "Cerrado — Abre a las " + nextOpening : "Cerrado";
+        if (nextOpening) {
+          const when =
+            nextOpening.offset === 0
+              ? "hoy"
+              : nextOpening.offset === 1
+                ? "mañana"
+                : "el " + weekdayName[nextOpening.day];
+          label = "Cerrado — Abre " + when + " a las " + nextOpening.open;
+        } else {
+          label = "Cerrado";
+        }
       }
 
       targets.forEach((target) => {
@@ -1681,7 +1703,12 @@
     meta.innerHTML =
       '<a href="https://www.instagram.com/racinghobbies/" target="_blank" rel="noopener noreferrer">Instagram</a>' +
       '<a href="https://www.tiktok.com/@racinghobbies" target="_blank" rel="noopener noreferrer">TikTok</a>' +
-      '<a data-wa-link href="https://wa.me/593998019836" target="_blank" rel="noopener noreferrer">WhatsApp</a>';
+      '<a data-wa-link target="_blank" rel="noopener noreferrer">WhatsApp</a>';
+    // El panel lo construye el JavaScript, así que aquí no hace falta —ni
+    // conviene— repetir el número a mano: el único que lo hacía se quedó
+    // atrás cuando cambió el celular de la tienda y apuntaba a otra línea.
+    // `wireContactLinks` rellena el href desde `RH_CONFIG`, la misma fuente
+    // que el resto del sitio.
 
     content.append(eyebrow, links, meta);
     panel.append(gallery, content);
