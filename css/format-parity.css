@@ -2316,56 +2316,114 @@ body .static-step-card .step-media::after {
     line-height: 1.36 !important;
   }
 
-  /* Historia: en un teléfono esta escena no necesita ocupar un viewport
-     entero. Se conserva el texto completo, pero se compactan sus ritmos y la
-     foto de apoyo para volver a la siguiente sección con naturalidad. */
-  .page-about .about-story-section {
+  /* Historia: la escena ocupa una pantalla, como el resto de la página, pero
+     repartida — la tarjeta de texto arriba y la foto quedándose con todo el
+     alto sobrante en lugar de una franja de 150 px, que recortaba la mesa de
+     trabajo por la mitad. La altura es mínima, no fija: si el texto crece
+     (tipografía grande del sistema, línea de más al traducir) la escena se
+     estira en vez de recortar el contenido. */
+  html body.page-about main > section.about-story-section {
     box-sizing: border-box;
+    display: flex;
     height: auto !important;
-    min-height: 0 !important;
+    min-height: 100svh !important;
     overflow: visible;
-    padding: 52px 0 24px !important;
+    padding: 84px 0 34px !important;
   }
 
-  .page-about .about-story-section > .container,
-  .page-about .about-story-section .two-col {
-    height: auto;
+  .page-about .about-story-section > .container {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
     min-height: 0;
+    height: auto;
   }
 
   .page-about .about-story-section .two-col {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto 150px !important;
-    gap: 12px !important;
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-direction: column !important;
+    min-height: 0;
+    height: auto;
+    gap: 14px !important;
   }
 
   .page-about .about-story-section .two-col > .reveal:first-child {
+    flex: 0 0 auto;
     min-height: 0;
     overflow: visible;
-    padding: 18px 16px !important;
+    padding: 22px 18px !important;
   }
 
+  /* El rótulo lleva tilde y con 0.9 no le cabía: el acento de "CÓMO" se
+     recortaba contra el kicker. Se usan las mismas alturas de línea que el
+     resto de los rótulos de sección: 1.06 sin tilde, 1.16 con ella. */
   .page-about .about-story-section .sec-title {
-    font-size: clamp(2.2rem, 9.2vw, 2.5rem) !important;
-    line-height: 0.9 !important;
-    margin-top: 10px !important;
+    font-size: clamp(2.05rem, 8.8vw, 2.45rem) !important;
+    line-height: 1.06 !important;
+    margin-top: 8px !important;
+  }
+
+  .page-about .about-story-section .sec-title.rh-has-diacritic {
+    line-height: 1.16 !important;
   }
 
   .page-about .about-story-section .sec-sub {
     font-size: 0.875rem !important;
-    line-height: 1.4 !important;
-    margin-top: 14px !important;
+    line-height: 1.45 !important;
+    margin-top: 12px !important;
   }
 
+  /* La foto se queda con el alto que sobra de la escena, con un suelo para
+     que nunca vuelva a ser una franja. */
   .page-about .about-story-section .static-story-visual {
-    min-height: 0 !important;
-    height: 150px !important;
+    flex: 1 1 0 !important;
+    height: auto !important;
+    min-height: 170px !important;
+    max-width: none !important;
+    margin: 0 !important;
+    /* Sin desplazamiento de parallax: la escena va justa de alto y ese medio
+       centímetro de deriva sacaba la foto del margen inferior. */
+    transform: none !important;
   }
 
   .page-about .about-story-section .static-story-visual img {
+    width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+    object-position: 50% 45% !important;
+  }
+
+  /* Pantallas cortas (iPhone SE y parecidos): el mismo reparto, con el ritmo
+     tipográfico un punto más apretado para que la escena siga cabiendo de una
+     sola vez sin recortar ni una línea. */
+  @media (max-height: 740px) {
+    html body.page-about main > section.about-story-section {
+      padding: 74px 0 26px !important;
+    }
+
+    .page-about .about-story-section .two-col {
+      gap: 12px !important;
+    }
+
+    .page-about .about-story-section .two-col > .reveal:first-child {
+      padding: 18px 16px !important;
+    }
+
+    .page-about .about-story-section .sec-title {
+      font-size: clamp(1.85rem, 7.8vw, 2.1rem) !important;
+      margin-top: 6px !important;
+    }
+
+    .page-about .about-story-section .sec-sub {
+      font-size: 0.8rem !important;
+      line-height: 1.42 !important;
+      margin-top: 10px !important;
+    }
+
+    .page-about .about-story-section .static-story-visual {
+      min-height: 140px !important;
+    }
   }
 
   /* Contacto: el formulario se hace más compacto y la ficha de la tienda se
@@ -2500,12 +2558,28 @@ body .static-step-card .step-media::after {
    revelado tipográfico; sólo ajusta medidas, no sus transiciones. */
 @media (max-width: 599px) and (orientation: portrait) {
   html.lando-anim .page-about .about-story-section .two-col > .reveal:first-child {
-    padding: 18px 16px !important;
+    padding: 22px 18px !important;
   }
 
   html.lando-anim .page-about .about-story-section .sec-title {
-    font-size: clamp(2.2rem, 9.2vw, 2.5rem) !important;
-    line-height: 0.9 !important;
+    font-size: clamp(2.05rem, 8.8vw, 2.45rem) !important;
+    line-height: 1.06 !important;
+  }
+
+  /* Con el revelado por caracteres la tilde se pinta como una capa aparte,
+     0.48em por encima de la caja de línea: necesita este aire o se recorta. */
+  html.lando-anim .page-about .about-story-section .sec-title.rh-has-diacritic {
+    line-height: 1.16 !important;
+  }
+
+  @media (max-height: 740px) {
+    html.lando-anim .page-about .about-story-section .two-col > .reveal:first-child {
+      padding: 18px 16px !important;
+    }
+
+    html.lando-anim .page-about .about-story-section .sec-title {
+      font-size: clamp(1.85rem, 7.8vw, 2.1rem) !important;
+    }
   }
 
   /* Contacto: ritmo más compacto, con controles de al menos 44px para que
@@ -2685,20 +2759,21 @@ body .static-step-card .step-media::after {
     max-height: 42svh;
   }
 
-  /* La historia conserva su composición compacta, centrada dentro de una
-     escena completa; no vuelve a inflar la tarjeta de texto. */
+  /* La historia ocupa la escena completa repartiendo el alto entre la tarjeta
+     de texto y la foto: la altura es mínima, no fija, para que un texto más
+     alto estire la escena en lugar de recortarse dentro de ella. */
   body.page-about .about-story-section {
     box-sizing: border-box;
-    height: 100svh !important;
+    height: auto !important;
     min-height: 100svh !important;
   }
 
-  body.page-about .about-story-section > .container,
-  body.page-about .about-story-section .two-col {
-    height: 100% !important;
+  body.page-about .about-story-section > .container {
+    height: auto !important;
+    min-height: 0;
   }
 
   body.page-about .about-story-section .two-col {
-    align-content: center;
+    height: auto !important;
   }
 }
