@@ -201,11 +201,20 @@ node --check js/catalog.js
 node --check js/contact.js
 node --check js/frame-guard.js
 
+# El <meta http-equiv> de cada página es el único CSP que rige en GitHub
+# Pages; \`_headers\`, \`.htaccess\` y el ejemplo de nginx cubren los otros
+# alojamientos. Los cuatro tienen que declarar el mismo par de hashes: cuando
+# sólo se comprobaba \`_headers\`, los otros tres se quedaron atrás sin ruido.
+csp_carriers=( "${html_files[@]}" _headers .htaccess nginx-security-headers.conf.example )
 for file in index.html contacto.html; do
   hash="$({
     perl -0777 -ne 'if (/<script type="application\/ld\+json">(.*?)<\/script>/s) { print $1 }' "$file"
   } | openssl dgst -sha256 -binary | openssl base64 -A)"
-  rg -q "$hash" _headers || fail "El hash CSP JSON-LD de $file no coincide con _headers."
+  for carrier in "${csp_carriers[@]}"; do
+    [[ -f "$carrier" ]] || continue
+    rg -q "$hash" "$carrier" ||
+      fail "El hash CSP JSON-LD de $file no está en $carrier (ejecuta scripts/update-csp-hashes.sh)."
+  done
 done
 
 rg -q 'sandbox' js/main.min.js || fail "El artefacto minificado no contiene el sandbox del mapa."
