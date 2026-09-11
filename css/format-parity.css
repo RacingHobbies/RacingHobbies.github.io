@@ -2843,6 +2843,62 @@ body .static-step-card .step-media::after {
 }
 
 /* ==========================================================================
+   MÓVIL — CONTACTO: LAS DOS FICHAS DE ABAJO, EN BANDA COMPLETA
+   Horarios ya ocupaba la fila entera, pero Extras se quedaba en media columna
+   y dejaba un hueco a la derecha que rompía la simetría de la rejilla.
+   Las dos pasan a banda completa con el icono al lado del texto: ocupan todo
+   el ancho y quedan más bajas que las cuatro tarjetas de arriba, que son las
+   que llevan el dato principal.
+   Sin `html.lando-anim` para que el bloque valga también con la variante de
+   animación desactivada, y con `html body` para ganarle en especificidad al
+   ajuste previo de Horarios.
+   ========================================================================== */
+
+@media (max-width: 899px) {
+  html body.page-contact .info-list .info-item:has(.store-status),
+  html body.page-contact .info-list .info-item:last-child {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: 20px minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 10px !important;
+    padding: 10px 14px !important;
+  }
+
+  html body.page-contact .info-list .info-item:has(.store-status) > svg,
+  html body.page-contact .info-list .info-item:last-child > svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin-top: 1px !important;
+  }
+
+  html body.page-contact .info-list .info-item:has(.store-status) h3,
+  html body.page-contact .info-list .info-item:last-child h3 {
+    margin-bottom: 3px !important;
+  }
+
+  html body.page-contact .info-list .info-item:has(.store-status) p,
+  html body.page-contact .info-list .info-item:last-child p {
+    font-size: 0.78rem !important;
+    line-height: 1.38 !important;
+  }
+
+  /* La píldora conserva el plegado que se le dio para 320px: la etiqueta más
+     larga ("Cerrado — Abre el lunes a las 10:00") mide 253px y ahí no caben,
+     ni siquiera en la banda completa. Parte en dos líneas antes que salirse. */
+  html body.page-contact .info-list .info-item:has(.store-status) .store-status {
+    width: auto !important;
+    max-width: 100% !important;
+    margin-top: 7px !important;
+    padding: 5px 8px !important;
+    font-size: 0.6rem !important;
+    line-height: 1.28 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
+/* ==========================================================================
    CONTACTO EN TELÉFONO: DOS ESCENAS COMPLETAS, DOS PAUSAS
    El formulario se quedaba en media pantalla —646px de contenido dentro de
    una escena de 664— y, como la pausa se mide sobre la sección entera
