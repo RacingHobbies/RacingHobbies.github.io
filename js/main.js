@@ -3083,13 +3083,19 @@
     // en lugar de cancelar el evento, así el trackpad conserva su inercia y la
     // barra nativa sigue funcionando. ScrollTrigger se sincroniza con su tick
     // para que las escenas con `scrub` vayan en el mismo frame, sin doble retraso.
-    if (!REDUCED && window.Lenis) {
+    const touchViewport = window.matchMedia("(max-width: 899px)").matches;
+    if (!REDUCED && window.Lenis && !touchViewport) {
+      // En pantallas táctiles el navegador ya ofrece inercia acelerada. Hacer
+      // que Lenis replique cada `touchmove` añade una segunda cola de frames y
+      // se percibe como tirones al cruzar escenas fijadas. Conservamos Lenis
+      // para rueda/trackpad y ScrollTrigger, pero el dedo vuelve a desplazar
+      // de forma nativa y directa.
       const lenis = new window.Lenis({
         // Conserva la cola de scroll intencional, pero con menos frames de
         // retraso para que el movimiento se sienta más directo.
         lerp: 0.14,
         wheelMultiplier: 1,
-        syncTouch: true,
+        syncTouch: !touchViewport,
         touchMultiplier: 1.25,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
@@ -3183,6 +3189,11 @@
       }
 
       const pauseAtSectionEdge = (instance) => {
+        // La pausa de lectura es intencional en escritorio, pero en un móvil
+        // equivale a congelar el gesto del usuario 250 ms en cada sección.
+        // La escena sigue teniendo su animación; simplemente no interceptamos
+        // ni detenemos el desplazamiento táctil.
+        if (touchViewport) return;
         const current = instance.scroll;
         const viewportHeight = window.innerHeight;
         const edgeTolerance = Math.min(42, viewportHeight * 0.05);
@@ -3255,10 +3266,12 @@
         }
       };
 
-      window.addEventListener("wheel", markScrollIntent, { passive: true });
-      window.addEventListener("touchstart", markScrollIntent, { passive: true });
-      window.addEventListener("touchmove", markScrollIntent, { passive: true });
-      lenis.on("scroll", pauseAtSectionEdge);
+      if (!touchViewport) {
+        window.addEventListener("wheel", markScrollIntent, { passive: true });
+        window.addEventListener("touchstart", markScrollIntent, { passive: true });
+        window.addEventListener("touchmove", markScrollIntent, { passive: true });
+        lenis.on("scroll", pauseAtSectionEdge);
+      }
 
       // El menú y el carrito bloquean el scroll de la página mientras están
       // abiertos; Lenis debe pararse o seguiría moviendo el fondo.
