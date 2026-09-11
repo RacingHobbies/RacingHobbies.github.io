@@ -2796,6 +2796,17 @@
         }
         document.documentElement.classList.add("lando-hscroll");
 
+        // Un carril se desplaza con `transform`, no con scroll nativo. En
+        // móviles algunos navegadores nunca activan `loading="lazy"` para las
+        // imágenes que empiezan fuera del viewport aunque después entren por
+        // la animación, dejando tarjetas vacías. Son sólo unas pocas imágenes
+        // por carril, así que se piden antes de comenzar el recorrido.
+        cards.forEach((card) => {
+          card.querySelectorAll("img").forEach((img) => {
+            img.loading = "eager";
+          });
+        });
+
         // Cada tarjeta recibe un envoltorio propio y su número: los `.reveal`
         // del sitio llevan `transform: none !important`, que anularía la
         // animación de profundidad si se aplicara a la tarjeta directamente.
