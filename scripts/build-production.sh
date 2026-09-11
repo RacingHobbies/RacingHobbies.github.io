@@ -19,6 +19,7 @@ for source in config data main catalog contact frame-guard; do
     --output "js/${source}.min.js"
 done
 
+bash scripts/update-csp-hashes.sh
 bash scripts/update-sri.sh
 
 echo "Archivos de producción actualizados."
