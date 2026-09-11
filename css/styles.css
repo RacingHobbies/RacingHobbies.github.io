@@ -19059,6 +19059,14 @@ html.js img.img-failed {
     will-change: transform, opacity;
   }
 
+  /* Las fichas informativas se envuelven en `.rh-card` al activar el carril.
+     El envoltorio anula el padding de `.static-step-card`, por lo que el texto
+     quedaba al ras de los bordes en móvil. La imagen mantiene su sangrado y
+     el texto recupera el mismo aire lateral en cada paso. */
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card .rh-card {
+    padding: 0 clamp(18px, 5vw, 24px) 22px !important;
+  }
+
   html.lando-anim [data-lando-htrack] .rh-card-num {
     position: absolute;
     top: 10px;
@@ -20199,4 +20207,35 @@ html.rh-hero-in body.rh-intro-running .header-actions {
   }
 }
 
+/* ===========================================================================
+   V63 — FILTROS DEL CATÁLOGO: CARRIL TÁCTIL CONTENIDO
+   En teléfono, también al girarlo, los filtros forman una sola fila que se
+   desplaza con el dedo. El sangrado anterior dejaba el primer chip al ras (e
+   incluso unos píxeles fuera) y sólo activaba el carril hasta 560 px, por lo
+   que en horizontal volvía a envolver los botones. El margen interno conserva
+   aire en ambos extremos sin reducir el área de toque.
+   ========================================================================== */
+@media (pointer: coarse) and (max-width: 899px) {
+  .page-catalog .chips {
+    flex-wrap: nowrap;
+    margin-inline: 0;
+    padding: 2px 8px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 8px;
+    touch-action: pan-x;
+    scrollbar-width: none;
+  }
 
+  .page-catalog .chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-catalog .chips > .chip {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
