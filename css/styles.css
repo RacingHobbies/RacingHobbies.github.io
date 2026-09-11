@@ -20213,16 +20213,17 @@ html.rh-hero-in body.rh-intro-running .header-actions {
 }
 
 /* ===========================================================================
-   V64 — TARJETAS DE PASO EN MÓVIL: AIRE LATERAL PARA EL TEXTO
-   El titular y el párrafo de las fichas de "4 pasos" y "Nuestros valores"
-   llegaban al ras del borde en teléfono. La intención era la de
+   V65 — TARJETAS DE PASO EN MÓVIL: AIRE LATERAL PARA EL TEXTO
+   El titular y el párrafo de las fichas de "En 4 pasos" y "Nuestros valores"
+   llegaban al ras del borde en teléfono. La intención ya estaba escrita en
    `.static-step-card { padding: 0 18px 22px }`, pero el carril horizontal
    fuerza `padding: 0 !important` sobre `.rh-hcard` para que la foto sangre de
-   lado a lado, y con ello se llevaba por delante también el margen del texto.
-   Aquí el aire vuelve, pero sobre el texto: la foto sigue a sangre y el
-   relleno se expresa en porcentaje del ancho de la ficha para que acompañe a
-   `min(62vw, 30svh)`. El suelo de 10px protege el teléfono en horizontal,
-   donde la ficha baja a ~117px y un valor fijo se comería la columna.
+   lado a lado, y de paso se llevaba por delante el margen del texto.
+   Aquí el aire vuelve, pero puesto sobre el texto: la foto sigue a sangre y
+   el relleno se expresa en porcentaje del ancho de la ficha para que acompañe
+   a `min(62vw, 30svh)` —14,5px a 320, 17,7px a 390, 22,6px en tableta—, en la
+   misma proporción que el `margin-inline` que usan estas fichas de 900px
+   para arriba.
    ========================================================================== */
 @media (max-width: 899px) {
   html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card h3,
@@ -20231,9 +20232,21 @@ html.rh-hero-in body.rh-intro-running .header-actions {
   }
 }
 
+/* Teléfono en horizontal: ahí manda `30svh` y la ficha se queda en ~117px de
+   ancho, donde una palabra como "reconocidas:" ya no cabía ni antes de este
+   relleno. El aire se mide sólo en porcentaje —sin suelo fijo— y las palabras
+   largas parten en lugar de salirse por el borde, que va recortado. */
+@media (orientation: landscape) and (max-height: 500px) {
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card h3,
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card p {
+    padding-inline: 6.2%;
+    overflow-wrap: anywhere;
+  }
+}
+
 
 /* ===========================================================================
-   V64 — LA TEXTURA DEL SECTOR ENTRA FUNDIDA (de verdad)
+   V66 — LA TEXTURA DEL SECTOR ENTRA FUNDIDA (de verdad)
    La compuerta `.atmo-on` (V48) evita descargar ~870 KB de textura durante el
    primer pintado, pero lo que abría era un `background-image` de la propia
    sección, y `background-image` no admite transición: la foto pasaba de no
