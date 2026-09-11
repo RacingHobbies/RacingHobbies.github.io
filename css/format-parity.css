@@ -923,16 +923,33 @@
 
 /* Teléfonos pequeños girados (667x375): la lista de seis datos es la columna
    más alta y dejaba la sección 11px por encima de la pantalla. */
-/* Apaisado de teléfono (740x360, 844x390): aquí el titular ya está atado al
-   alto (10svh) y la composición llegaba a 7px del canto inferior, así que los
-   8px de aire que gana la bajada no salían de ninguna parte. Se devuelven
-   recortando el cuerpo del titular un 6%: cuatro líneas a 0.6svh menos liberan
-   ~8px, los mismos que baja el bloque. El titular no pierde presencia y las
-   acciones conservan su margen con el borde. */
-@media (max-height: 430px) and (min-width: 600px) {
+/* Apaisado de teléfono: el titular ya está atado al alto y la composición
+   llegaba al canto inferior. Dos cosas se resuelven aquí con una sola fórmula:
+
+   1. El aire que gana la bajada (+8px) no salía de ninguna parte, porque a
+      740x360 el bloque acababa a 7px del borde.
+   2. Por debajo de ~350px de alto las acciones se salían de la pantalla: 18px
+      a 320 y 5px a 340, en CUALQUIER ancho. El titular de cuatro líneas más el
+      bloque de meta no caben, y el botón principal quedaba recortado.
+
+   El techo del cuerpo pasa de un valor fijo (9.4svh) a una recta que vale lo
+   mismo a 430px de alto —identidad, ahí no cambia nada— y va cediendo cuerpo
+   según baja la pantalla: 40px a 430, 29 a 360, 23 a 320. El titular encoge
+   donde la pantalla no da, en vez de desbordarse.
+
+   Sin el guardia de ancho: el desborde no dependía del ancho, y por debajo de
+   600 la rama de `home-responsive` se quedaba sin esta compensación. */
+@media (orientation: landscape) and (max-height: 430px) {
   .page-home .hero,
   .page-home .hero > .container {
-    --home-copy-size: min(clamp(1.5rem, 7.9vw, 5.6rem), 9.4svh);
+    --home-copy-size: min(clamp(1.5rem, 7.9vw, 5.6rem), calc(15.82svh - 27.6px));
+    --home-sub-gap: clamp(16px, calc(2.4svh + 8px), 48px);
+    --home-cta-gap: clamp(38px, calc(9svh + 8px), 208px);
+  }
+
+  /* Por debajo de 600 los botones seguían a 46px y eran los que se salían. */
+  .page-home .hero .hero-ctas .btn {
+    min-height: 42px !important;
   }
 }
 
@@ -2327,14 +2344,20 @@ body .static-step-card .step-media::after {
      alto sobrante en lugar de una franja de 150 px, que recortaba la mesa de
      trabajo por la mitad. La altura es mínima, no fija: si el texto crece
      (tipografía grande del sistema, línea de más al traducir) la escena se
-     estira en vez de recortar el contenido. */
+     estira en vez de recortar el contenido.
+
+     El ritmo se mide en `svh`, no en un `@media (max-height:)`: en Safari de
+     iPhone las consultas de alto usan el viewport grande (sin barras), así
+     que en un teléfono corto nunca se activaba el ajuste y la tarjeta se
+     comía la pantalla dejando la foto cortada. Con `svh` la tipografía y el
+     aire se miden contra el alto realmente visible. */
   html body.page-about main > section.about-story-section {
     box-sizing: border-box;
     display: flex;
     height: auto !important;
     min-height: 100svh !important;
     overflow: visible;
-    padding: 84px 0 34px !important;
+    padding: clamp(62px, 10.6svh, 84px) 0 clamp(22px, 4.6svh, 34px) !important;
   }
 
   .page-about .about-story-section > .container {
@@ -2351,14 +2374,14 @@ body .static-step-card .step-media::after {
     flex-direction: column !important;
     min-height: 0;
     height: auto;
-    gap: 14px !important;
+    gap: clamp(10px, 2svh, 14px) !important;
   }
 
   .page-about .about-story-section .two-col > .reveal:first-child {
     flex: 0 0 auto;
     min-height: 0;
     overflow: visible;
-    padding: 22px 18px !important;
+    padding: clamp(14px, 2.4svh, 22px) 16px !important;
   }
 
   /* El rótulo lleva tilde y con 0.9 no le cabía: el acento de "CÓMO" se
@@ -2366,15 +2389,15 @@ body .static-step-card .step-media::after {
      resto de los rótulos de sección; los que llevan tilde reclaman su
      interlineado en el bloque canónico de `.rh-has-diacritic`. */
   .page-about .about-story-section .sec-title {
-    font-size: clamp(2.05rem, 8.8vw, 2.45rem) !important;
+    font-size: clamp(1.7rem, min(8.2vw, 4.3svh), 2.45rem) !important;
     line-height: 1.06 !important;
-    margin-top: 8px !important;
+    margin-top: 6px !important;
   }
 
   .page-about .about-story-section .sec-sub {
-    font-size: 0.875rem !important;
-    line-height: 1.45 !important;
-    margin-top: 12px !important;
+    font-size: clamp(0.78rem, min(3.5vw, 1.95svh), 0.9rem) !important;
+    line-height: 1.44 !important;
+    margin-top: clamp(8px, 1.7svh, 12px) !important;
   }
 
   /* La foto se queda con el alto que sobra de la escena, con un suelo para
@@ -2382,7 +2405,7 @@ body .static-step-card .step-media::after {
   .page-about .about-story-section .static-story-visual {
     flex: 1 1 0 !important;
     height: auto !important;
-    min-height: 170px !important;
+    min-height: clamp(120px, 19svh, 190px) !important;
     max-width: none !important;
     margin: 0 !important;
     /* Sin desplazamiento de parallax: la escena va justa de alto y ese medio
@@ -2395,38 +2418,6 @@ body .static-step-card .step-media::after {
     height: 100% !important;
     object-fit: cover !important;
     object-position: 50% 45% !important;
-  }
-
-  /* Pantallas cortas (iPhone SE y parecidos): el mismo reparto, con el ritmo
-     tipográfico un punto más apretado para que la escena siga cabiendo de una
-     sola vez sin recortar ni una línea. */
-  @media (max-height: 740px) {
-    html body.page-about main > section.about-story-section {
-      padding: 74px 0 26px !important;
-    }
-
-    .page-about .about-story-section .two-col {
-      gap: 12px !important;
-    }
-
-    .page-about .about-story-section .two-col > .reveal:first-child {
-      padding: 18px 16px !important;
-    }
-
-    .page-about .about-story-section .sec-title {
-      font-size: clamp(1.85rem, 7.8vw, 2.1rem) !important;
-      margin-top: 6px !important;
-    }
-
-    .page-about .about-story-section .sec-sub {
-      font-size: 0.8rem !important;
-      line-height: 1.42 !important;
-      margin-top: 10px !important;
-    }
-
-    .page-about .about-story-section .static-story-visual {
-      min-height: 140px !important;
-    }
   }
 
   /* Contacto: el formulario se hace más compacto y la ficha de la tienda se
@@ -2561,22 +2552,18 @@ body .static-step-card .step-media::after {
    revelado tipográfico; sólo ajusta medidas, no sus transiciones. */
 @media (max-width: 599px) and (orientation: portrait) {
   html.lando-anim .page-about .about-story-section .two-col > .reveal:first-child {
-    padding: 22px 18px !important;
+    padding: clamp(14px, 2.4svh, 22px) 16px !important;
   }
 
   html.lando-anim .page-about .about-story-section .sec-title {
-    font-size: clamp(2.05rem, 8.8vw, 2.45rem) !important;
+    font-size: clamp(1.7rem, min(8.2vw, 4.3svh), 2.45rem) !important;
     line-height: 1.06 !important;
   }
 
-  @media (max-height: 740px) {
-    html.lando-anim .page-about .about-story-section .two-col > .reveal:first-child {
-      padding: 18px 16px !important;
-    }
-
-    html.lando-anim .page-about .about-story-section .sec-title {
-      font-size: clamp(1.85rem, 7.8vw, 2.1rem) !important;
-    }
+  html.lando-anim .page-about .about-story-section .sec-sub {
+    font-size: clamp(0.78rem, min(3.5vw, 1.95svh), 0.9rem) !important;
+    line-height: 1.44 !important;
+    margin-top: clamp(8px, 1.7svh, 12px) !important;
   }
 
   /* Contacto: ritmo más compacto, con controles de al menos 44px para que
@@ -2843,6 +2830,75 @@ body .static-step-card .step-media::after {
 
   body.page-contact .contact-form-section .info-grid > .reveal .info-item {
     padding-block: clamp(2px, 0.7svh, 9px) !important;
+  }
+}
+
+/* ==========================================================================
+   TELÉFONO — CAPAS DE COMPOSICIÓN: SÓLO LAS QUE SE MUEVEN AHORA
+   `will-change` no es "esto irá más rápido": es una reserva permanente de capa
+   en la GPU. Contadas sobre la portada a 390px había 79 elementos con la
+   reserva puesta —los `.reveal`, las imágenes con desvanecido, veinte trazos
+   de SVG— para animaciones que ocurren UNA vez, al entrar en pantalla. Ese
+   árbol de capas se mantiene vivo durante toda la visita y hay que recomponerlo
+   en cada cuadro de scroll; en un teléfono es memoria de vídeo y trabajo de
+   rasterizado a cambio de nada.
+
+   La reserva se conserva sólo donde algo se mueve de forma continua mientras
+   se scrollea: la cinta de marcas y las tarjetas de los carriles, que van
+   atadas al scroll con `scrub` y no se benefician de la promoción automática
+   del navegador. `stroke-dashoffset` ni siquiera es una propiedad que la GPU
+   pueda componer, así que ahí la reserva era pura pérdida.
+   ========================================================================== */
+
+@media (pointer: coarse) {
+  html.lando-anim .reveal,
+  html.lando-anim .collage,
+  html.lando-anim .collage-item,
+  html.lando-anim .deck-card,
+  html.lando-anim .vitrina-grid,
+  html.lando-anim .img-fade,
+  html.lando-anim .feature-visual,
+  html.lando-anim .feature-img,
+  html.lando-anim .hero-brand-visual,
+  html.lando-anim .logo,
+  html.lando-anim .header-actions,
+  html.lando-anim .map-card,
+  .reveal,
+  .collage,
+  .collage-item,
+  .deck-card,
+  .vitrina-grid,
+  .img-fade,
+  .feature-visual,
+  .feature-img,
+  .hero-brand-visual,
+  .logo,
+  .header-actions,
+  .map-card {
+    will-change: auto !important;
+  }
+
+  /* Los trazos que se dibujan solos: la propiedad no la compone la GPU. */
+  svg path,
+  svg circle,
+  svg rect,
+  svg line,
+  svg polyline {
+    will-change: auto !important;
+  }
+
+  /* `backdrop-filter` obliga al navegador a leer y desenfocar lo que hay
+     DETRÁS del elemento en cada cuadro en que ese fondo se mueve; scrolleando,
+     eso es todos. Aquí el fondo es el negro de la marca y estos botones no
+     llevan color propio, así que desenfocar un negro casi liso devuelve el
+     mismo negro: se paga el trabajo y no se ve la diferencia. En escritorio se
+     conserva, que es donde el efecto sí se aprecia sobre las fotos. */
+  .btn-line,
+  .menu-btn,
+  .back-top,
+  .toast {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 
