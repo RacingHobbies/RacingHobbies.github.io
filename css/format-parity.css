@@ -2208,6 +2208,19 @@ body .static-step-card .step-media::after {
    AJUSTE FINO DE LAS ESCENAS INDICADAS EN TELÉFONO
    ========================================================================== */
 @media (max-width: 599px) and (orientation: portrait) {
+  /* El número de sector vive en el margen superior de cada escena. En el
+     teléfono no hay margen: a 54 px de alto empezaba justo donde empieza la
+     tarjeta de contenido (entre 72 y 106 px según la página) y las cifras
+     salían partidas por el borde de la tarjeta. Se sube al hueco que queda
+     sobre ella y se ajusta al tamaño de ese hueco, así que se lee entero.
+     La cabecera se retira al bajar, de modo que la franja queda libre. */
+  html body:not(.page-home) main > section:not(.page-hero)::after {
+    top: 26px;
+    right: 16px;
+    font-size: clamp(1.5rem, 6.4vw, 2rem);
+    letter-spacing: -0.04em;
+  }
+
   /* Redes: el abanico llegaba a ocupar apenas un tercio de la escena. Se
      agranda su área y sus tarjetas, mientras el margen que las separa de los
      enlaces se reduce en la misma medida para mantenerlos independientes. */
