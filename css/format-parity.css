@@ -2758,3 +2758,71 @@ body .static-step-card .step-media::after {
     overflow-wrap: break-word !important;
   }
 }
+
+/* ==========================================================================
+   CONTACTO EN TELÉFONO: DOS ESCENAS COMPLETAS, DOS PAUSAS
+   El formulario se quedaba en media pantalla —646px de contenido dentro de
+   una escena de 664— y, como la pausa se mide sobre la sección entera
+   (formulario y ficha de la tienda, dos pantallas apiladas en vertical), el
+   scroll sólo se detenía al final de las dos. Cada tarjeta pasa a ocupar una
+   pantalla y `js/main.js` la trata como escena propia, con su pausa.
+
+   Las cuentas, para que el paso de una tarjeta a la siguiente sea de una
+   pantalla exacta: alto = 100svh - 32px y hueco entre tarjetas = 32px, así
+   que alto + hueco = 100svh. La pausa deja el borde inferior 32/2 = 16px por
+   encima del pliegue (`CONTACT_CARD_FRAME` en `js/main.js`), la misma medida
+   que el relleno de la sección: al detenerse, la tarjeta queda con esos 16px
+   de aire arriba y abajo.
+   ========================================================================== */
+@media (max-width: 599px) and (orientation: portrait) {
+  body.page-contact main > section.contact-form-section {
+    padding-block: 16px !important;
+  }
+
+  body.page-contact .contact-form-section > .container {
+    width: 100%;
+  }
+
+  body.page-contact .contact-form-section .info-grid {
+    gap: 32px !important;
+  }
+
+  body.page-contact .contact-form-section .info-grid > .reveal,
+  body.page-contact .contact-form-section .info-grid > .reveal:nth-child(2) {
+    box-sizing: border-box;
+    min-height: calc(100svh - 32px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    top: 0;
+  }
+
+  /* El contenido tiene que caber en esa altura sin recortes. Lo que falta sale
+     del aire entre bloques y del alto libre del área de texto, atados al alto
+     real de la pantalla para que un teléfono más bajo los apriete en la misma
+     proporción; los controles conservan sus 44px de objetivo táctil.
+     La cadena de clases llega hasta `.reveal` a propósito: las medidas
+     compactas anteriores se declaran bajo `html.lando-anim`, y sin ese peso
+     extra estas no ganarían. */
+  body.page-contact .contact-form-section .info-grid > .reveal .sec-sub {
+    margin: clamp(8px, 1.6svh, 14px) 0 clamp(6px, 1.2svh, 10px) !important;
+  }
+
+  body.page-contact .contact-form-section .info-grid > .reveal .form-grid {
+    margin-top: clamp(6px, 1.4svh, 10px) !important;
+  }
+
+  body.page-contact .contact-form-section .info-grid > .reveal .field textarea {
+    min-height: clamp(64px, 11svh, 88px) !important;
+  }
+
+  /* La ficha de la tienda son seis datos: su aire se reparte con el alto
+     disponible en lugar de fijarse en 10px por fila. */
+  body.page-contact .contact-form-section .info-grid > .reveal .info-list {
+    margin-top: clamp(8px, 2svh, 22px) !important;
+  }
+
+  body.page-contact .contact-form-section .info-grid > .reveal .info-item {
+    padding-block: clamp(2px, 0.7svh, 9px) !important;
+  }
+}
