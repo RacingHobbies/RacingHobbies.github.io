@@ -15,6 +15,14 @@
   const LOW_POWER_DEVICE =
     Number(navigator.deviceMemory || 8) <= 4 ||
     Number(navigator.hardwareConcurrency || 8) <= 4;
+  // En una pantalla táctil el navegador ya desplaza a 120 Hz cuando el
+  // dispositivo puede hacerlo. Las escenas con `pin` y `scrub` añaden trabajo
+  // de layout a cada gesto y convierten ese desplazamiento nativo en tirones.
+  // La portada mantiene sus entradas, pero las escenas continuas quedan para
+  // pantallas grandes, donde hay puntero, potencia y espacio para apreciarlas.
+  const MOBILE_VIEWPORT = window.matchMedia(
+    "(max-width: 899px), (pointer: coarse)"
+  ).matches;
 
   // Señala que JS está activo: habilita las animaciones en CSS.
   document.documentElement.classList.add("js");
@@ -835,7 +843,7 @@
   }
 
   function initScrollReveals() {
-    if (REDUCED || LOW_POWER_DEVICE) return;
+    if (REDUCED || LOW_POWER_DEVICE || MOBILE_VIEWPORT) return;
     scrollRevealOn = true;
     collectScrollReveals();
     if (!scrollRevealItems.length) {
@@ -878,7 +886,7 @@
   /* ---------- Profundidad editorial ---------- */
 
   function initParallax() {
-    if (REDUCED || LOW_POWER_DEVICE) return;
+    if (REDUCED || LOW_POWER_DEVICE || MOBILE_VIEWPORT) return;
     const elements = $$("[data-plx]");
     if (elements.length === 0) return;
     let ticking = false;
@@ -923,7 +931,7 @@
   /* ---------- Tilt del producto protagonista (botón accionable) ---------- */
 
   function initTilt() {
-    if (REDUCED) return;
+    if (REDUCED || !window.matchMedia("(pointer: fine)").matches) return;
     $$("[data-tilt]").forEach((element) => {
       let frame = null;
       element.addEventListener("pointermove", (event) => {
@@ -962,6 +970,7 @@
       document.body.classList.add("rh-intro-complete");
       loader.classList.add("done");
       loader.remove();
+      if (!REDUCED) document.documentElement.classList.add("rh-hero-ready");
       return;
     }
     document.documentElement.classList.add("rh-intro-lock");
@@ -1032,6 +1041,9 @@
       document.body.classList.remove("rh-intro-running", "rh-intro-reveal", "rh-intro-release");
       document.body.classList.add("rh-intro-complete");
       loader.remove();
+      // Esta clase se añade DESPUÉS de retirar el velo. Así la entrada de
+      // móvil se ve realmente, en vez de terminar detrás del loader.
+      document.documentElement.classList.add("rh-hero-ready");
       runMotionLayer();
     };
 
@@ -2294,6 +2306,14 @@
     if (REDUCED) return;
     document.documentElement.classList.add("lando-anim");
 
+    // En móvil no se parte el texto en decenas de nodos ni se construyen
+    // ScrollTriggers. La entrada ligera se resuelve con CSS y el resto de la
+    // página usa IntersectionObserver y el scroll nativo del navegador.
+    if (MOBILE_VIEWPORT) {
+      document.documentElement.classList.add("rh-mobile-motion");
+      return;
+    }
+
     const g = window.gsap;
     const ST = window.ScrollTrigger;
     if (g && ST) {
@@ -3004,6 +3024,8 @@
   /* ---------- Experiencia cinematográfica global ---------- */
 
   function initLandoExperience() {
+    if (MOBILE_VIEWPORT) return;
+
     const routeCurtain = document.createElement("div");
     routeCurtain.className = "rh-route-curtain";
     routeCurtain.setAttribute("aria-hidden", "true");
@@ -3478,6 +3500,8 @@
   /* ---------- Paridad de movimiento con la referencia ---------- */
 
   function initReferenceParityMotion() {
+    if (MOBILE_VIEWPORT) return;
+
     const g = window.gsap;
     const ST = window.ScrollTrigger;
 

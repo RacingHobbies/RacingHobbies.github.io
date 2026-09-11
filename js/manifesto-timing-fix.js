@@ -2,11 +2,16 @@
 (function initManifestoTimingFix() {
   let queued = false;
 
-  const isMobileScene = () =>
-    window.matchMedia("(max-width: 599px) and (orientation: portrait)").matches;
+  const isMobileViewport = () =>
+    window.matchMedia("(max-width: 899px), (pointer: coarse)").matches;
 
   const run = () => {
     queued = false;
+
+    // El manifiesto fijo añadía otro `pin` al gesto táctil. En móvil la escena
+    // se lee como contenido normal: el scroll queda completamente nativo y no
+    // hay refreshes costosos cuando el navegador muestra su barra de dirección.
+    if (isMobileViewport()) return;
 
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
@@ -17,7 +22,6 @@
     const lines = [...manifesto.querySelectorAll(".ln-manifesto-copy > span")];
     const blocks = [...manifesto.querySelectorAll(".ln-wipe-grid > span")];
     const copies = [...manifesto.querySelectorAll(".ln-manifesto-copy")];
-    const mobile = isMobileScene();
 
     // main.min.js crea su propia línea tras la introducción inicial. Esta
     // corre después y elimina cualquier versión previa para que los dos
@@ -42,36 +46,21 @@
     };
 
     const timeline = gsap.timeline({
-      scrollTrigger: mobile
-        ? {
-            // En móvil la escena mide exactamente una pantalla: el tramo
-            // sticky de escritorio quedaba en 1 px. Se fija durante un gesto
-            // completo para que la escena siga ocupando una sola pantalla
-            // visual y no se mezcle a media animación con Categorías.
-            trigger: manifesto,
-            id: "rh-manifesto-timing-fix",
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            anticipatePin: 1,
-            scrub: 0.24,
-            invalidateOnRefresh: true,
-          }
-        : {
-            trigger: stage || manifesto,
-            id: "rh-manifesto-timing-fix",
-            start: "top top",
-            end: () => "+=" + stickyTravel(),
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
+      scrollTrigger: {
+        trigger: stage || manifesto,
+        id: "rh-manifesto-timing-fix",
+        start: "top top",
+        end: () => "+=" + stickyTravel(),
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
     });
 
     if (copies.length) {
       timeline.fromTo(
         copies,
-        { yPercent: mobile ? -1 : -2 },
-        { yPercent: mobile ? 5 : 8, ease: "none", duration: mobile ? 5.4 : 2.16 },
+        { yPercent: -2 },
+        { yPercent: 8, ease: "none", duration: 2.16 },
         0
       );
     }
@@ -86,9 +75,9 @@
           yPercent: 0,
           opacity: 1,
           ease: "power1.inOut",
-          duration: mobile ? 2.7 : 4.8,
+          duration: 4.8,
         },
-        index * (mobile ? 0.7 : 1.4)
+        index * 1.4
       );
     });
 
@@ -97,17 +86,17 @@
         .fromTo(
           block,
           { scaleY: 0 },
-          { scaleY: 1, ease: "power1.inOut", duration: mobile ? 1.7 : 3 },
-          mobile ? 0.7 : 1.2
+          { scaleY: 1, ease: "power1.inOut", duration: 3 },
+          1.2
         )
         .to(
           block,
-          { scaleY: 0, ease: "power1.inOut", duration: mobile ? 1.5 : 2.5 },
-          mobile ? 2.9 : 4.35
+          { scaleY: 0, ease: "power1.inOut", duration: 2.5 },
+          4.35
         );
     });
 
-    if (copies.length) timeline.to({}, { duration: mobile ? 1.2 : 8 }, mobile ? 5.4 : 9);
+    if (copies.length) timeline.to({}, { duration: 8 }, 9);
     ScrollTrigger.refresh();
   };
 

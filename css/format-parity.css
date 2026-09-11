@@ -2926,6 +2926,66 @@ html.lando-anim .sec-title.rh-has-diacritic,
 }
 
 /* ===========================================================================
+   MÓVIL — SCROLL NATIVO PARA LAS ESCENAS DE PORTADA
+
+   En móvil no se construye el carril GSAP. Estas reglas convierten las dos
+   secciones que antes se fijaban en cuadrículas normales para que ninguna
+   tarjeta quede fuera del alcance del pulgar. El manifiesto también pierde su
+   largo artificial: sigue siendo una escena completa, pero se recorre una vez
+   en lugar de mantener un sticky y varios `pin` sobre el mismo gesto.
+   ========================================================================== */
+@media (max-width: 899px), (pointer: coarse) {
+  html.rh-mobile-motion .ln-manifesto {
+    height: auto !important;
+    min-height: 100svh !important;
+    overflow: hidden !important;
+  }
+
+  html.rh-mobile-motion .ln-manifesto-stage {
+    position: relative !important;
+    height: 100svh !important;
+    min-height: 0 !important;
+  }
+
+  html.rh-mobile-motion [data-lando-horizontal] {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: clamp(72px, 14vw, 112px) 0 !important;
+  }
+
+  html.rh-mobile-motion [data-lando-horizontal] > .container {
+    display: block !important;
+    min-height: 0 !important;
+    max-width: var(--container) !important;
+  }
+
+  html.rh-mobile-motion [data-lando-htrack] {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 12px !important;
+  }
+
+  html.rh-mobile-motion .editorial-garage [data-lando-htrack] > .collage-item,
+  html.rh-mobile-motion .home-showcase [data-lando-htrack] > .tile {
+    grid-column: auto !important;
+    width: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  html.rh-mobile-motion .home-showcase [data-lando-htrack] > .tile {
+    min-height: 0 !important;
+  }
+}
+
+/* ===========================================================================
    TELÉFONO EN HORIZONTAL: LAS BANDAS USAN EL ANCHO QUE LES SOBRA
    En apaisado hay ancho de sobra y falta alto, y estas bandas hacían justo lo
    contrario: apilaban en una columna dos bloques que caben al lado. Medido a

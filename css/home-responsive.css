@@ -567,3 +567,47 @@ body.rh-intro-complete .page-home .hero-proof {
     --ln-pad: 14px;
   }
 }
+
+/* ==========================================================================
+   MÓVIL — ENTRADA CON COSTE CONSTANTE
+
+   La primera pantalla conserva una llegada clara y escalonada, pero sólo
+   anima opacidad. No crea capas grandes, no fuerza layout y no compite con el
+   gesto del pulgar. `rh-hero-ready` se añade después de que el loader sale, de
+   modo que la animación nunca se pierde detrás de la cortina inicial.
+   ========================================================================== */
+@media (max-width: 899px) and (prefers-reduced-motion: no-preference),
+  (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  html.rh-mobile-motion.rh-hero-ready .page-home .hero-meta,
+  html.rh-mobile-motion.rh-hero-ready .page-home .hero-machine,
+  html.rh-mobile-motion.rh-hero-ready .page-home .statement,
+  html.rh-mobile-motion.rh-hero-ready .page-home .statement-sub,
+  html.rh-mobile-motion.rh-hero-ready .page-home .hero .hero-ctas {
+    animation: rh-mobile-hero-enter 440ms var(--ease-reveal) both;
+  }
+
+  html.rh-mobile-motion.rh-hero-ready .page-home .hero-machine {
+    animation-delay: 50ms;
+  }
+
+  html.rh-mobile-motion.rh-hero-ready .page-home .statement {
+    animation-delay: 100ms;
+  }
+
+  html.rh-mobile-motion.rh-hero-ready .page-home .statement-sub {
+    animation-delay: 170ms;
+  }
+
+  html.rh-mobile-motion.rh-hero-ready .page-home .hero .hero-ctas {
+    animation-delay: 230ms;
+  }
+
+  html.rh-mobile-motion .page-home .hero-machine-stage img.hero-brand-visual {
+    animation: none !important;
+  }
+
+  @keyframes rh-mobile-hero-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
