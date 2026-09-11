@@ -77,6 +77,9 @@ Para actualizar basta con empujar a `main`; GitHub Pages reconstruye solo:
 bash scripts/build-production.sh   # si tocaste css/*.css o js/*.js
 bash scripts/update-sri.sh         # recalcula integrity; sin esto el navegador
                                    # bloquea el recurso y el fallo es silencioso
+                                   # (build-production.sh ya llama a este y a
+                                   # update-csp-hashes.sh; ejecútalos sueltos
+                                   # sólo si editaste HTML a mano)
 ./scripts/security-audit.sh        # debe decir OK antes de publicar
 git add -A && git commit -m "…" && git push
 ```
@@ -140,6 +143,7 @@ la documentación del repositorio.
 | `robots.txt` / `sitemap.xml` | Descubrimiento e indexación |
 | `scripts/build-production.sh` | Regenera CSS/JS minificados tras editar fuentes |
 | `scripts/update-sri.sh` | Recalcula automáticamente la integridad SRI del HTML |
+| `scripts/update-csp-hashes.sh` | Recalcula los hashes CSP del JSON-LD y los propaga a los cuatro sitios que declaran la política |
 | `scripts/package-production.sh` | Genera una carpeta publicable y un comprimido único con manifiesto SHA-256 |
 | `scripts/package-cloudflare.sh` | Genera y valida `.cloudflare-pages/` para una carga directa, sin archivos exclusivos de Apache |
 

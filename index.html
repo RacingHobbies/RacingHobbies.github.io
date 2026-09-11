@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-elem 'self' 'sha256-X9GcKRxl1inl3SOYeMropBcIl0xpsam3sjMphyc9Tio=' 'sha256-dbRehdiG7gj7okdOK8AIurA0f2qkUtjpRVpTzKGfpg4='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; frame-src https://www.google.com; form-action 'self'; upgrade-insecure-requests">
+        content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'sha256-NWrrH51KpZ/6zRuvOjFILlBfDb/nnos3nP4Jg94jb7c=' 'sha256-WJlvNolgEofVm4L7PJO540n2v5BoW7Oa859uXFd0Z30='; script-src-elem 'self' 'sha256-NWrrH51KpZ/6zRuvOjFILlBfDb/nnos3nP4Jg94jb7c=' 'sha256-WJlvNolgEofVm4L7PJO540n2v5BoW7Oa859uXFd0Z30='; script-src-attr 'none'; style-src 'self'; style-src-elem 'self'; style-src-attr 'none'; img-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'; media-src 'self'; frame-src https://www.google.com; form-action 'self'; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <script src="js/frame-guard.min.js?v=1" integrity="sha256-omfqFtYSLgAsJEbmFHczRiUdMurlrdQToP6ZK1foFsg="></script>
   <meta name="description" content="Racing Hobbies Ecuador — Adrenalina a control remoto. Autos RC, crawlers, aviones y helicópteros, baterías, repuestos y servicio técnico especializado en Quito.">
@@ -24,11 +24,11 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preload" href="assets/fonts/anton-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/styles.min.css?v=217" integrity="sha256-3ecaTma3bG9sPL2ZSHCAASXNMVz2gCq+u6ms7d3hn+Y=">
+  <link rel="stylesheet" href="css/styles.min.css?v=220" integrity="sha256-zgjHxLLgh4+786WQBiGKaeFsSaAn3Rt+vYkQAOPe50c=">
   <link rel="stylesheet" href="css/typography.css?v=5" integrity="sha256-Ob6mr9H0xaVdzlLU6xWl5TvS6AJ6Yt3hhBBNoVarX0s=">
   <link rel="stylesheet" href="css/community-fix.css?v=31" integrity="sha256-wab4GceJXNpHx2i+VS6yi5F5NYusdClUe+mCSMrABss=">
   <link rel="stylesheet" href="css/home-responsive.css?v=18" integrity="sha256-doVVrxif1gxPmrzXj2fKvK9M7S0J5C3Ug5/yaHuTKZw=">
-  <link rel="stylesheet" href="css/format-parity.css?v=95" integrity="sha256-8wEy+XPzgGw6Ywa9HZHs+VxGDTqNPtnNbGLfeR9M3KU=">
+  <link rel="stylesheet" href="css/format-parity.css?v=96" integrity="sha256-2zehpTONjHwBChYXrVuLXZranxZfjH3DP1QVxQEeqDs=">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -225,7 +225,7 @@
           <img class="feature-img" src="assets/img/tmaxx.webp" alt="Traxxas T-Maxx monster truck nitro 4WD" width="600" height="466" loading="lazy" decoding="async">
         </button>
         <h2 class="feature-name reveal" id="feature-title">T-Maxx<br>Nitro 4WD</h2>
-        <p class="feature-price reveal">Motor nitro, arranque eléctrico <strong>$800</strong></p>
+        <p class="feature-price reveal">Motor nitro, arranque eléctrico <strong data-price-of="tmaxx">$800</strong></p>
         <div class="hero-ctas reveal">
           <button class="btn btn-volt" type="button" data-add="tmaxx">Agregar al carrito</button>
           <button class="btn btn-line" type="button" data-detail="tmaxx">Ver ficha</button>
@@ -310,7 +310,7 @@
               </svg>
               <div>
                 <h3>Dirección</h3>
-                <p><a href="https://www.google.com/maps/search/?api=1&query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Av. Eloy Alfaro N40-413 y Granados, frente a Petroecuador (Quito)</a></p>
+                <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Av. Eloy Alfaro N40-413 y Granados, frente a Petroecuador (Quito)</a></p>
               </div>
             </div>
             <div class="info-item">
@@ -375,7 +375,7 @@
               <h3>Encuéntranos en la pista</h3>
               <button class="btn btn-line btn-sm" type="button" data-load-map>Cargar mapa</button>
             </div>
-            <a class="btn btn-volt btn-sm map-cta" href="https://www.google.com/maps/search/?api=1&query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Cómo llegar</a>
+            <a class="btn btn-volt btn-sm map-cta" href="https://www.google.com/maps/search/?api=1&amp;query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Cómo llegar</a>
           </div>
         </div>
       </div>
@@ -436,7 +436,7 @@
         <div class="footer-col">
           <h3>Contacto</h3>
           <ul>
-            <li><a href="https://www.google.com/maps/search/?api=1&query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Av. Eloy Alfaro N40-413 y Granados, Quito</a></li>
+            <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Racing+Hobbies+Av+Eloy+Alfaro+N40-413+Quito" target="_blank" rel="noopener noreferrer">Av. Eloy Alfaro N40-413 y Granados, Quito</a></li>
             <li><a data-tel-link href="tel:+593998019836">099&nbsp;801&nbsp;9836</a></li>
             <li><a href="tel:+59323341561">02&nbsp;334&#8209;1561</a></li>
             <li><a href="mailto:racinghobbiesquito@gmail.com">racinghobbiesquito@gmail.com</a></li>
@@ -466,7 +466,7 @@
   <script defer src="js/vendor/ScrollTrigger.min.js?v=1" integrity="sha256-sLFNZ7VbDEPHVqwLEGz8sJ0IeZRfbq1kRRBlsGcpFqI="></script>
   <script defer src="js/config.min.js?v=1" integrity="sha256-pfgVcnz5BlirbER0+LLKJlTC5bKu7cTfu5rc22KeCvs="></script>
   <script defer src="js/data.min.js?v=1" integrity="sha256-FgJrYjcKPj1hW9tDbIdkQS1+fzEzqZOMDSBr4JFDH+U="></script>
-  <script defer src="js/main.min.js?v=107" integrity="sha256-SfURRPDJqBctguYTsIM2W0DcfAlOPl6oavBmyVPLgvA="></script>
+  <script defer src="js/main.min.js?v=112" integrity="sha256-mjz8t+m3LDMp+Ys4jBR9MsS3wIYKECRHDB1n3RrJazU="></script>
   <script defer src="js/manifesto-timing-fix.js?v=3" integrity="sha256-0sjLRw+/Hff708Xst2c0GTcA6FZER5G+uXX7S9m8e10="></script>
 </body>
 </html>
