@@ -1106,18 +1106,20 @@ html.lando-anim .page-home .home-showcase .sec-title:not(.rh-has-diacritic),
   line-height: 1.06 !important;
 }
 
-/* Rótulo con tilde. Tiene que estar aquí y no junto a la regla de tildes de
-   `styles.css`: allí quedaba por delante de
-   `html.lando-anim [data-lando-horizontal] .sec-title`, que tiene la misma
-   especificidad y va después en el archivo, así que ganaba el 0.88 y
-   "EXPLORA POR CATEGORÍA" salía con las dos líneas fundidas en una. */
+/* Titulares con tilde. La tilde participa como una capa independiente durante
+   la revelación por caracteres; por eso necesitan un poco más de aire que un
+   titular normal, en todas las secciones y páginas. Este valor reemplaza los
+   line-heights compactos de los carriles y evita que el renglón superior la
+   tape. */
+html.lando-anim [data-reveal-lines].rh-has-diacritic,
+[data-reveal-lines].rh-has-diacritic,
 html.lando-anim .page-home .editorial-garage .sec-title.rh-has-diacritic,
 html.lando-anim .page-home .home-showcase .sec-title.rh-has-diacritic,
 html.lando-anim .page-home [data-lando-horizontal] .sec-title.rh-has-diacritic,
 html.lando-anim [data-lando-horizontal] .sec-title.rh-has-diacritic,
 html.lando-anim .sec-title.rh-has-diacritic,
 .sec-title.rh-has-diacritic {
-  line-height: 1.16 !important;
+  line-height: 1.18 !important;
 }
 
 html.lando-anim .page-home .feature-name,
