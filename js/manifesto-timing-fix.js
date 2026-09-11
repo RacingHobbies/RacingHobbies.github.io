@@ -141,8 +141,31 @@
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-    window.addEventListener("resize", queueRun, { passive: true });
-    window.addEventListener("orientationchange", queueRun, { passive: true });
+    // Reconstruir la escena arrastra un `ScrollTrigger.refresh()` de casi
+    // cincuenta escenas —140 ms medidos con la CPU a 1/6—, así que sólo puede
+    // ocurrir cuando la maqueta cambia de verdad. En un teléfono el `resize`
+    // más frecuente con diferencia es la barra de direcciones entrando y
+    // saliendo: cambia el alto, nunca el ancho, y no altera el reparto de la
+    // escena. Nos quedamos con los cambios de ancho y con el giro del
+    // aparato, que sí la cambian.
+    let anchoPrevio = window.innerWidth;
+    window.addEventListener(
+      "resize",
+      () => {
+        if (window.innerWidth === anchoPrevio) return;
+        anchoPrevio = window.innerWidth;
+        queueRun();
+      },
+      { passive: true }
+    );
+    window.addEventListener(
+      "orientationchange",
+      () => {
+        anchoPrevio = window.innerWidth;
+        queueRun();
+      },
+      { passive: true }
+    );
   };
 
   if (document.readyState === "loading") {

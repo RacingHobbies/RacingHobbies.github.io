@@ -1319,6 +1319,17 @@
         main.insertBefore(createFinishLine(), section);
       }
 
+      // La textura del sector ya no la pinta el `background-image` de la
+      // sección sino esta capa, que sí puede fundirse. Ver el bloque V64 del
+      // CSS: `background-image` no admite transición, así que mientras el arte
+      // viviera ahí no había forma de que entrara suave.
+      if (!$(".race-art", section)) {
+        const art = document.createElement("div");
+        art.className = "race-art";
+        art.setAttribute("aria-hidden", "true");
+        section.prepend(art);
+      }
+
       if (!$(".race-atmosphere", section)) {
         const atmosphere = document.createElement("div");
         atmosphere.className = "race-atmosphere";
@@ -2285,7 +2296,19 @@
 
     const g = window.gsap;
     const ST = window.ScrollTrigger;
-    if (g && ST) g.registerPlugin(ST);
+    if (g && ST) {
+      g.registerPlugin(ST);
+      // En un teléfono, mostrar u ocultar la barra de direcciones cambia
+      // `innerHeight` y dispara un `resize`. ScrollTrigger responde
+      // recalculando las cincuenta escenas de la portada y recolocando sus
+      // `pin`: 140 ms de hilo principal bloqueado, medidos con la CPU a 1/6,
+      // JUSTO mientras el dedo arrastra. Y la barra aparece y desaparece en
+      // cada cambio de dirección del scroll, así que el tirón se repite todo
+      // el rato. `ignoreMobileResize` deja pasar los cambios de ancho —girar
+      // el teléfono, abrir el teclado— e ignora sólo ese vaivén de alto que
+      // el navegador móvil se provoca a sí mismo.
+      if (ST.config) ST.config({ ignoreMobileResize: true });
+    }
 
     /* ==================================================================
        1. Reveal de imágenes por máscara

@@ -20211,3 +20211,112 @@ html.rh-hero-in body.rh-intro-running .header-actions {
     scroll-snap-align: start;
   }
 }
+
+/* ===========================================================================
+   V64 — TARJETAS DE PASO EN MÓVIL: AIRE LATERAL PARA EL TEXTO
+   El titular y el párrafo de las fichas de "4 pasos" y "Nuestros valores"
+   llegaban al ras del borde en teléfono. La intención era la de
+   `.static-step-card { padding: 0 18px 22px }`, pero el carril horizontal
+   fuerza `padding: 0 !important` sobre `.rh-hcard` para que la foto sangre de
+   lado a lado, y con ello se llevaba por delante también el margen del texto.
+   Aquí el aire vuelve, pero sobre el texto: la foto sigue a sangre y el
+   relleno se expresa en porcentaje del ancho de la ficha para que acompañe a
+   `min(62vw, 30svh)`. El suelo de 10px protege el teléfono en horizontal,
+   donde la ficha baja a ~117px y un valor fijo se comería la columna.
+   ========================================================================== */
+@media (max-width: 899px) {
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card h3,
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card p {
+    padding-inline: clamp(10px, 7.4%, 24px);
+  }
+}
+
+
+/* ===========================================================================
+   V64 — LA TEXTURA DEL SECTOR ENTRA FUNDIDA (de verdad)
+   La compuerta `.atmo-on` (V48) evita descargar ~870 KB de textura durante el
+   primer pintado, pero lo que abría era un `background-image` de la propia
+   sección, y `background-image` no admite transición: la foto pasaba de no
+   estar a estar entre dos fotogramas. Medido en la navegación a catálogo, el
+   brillo medio de la pantalla saltaba de 18 a 52 en 20 ms.
+
+   El intento anterior (V63, retirada) fue tapar ese instante con un velo. No
+   servía: la foto no se pinta al abrirse la compuerta sino ~500 ms después,
+   cuando el renderizador la rasteriza, y para entonces el velo ya se había
+   ido. Lo único que aportaba era un oscurecimiento intermedio.
+
+   Aquí se mueve la textura a una capa propia, que sí se puede fundir. La
+   composición medida es la misma en las ocho páginas y en los tres anchos —un
+   único degradado sobre el arte— así que se reparte en tres planos sin cambiar
+   el resultado:
+
+     -3  .race-art     la textura, `opacity` 0→1 (lo que antes era la capa
+                       inferior del `background-image` de la sección)
+     -2  ::after       el degradado que iba encima de ella
+     -1  .race-atmosphere   sin tocar, como estaba
+
+   La sección deja de pintar imagen (conserva su `background-color`). Los
+   sectores sin `--sector-art` —`.pit-band`, `.about-vision-section`,
+   `.service-cta-section`, `.error-page`— simplemente dejan la capa vacía:
+   `var()` sin valor invalida la declaración y no pinta nada.
+   ========================================================================== */
+
+html.js body main .race-sector.race-sector.race-sector:not(.atmo-on),
+html.js body main .race-sector.race-sector.race-sector.atmo-on {
+  background-image: none !important;
+}
+
+html.js body main .race-sector > .race-art {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background-image: var(--sector-art);
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 0.62s ease;
+}
+
+/* El manifiesto estira su textura en vez de recortarla: es el único sector que
+   no usa `cover`, y se replica aquí para no cambiarle el encuadre. */
+html.js body main .ln-manifesto > .race-art {
+  background-size: 100% 100%;
+}
+
+html.js body main .race-sector.atmo-on > .race-art {
+  opacity: 1;
+}
+
+/* El degradado, que antes era la capa superior del fondo de la sección. Este
+   pseudo-elemento venía usado como anillo decorativo en `.page-hero` y `.hero`
+   —ancho fijo, `aspect-ratio`, borde redondo— y anulado después con
+   `display: none`, así que hay que devolverlo a una caja limpia. */
+html.js body main .race-sector::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  opacity: 1 !important;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js body main .race-sector > .race-art {
+    transition: none;
+  }
+}
