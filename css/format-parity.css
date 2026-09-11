@@ -2256,12 +2256,14 @@ body .static-step-card .step-media::after {
     left: auto !important;
   }
 
-  /* Servicios: cuatro tarjetas caben en una escena sin perder legibilidad. */
+  /* Servicios: cuatro tarjetas caben en una escena sin perder legibilidad.
+     La escena mide un viewport, pero puede crecer si el teléfono es corto:
+     antes recortaba las últimas líneas de las tarjetas más largas. */
   .page-service .service-catalog-section {
     box-sizing: border-box;
-    height: 100svh !important;
+    height: auto !important;
     min-height: 100svh !important;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     padding: 76px 0 28px !important;
   }
@@ -2286,7 +2288,7 @@ body .static-step-card .step-media::after {
   .page-service .service-catalog-section .feature-row {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(min-content, 1fr)) !important;
     gap: 12px !important;
     flex: 1 1 auto;
     min-height: 0;
@@ -2299,7 +2301,11 @@ body .static-step-card .step-media::after {
     padding: 18px 16px !important;
   }
 
+  /* Los cuatro iconos comparten caja y no se dejan aplastar por el reparto
+     de altura de la tarjeta: así los cuatro miden lo mismo y los títulos
+     arrancan a la misma altura en las dos columnas. */
   .page-service .service-catalog-section .feature svg {
+    flex: none !important;
     width: 25px !important;
     height: 25px !important;
     margin-bottom: 10px !important;
@@ -2695,5 +2701,50 @@ body .static-step-card .step-media::after {
 
   body.page-about .about-story-section .two-col {
     align-content: center;
+  }
+}
+
+/* ==========================================================================
+   Servicios en teléfonos cortos
+   ==========================================================================
+   Con los iconos ya fijos, las cuatro tarjetas piden más alto del que tiene
+   un teléfono corto. Se comprime el ritmo de la escena —aire, titular y
+   cuerpo— para que la sección vuelva a caber en una pantalla sin recortar
+   ni una línea de texto.                                                    */
+@media (max-width: 599px) and (orientation: portrait) and (max-height: 720px) {
+  .page-service .service-catalog-section {
+    padding: 58px 0 18px !important;
+  }
+
+  .page-service .service-catalog-section .sec-head {
+    margin-bottom: 10px !important;
+  }
+
+  .page-service .service-catalog-section .sec-title {
+    font-size: clamp(1.8rem, 8.4vw, 2.3rem) !important;
+  }
+
+  .page-service .service-catalog-section .feature-row {
+    gap: 10px !important;
+  }
+
+  .page-service .service-catalog-section .feature {
+    padding: 12px 12px !important;
+  }
+
+  .page-service .service-catalog-section .feature svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .page-service .service-catalog-section .feature h3 {
+    font-size: 0.84rem !important;
+    margin-bottom: 5px !important;
+  }
+
+  .page-service .service-catalog-section .feature p {
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
   }
 }

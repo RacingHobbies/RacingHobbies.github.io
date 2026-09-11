@@ -3632,7 +3632,11 @@ section {
   box-shadow: 6px 6px 0 var(--volt);
 }
 
+/* El icono es una pieza fija de la tarjeta: sin `flex: none` el reparto de
+   altura del propio flex lo aplasta cuando la escena se queda corta, y cada
+   tarjeta acababa mostrando su icono a un tamaño distinto. */
 .feature svg {
+  flex: none;
   width: 30px;
   height: 30px;
   color: var(--volt-deep);
