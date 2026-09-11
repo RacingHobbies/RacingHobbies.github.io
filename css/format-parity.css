@@ -2924,3 +2924,80 @@ html.lando-anim .sec-title.rh-has-diacritic,
 .rh-has-diacritic.rh-has-diacritic.rh-has-diacritic.rh-has-diacritic.rh-has-diacritic.rh-has-diacritic {
   line-height: 1.14 !important;
 }
+
+/* ===========================================================================
+   TELÉFONO EN HORIZONTAL: LAS BANDAS USAN EL ANCHO QUE LES SOBRA
+   En apaisado hay ancho de sobra y falta alto, y estas bandas hacían justo lo
+   contrario: apilaban en una columna dos bloques que caben al lado. Medido a
+   667x375, `.two-col` resolvía a `grid-template-columns: 545px` —una sola
+   columna— y la sección de visión se iba a 658px sobre un viewport de 375,
+   1,75 pantallas. Puestos lado a lado, el alto pasa a ser el del bloque más
+   alto en vez de la suma de los dos.
+   ========================================================================== */
+
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  .page-about .about-vision-section .two-col {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 26px !important;
+  }
+
+  body:not(.page-home) .service-cta-section > .container,
+  body:not(.page-home) .pit-band > .container {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 26px !important;
+  }
+
+  /* El botón de pit-band no se estira a media banda: conserva su ancho. */
+  body:not(.page-home) .pit-band > .container > .btn {
+    flex: 0 0 auto !important;
+  }
+
+  /* Con los bloques ya en fila, el respiro vertical se ajusta al alto que
+     queda bajo la cabecera fija. */
+  .page-home .community-section,
+  body:not(.page-home) .pit-band,
+  body:not(.page-home) .service-cta-section,
+  .page-about .about-vision-section {
+    padding-top: calc(var(--header-h) + 10px) !important;
+    padding-bottom: 22px !important;
+  }
+}
+
+/* ===========================================================================
+   VERTICAL EN PANTALLAS CORTAS: LOS TRES QUE SE PASABAN POR POCO
+   A 375x667 y 360x780 quedaban tres secciones entre 1,02 y 1,13 pantallas: se
+   veía la cola asomando sin motivo. Todo lo que se recorta aquí es respiro,
+   no contenido, y por encima de 800px de alto no se toca nada.
+   ========================================================================== */
+
+@media (max-width: 899px) and (orientation: portrait) and (max-height: 800px) {
+  /* Ubicación: 757 sobre 667. El bulto es la tarjeta del mapa (220px, de los
+     que 94 son respiro interno) y el relleno de los seis datos. */
+  .page-home .home-location .map-card .map-consent {
+    padding: 16px !important;
+    gap: 6px !important;
+  }
+
+  .page-home .home-location .info-item {
+    padding-block: 10px !important;
+  }
+
+  .page-home .home-location .sec-head {
+    margin-bottom: 4px !important;
+  }
+
+  /* Servicios del taller: 827 sobre 780. */
+  body:not(.page-home) .service-catalog-section {
+    padding-top: clamp(40px, 6svh, 72px) !important;
+    padding-bottom: clamp(32px, 5svh, 64px) !important;
+  }
+
+  /* Comunidad se pasaba 16px tras el recorte de márgenes de pantallas bajas. */
+  .page-home .community-section {
+    padding-top: calc(var(--header-h) + 30px) !important;
+    padding-bottom: 32px !important;
+  }
+}
