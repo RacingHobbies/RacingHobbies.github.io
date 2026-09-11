@@ -284,9 +284,3 @@ html.lando-anim [data-reveal-lines] .rh-char {
   transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1) !important;
   transition-delay: calc(var(--i, 0) * 0.018s) !important;
 }
-
-html.lando-anim [data-reveal-lines] .rh-cmask-diacritic::after {
-  transition-duration: 0.58s !important;
-  transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1) !important;
-  transition-delay: calc(var(--i, 0) * 0.018s) !important;
-}

@@ -9903,45 +9903,26 @@ html body .hero .statement.in .w {
 
 /* --- Reveal de texto por caracteres (máscara), CSS + IntersectionObserver --- */
 html.lando-anim .rh-word { display: inline-block; white-space: nowrap; }
-html.lando-anim .rh-cmask { display: inline-block; overflow: hidden; vertical-align: top; }
-/* Reserva aire entre líneas solo cuando el titular necesita una tilde.
-   Con 1 no bastaba: medido sobre los píxeles, "ELIGE TU PRÓXIMA MÁQUINA"
-   dejaba 1px entre la tilde y la línea de encima, y en los rótulos de sección
-   las dos líneas llegaban a fundirse. El signo se pinta a 0.48em por encima
-   de la caja de línea, así que necesita bastante más que 1.
-
-   Cubre los titulares de página. Los rótulos de sección con tilde NO llegan
-   aquí: `html.lando-anim [data-lando-horizontal] .sec-title` tiene la misma
-   especificidad y va después en este archivo, así que les ganaba con su 0.88.
-   Ese caso se resuelve en el bloque final de `format-parity.css`, que carga
-   la última; el mismo valor está repetido allí a propósito. */
+/* La máscara tapa al carácter mientras sube desde abajo, pero deja el borde
+   SUPERIOR abierto: ahí es donde sobresale la tilde de un titular en caja alta,
+   y con `overflow: hidden` quedaba decapitada. El recorte por los otros tres
+   lados sigue ocultando la letra durante su recorrido, que siempre viene de
+   abajo, así que la entrada se ve igual. Antes esto se resolvía pintando la
+   tilde aparte, en un `::after`, y ese signo postizo no sabía dónde lo pone la
+   fuente: se solapaba con su propia letra. Ahora la tilde es el glifo real. */
+html.lando-anim .rh-cmask {
+  display: inline-block;
+  vertical-align: top;
+  clip-path: inset(-0.45em 0 0 0);
+}
+/* Reserva aire entre líneas solo cuando el titular necesita una tilde: la
+   tilde sobresale por encima de la altura de mayúscula, así que con los
+   interlineados cerrados de esta tipografía se apoya en el renglón de arriba.
+   El valor definitivo lo fija `format-parity.css`, que carga la última y llega
+   con especificidad suficiente para ganarle también a los ajustes compactos de
+   móvil; aquí queda el mismo número para que la regla base ya sea correcta. */
 html.lando-anim [data-reveal-lines].rh-has-diacritic {
-  line-height: 1.16 !important;
-}
-/* Separamos el signo diacrítico para que quede dentro de su propia línea,
-   sin dejar que el glifo completo invada el titular anterior. */
-html.lando-anim .rh-cmask-diacritic {
-  position: relative;
-  overflow: visible;
-  clip-path: inset(-0.18em 0 0 0);
-}
-html.lando-anim .rh-cmask-diacritic::after {
-  content: attr(data-diacritic);
-  position: absolute;
-  top: -0.06em;
-  left: 50%;
-  color: inherit;
-  font: inherit;
-  font-size: 0.48em;
-  font-weight: 900;
-  line-height: 1;
-  pointer-events: none;
-  transform: translate(-50%, 115%);
-  transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: calc(var(--i, 0) * 0.028s);
-}
-html.lando-anim [data-reveal-lines].rh-in .rh-cmask-diacritic::after {
-  transform: translate(-50%, 0);
+  line-height: 1.14 !important;
 }
 /* Sin `will-change`: cada carácter es un <span> propio, así que declararlo
    aquí promocionaba a capa de composición los 85 caracteres de los titulares
@@ -19059,14 +19040,6 @@ html.js img.img-failed {
     will-change: transform, opacity;
   }
 
-  /* Las fichas informativas se envuelven en `.rh-card` al activar el carril.
-     El envoltorio anula el padding de `.static-step-card`, por lo que el texto
-     quedaba al ras de los bordes en móvil. La imagen mantiene su sangrado y
-     el texto recupera el mismo aire lateral en cada paso. */
-  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card .rh-card {
-    padding: 0 clamp(18px, 5vw, 24px) 22px !important;
-  }
-
   html.lando-anim [data-lando-htrack] .rh-card-num {
     position: absolute;
     top: 10px;
@@ -20004,8 +19977,7 @@ html:not(.js) .rh-loader {
    `.rh-in` es terminal, así que anular aquí la transición no impide ninguna
    animación posterior — simplemente evita reproducir a ciegas, detrás del
    negro, un rodaje de casi dos segundos que nadie llegaría a ver. */
-html.lando-anim [data-reveal-lines].rh-in-instant .rh-char,
-html.lando-anim [data-reveal-lines].rh-in-instant .rh-cmask-diacritic::after {
+html.lando-anim [data-reveal-lines].rh-in-instant .rh-char {
   transition: none !important;
 }
 

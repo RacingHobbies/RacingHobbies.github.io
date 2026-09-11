@@ -324,6 +324,17 @@
     let ultimo = window.scrollY || 0;
     let pedido = false;
 
+    // `classList.add`/`remove` reescriben el atributo `class` aunque el token
+    // ya estuviera (o no) presente, y eso despierta a cualquier
+    // MutationObserver montado sobre <html> en CADA cuadro de scroll.
+    // Guardamos el estado y sólo tocamos el DOM en los cambios reales.
+    let oculta = raiz.classList.contains("rh-cabecera-oculta");
+    const fijarOculta = (valor) => {
+      if (valor === oculta) return;
+      oculta = valor;
+      raiz.classList.toggle("rh-cabecera-oculta", valor);
+    };
+
     const evaluar = () => {
       pedido = false;
       const y = window.scrollY || 0;
@@ -335,11 +346,11 @@
         document.body.classList.contains("overlay-open");
 
       if (bloqueado || y < 170) {
-        raiz.classList.remove("rh-cabecera-oculta");
+        fijarOculta(false);
       } else if (delta > 6) {
-        raiz.classList.add("rh-cabecera-oculta");
+        fijarOculta(true);
       } else if (delta < -6) {
-        raiz.classList.remove("rh-cabecera-oculta");
+        fijarOculta(false);
       }
       // El umbral de 6px evita que el rebote del scroll suave la haga parpadear.
       if (Math.abs(delta) > 6) ultimo = y;
@@ -2170,6 +2181,7 @@
     const original = el.textContent.replace(/\s+/g, " ").trim();
     el.setAttribute("aria-label", original);
     const chars = [];
+    let hasDiacritic = false;
 
     function wrapTextNode(node) {
       const frag = document.createDocumentFragment();
@@ -2181,25 +2193,19 @@
         }
         const word = document.createElement("span");
         word.className = "rh-word";
-        for (const ch of part) {
+        // NFC: si el texto llega descompuesto (base + marca combinante), cada
+        // code point iría a su propio <span> y la tilde quedaría suelta.
+        for (const ch of part.normalize("NFC")) {
+          // La tilde viaja dentro del glifo, no como una capa aparte: la
+          // máscara deja el borde superior abierto y el navegador la dibuja
+          // donde manda la fuente. Aquí sólo se anota que el titular la lleva,
+          // para que reclame el interlineado con aire de `format-parity.css`.
+          if (ch.normalize("NFD").length > 1) hasDiacritic = true;
           const mask = document.createElement("span");
-          const normalized = Array.from(ch.normalize("NFD"));
-          const baseChar = normalized[0] || ch;
-          const combiningMarks = normalized.slice(1);
-          const diacriticSymbols = {
-            "\u0300": "`",
-            "\u0301": "´",
-            "\u0303": "˜",
-            "\u0308": "¨",
-            "\u0327": "¸",
-          };
-          const diacritic = combiningMarks.map((mark) => diacriticSymbols[mark] || mark).join("");
-          const hasDiacritic = combiningMarks.length > 0;
-          mask.className = `rh-cmask${hasDiacritic ? " rh-cmask-diacritic" : ""}`;
-          if (hasDiacritic) mask.dataset.diacritic = diacritic;
+          mask.className = "rh-cmask";
           const inner = document.createElement("span");
           inner.className = "rh-char";
-          inner.textContent = hasDiacritic ? baseChar : ch;
+          inner.textContent = ch;
           mask.appendChild(inner);
           word.appendChild(mask);
           chars.push(inner);
@@ -2220,7 +2226,7 @@
       });
     })(el);
 
-    if (el.querySelector(".rh-cmask-diacritic")) {
+    if (hasDiacritic) {
       el.classList.add("rh-has-diacritic");
     }
 

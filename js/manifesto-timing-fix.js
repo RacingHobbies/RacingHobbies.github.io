@@ -120,10 +120,24 @@
   };
 
   const boot = () => {
-    if (document.documentElement.classList.contains("lando-anim")) queueRun();
+    const tieneEscena = () =>
+      document.documentElement.classList.contains("lando-anim");
 
+    if (tieneEscena()) queueRun();
+
+    // Sólo interesa el momento en que aparece `lando-anim`. Un MutationObserver
+    // se dispara en CADA escritura del atributo `class`, aunque el valor no
+    // cambie: `classList.add`/`remove` reescriben el atributo igual. La cabecera
+    // que se retira llama a `remove` en cada cuadro de scroll, así que sin esta
+    // comparación la escena se reconstruía ~10 veces por segundo mientras el
+    // usuario desliza, y cada reconstrucción arrastraba un `ScrollTrigger`
+    // .refresh() de casi cincuenta escenas: ~130 ms de bloqueo por cuadro.
+    let escenaPrevia = tieneEscena();
     const observer = new MutationObserver(() => {
-      if (document.documentElement.classList.contains("lando-anim")) queueRun();
+      const escenaActual = tieneEscena();
+      if (escenaActual === escenaPrevia) return;
+      escenaPrevia = escenaActual;
+      if (escenaActual) queueRun();
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
