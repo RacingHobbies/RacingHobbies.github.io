@@ -20211,3 +20211,35 @@ html.rh-hero-in body.rh-intro-running .header-actions {
     scroll-snap-align: start;
   }
 }
+
+/* ===========================================================================
+   V65 — TARJETAS DE PASO EN MÓVIL: AIRE LATERAL PARA EL TEXTO
+   El titular y el párrafo de las fichas de "En 4 pasos" y "Nuestros valores"
+   llegaban al ras del borde en teléfono. La intención ya estaba escrita en
+   `.static-step-card { padding: 0 18px 22px }`, pero el carril horizontal
+   fuerza `padding: 0 !important` sobre `.rh-hcard` para que la foto sangre de
+   lado a lado, y de paso se llevaba por delante el margen del texto.
+   Aquí el aire vuelve, pero puesto sobre el texto: la foto sigue a sangre y
+   el relleno se expresa en porcentaje del ancho de la ficha para que acompañe
+   a `min(62vw, 30svh)` —14,5px a 320, 17,7px a 390, 22,6px en tableta—, en la
+   misma proporción que el `margin-inline` que usan estas fichas de 900px
+   para arriba.
+   ========================================================================== */
+@media (max-width: 899px) {
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card h3,
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card p {
+    padding-inline: clamp(10px, 7.4%, 24px);
+  }
+}
+
+/* Teléfono en horizontal: ahí manda `30svh` y la ficha se queda en ~117px de
+   ancho, donde una palabra como "reconocidas:" ya no cabía ni antes de este
+   relleno. El aire se mide sólo en porcentaje —sin suelo fijo— y las palabras
+   largas parten en lugar de salirse por el borde, que va recortado. */
+@media (orientation: landscape) and (max-height: 500px) {
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card h3,
+  html.lando-anim [data-lando-htrack] > .rh-hcard.static-step-card p {
+    padding-inline: 6.2%;
+    overflow-wrap: anywhere;
+  }
+}
