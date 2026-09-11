@@ -3089,6 +3089,20 @@
         "main > .contact-form-section",
         "main > .legal-section",
       ].join(",");
+
+      // En teléfono vertical la escena de contacto no cabe en una pantalla: el
+      // formulario y la ficha de la tienda se apilan y cada uno ocupa la suya
+      // (`css/format-parity.css`). Ahí la pausa deja de corresponder a la
+      // sección —sólo se detendría al final de las dos— y pasa a cada tarjeta.
+      const contactCardSelector =
+        ".page-contact .contact-form-section .info-grid > .reveal";
+      const splitContactScenes = window.matchMedia(
+        "(max-width: 599px) and (orientation: portrait)"
+      );
+      // Las tarjetas miden una pantalla menos su marco: al detenerlas con su
+      // borde inferior 16px por encima del pliegue quedan con el mismo aire
+      // arriba y abajo. Son los 16px que la hoja de estilos reserva alrededor.
+      const CONTACT_CARD_FRAME = 16;
       let hasScrollIntent = false;
       let sectionPauseActive = false;
       const sectionPauseArmed = new WeakMap();
@@ -3105,11 +3119,21 @@
       let pauseSections = null;
       const readPauseSections = () => {
         if (!pauseSections) {
-          pauseSections = $$(pauseSectionSelector).map((section) => ({
-            el: section,
-            isHero: section.matches(".hero, .page-hero"),
-            isManifesto: section.matches(".ln-manifesto"),
-          }));
+          const splitContact = splitContactScenes.matches;
+          const selector = splitContact
+            ? `${pauseSectionSelector},${contactCardSelector}`
+            : pauseSectionSelector;
+          pauseSections = $$(selector)
+            .filter(
+              (section) =>
+                !(splitContact && section.matches(".contact-form-section"))
+            )
+            .map((section) => ({
+              el: section,
+              isHero: section.matches(".hero, .page-hero"),
+              isManifesto: section.matches(".ln-manifesto"),
+              isContactCard: splitContact && section.matches(contactCardSelector),
+            }));
         }
         return pauseSections;
       };
@@ -3118,6 +3142,16 @@
         new MutationObserver(() => {
           pauseSections = null;
         }).observe(mainRegion, { childList: true });
+      }
+      // Al girar el teléfono la composición vuelve a una sola escena (o se
+      // parte de nuevo): la lista cacheada tiene que rehacerse.
+      const invalidatePauseSections = () => {
+        pauseSections = null;
+      };
+      if (typeof splitContactScenes.addEventListener === "function") {
+        splitContactScenes.addEventListener("change", invalidatePauseSections);
+      } else if (typeof splitContactScenes.addListener === "function") {
+        splitContactScenes.addListener(invalidatePauseSections);
       }
 
       const pauseAtSectionEdge = (instance) => {
@@ -3152,7 +3186,18 @@
           // del borde, el sticky empieza a liberarse y el texto sube antes de
           // que llegue la pausa. Lo detenemos unos píxeles antes para mantener
           // la composición fija y que la lectura sea limpia.
-          const pauseLead = entry.isManifesto ? 32 : 0;
+          // Es decir: `pauseLead` detiene la escena ANTES del pliegue. Las
+          // tarjetas de contacto piden lo contrario —parar con su borde ya
+          // dentro, para verse enmarcadas—, así que su valor es negativo, y el
+          // marco cede si la tarjeta no cabe entera en pantallas muy bajas.
+          const pauseLead = entry.isManifesto
+            ? 32
+            : entry.isContactCard
+              ? -Math.min(
+                  CONTACT_CARD_FRAME,
+                  Math.max(0, viewportHeight - rect.height)
+                )
+              : 0;
           const isNearViewportEdge = edgeDistance <= pauseLead && edgeDistance >= -edgeTolerance;
 
           if (edgeDistance > edgeTolerance) {
