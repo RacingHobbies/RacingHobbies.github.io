@@ -2833,6 +2833,22 @@
         (sec.querySelector(":scope > .container") || sec).appendChild(bar);
         const fill = bar.firstElementChild;
 
+        // La barra vive fuera de la fila para que no se desplace junto con las
+        // tarjetas. Su posición, sin embargo, debe seguir el borde inferior de
+        // esas tarjetas —no el borde del contenedor, que también incluye el
+        // titular y el espacio de la escena fijada.
+        const positionProgressBar = () => {
+          const firstCard = cards[0];
+          const barHeight = bar.offsetHeight || 2;
+          const container = sec.querySelector(":scope > .container") || sec;
+          if (!firstCard) return;
+          const cardBounds = firstCard.getBoundingClientRect();
+          const containerBounds = container.getBoundingClientRect();
+          bar.style.top = `${cardBounds.bottom - containerBounds.top - barHeight}px`;
+          bar.style.bottom = "auto";
+        };
+        positionProgressBar();
+
         // Margen de salida proporcional: 120px sobre un viewport ancho, pero en
         // un móvil de 390px esa cifra fija se comía un tercio de la pantalla y
         // la última tarjeta quedaba a media altura al final del recorrido.
@@ -2865,6 +2881,7 @@
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            onRefresh: positionProgressBar,
             onUpdate: (self) => {
               fill.style.transform = "scaleX(" + self.progress.toFixed(4) + ")";
             },
