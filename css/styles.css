@@ -20284,7 +20284,10 @@ html.js body main .race-sector > .race-art {
   inset: 0;
   z-index: -3;
   pointer-events: none;
-  background-image: var(--sector-art);
+  /* La portada declara `--sector-art` y las páginas internas `--section-art`;
+     `sectorArtURL()` en el JS mira las dos, y aquí hay que mirar las dos
+     igual o los sectores interiores se quedan sin textura. */
+  background-image: var(--sector-art, var(--section-art));
   background-position: 50% 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -20324,8 +20327,16 @@ html.js body main .race-sector::after {
   opacity: 1 !important;
   z-index: -2;
   pointer-events: none;
+  /* `!important` porque en `.hero` este pseudo-elemento ya traía un resplandor
+     verde declarado —invisible, porque otra capa lo apagaba con `display:none`—
+     y al devolverlo a la vida ganaba al degradado, dejando la textura sin
+     oscurecer. Verificado que hoy ningún sector pinta un fondo propio aquí. */
+  background-color: transparent !important;
   background-image:
-    linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9));
+    linear-gradient(110deg, rgba(1, 1, 1, 0.94), rgba(5, 5, 5, 0.68) 54%, rgba(0, 0, 0, 0.9)) !important;
+  background-position: 0 0 !important;
+  background-repeat: no-repeat !important;
+  background-size: auto !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
